@@ -1,0 +1,10 @@
+node_modules/
+.env
+*.env
+backend/aiven.txt
+backend/qrs/
+backend/crear-base-aiven.mjs
+capturas/
+render-env.txt
+frontend/index.antes-moderno.html
+frontend/index.bloque1.html

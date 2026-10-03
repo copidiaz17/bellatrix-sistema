@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela de Gimnasia Bellatrix//Torneo Aniversario//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:torneo-aniversario-11-2026@bellatrix
+DTSTAMP:20260925T120000Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:11° Torneo Aniversario Bellatrix
+LOCATION:Club Social Monteros\, Rivadavia 438\, Monteros\, Tucumán
+DESCRIPTION:Gimnasia rítmica y artística. Horario a confirmar.\nEntradas 
+ y novedades: https://copidiaz17.github.io/bellatrix-2026/
+URL:https://copidiaz17.github.io/bellatrix-2026/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Mañana es el Torneo Aniversario Bellatrix
+TRIGGER:-PT15H
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,91 @@
+# Blueprint de Render para el 11° Torneo Aniversario Bellatrix (11/10/2026).
+# Los valores marcados sync:false NO se guardan acá: se cargan a mano en el
+# panel de Render (Environment). Nunca poner secretos en este archivo.
+services:
+  - type: web
+    name: bellatrix-2026
+    runtime: node
+    plan: free            # ⚠️ pasar a starter antes del torneo: en free se duerme y tarda en despertar
+    region: oregon
+    rootDir: backend      # el package.json vive en backend/
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # ── Evento ──
+      - key: EVENTO_NOMBRE
+        value: 11° Torneo Aniversario Bellatrix
+      - key: EVENTO_CUANDO
+        value: Domingo 11 de Octubre
+      - key: EVENTO_LUGAR
+        value: Club Social Monteros · Monteros, Tucumán
+      - key: EVENTO_MAIL_FROM
+        value: entradas@bellatrix.com.ar
+
+      # ── Precio: 10.000 + 10% = 11.000 (Emilia 91,8% / José 8,2% por convenio) ──
+      - key: PRECIO_ENTRADA
+        value: "10000"
+      - key: CARGO_PCT
+        value: "10"
+      - key: MAX_ENTRADAS
+        value: "20"
+
+      # ── URLs ──
+      # ⚠️ Las DOS son la URL REAL del servicio, sin barra final. En Olympia esto
+      # trabó el deploy: apuntaban a un dominio que no existía y el aviso de
+      # ePagos nunca llegaba.
+      - key: FRONTEND_URL
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+
+      # ── ePagos ──
+      # sandbox hasta que lleguen las credenciales de producción de Emilia.
+      - key: EPAGOS_ENV
+        value: sandbox
+      - key: EPAGOS_ID_ORGANISMO
+        sync: false
+      - key: EPAGOS_ID_USUARIO
+        sync: false
+      - key: EPAGOS_PASSWORD
+        sync: false
+      - key: EPAGOS_HASH
+        sync: false
+      - key: EPAGOS_CONVENIO
+        sync: false
+      # 1 = efectivo, 2 = tarjeta de crédito (acredita a 18 días hábiles).
+      # ⚠️ NUNCA excluir el 7: es "Otras billeteras → QR", el medio que más se usa.
+      - key: EPAGOS_TIPOS_EXCLUIDOS
+        value: "1,2"
+
+      # ── Base de datos (Aiven, servidor ritmica-falube-stock) ──
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: bellatrix
+      - key: DB_SSL
+        value: "true"
+
+      # ── Mail ──
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+
+      # ── Secretos ──
+      # 🚫 QR_SECRET no se rota una vez vendida la primera entrada:
+      # firma los QR Y las sesiones del panel.
+      - key: QR_SECRET
+        sync: false
+      - key: SCAN_TOKEN
+        sync: false

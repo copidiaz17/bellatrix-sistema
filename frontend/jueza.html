@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Jueces — Bellatrix 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0b0509;--negro-2:#150a12;--negro-3:#1e0f1a;
+    --fucsia:#d6247a;--fucsia-osc:#8e1d6b;--violeta:#8e3bb8;--violeta-osc:#5b1a86;
+    --oro:#ffb3d6;--oro-claro:#ffd6ea;
+    --texto:#f4e9f0;--texto-tenue:#c5a8ba;--borde:rgba(255,179,214,.28);
+    --ok:#16a34a;--err:#dc2626;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--texto);min-height:100vh;
+    background:radial-gradient(ellipse at 15% 0%,rgba(139,47,201,.22),transparent 55%),
+               radial-gradient(ellipse at 85% 100%,rgba(255,30,140,.18),transparent 55%),var(--negro);}
+  .wrap{max-width:640px;margin:0 auto;padding:18px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+  .topbar h1{font-size:18px;background:linear-gradient(90deg,var(--fucsia),var(--oro-claro));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .topbar .sub{font-size:12px;color:var(--texto-tenue);margin-top:2px;}
+  .btn{background:var(--fucsia);color:#fff;border:none;border-radius:24px;padding:11px 20px;
+    font-weight:700;cursor:pointer;font-size:15px;font-family:inherit;transition:.15s;width:100%;}
+  .btn:hover{background:var(--fucsia-osc);}
+  .btn.ghost{background:transparent;color:var(--texto);border:1px solid var(--borde);width:auto;padding:8px 16px;font-size:13px;}
+  .btn.ghost:hover{border-color:var(--fucsia);color:var(--fucsia);}
+  .btn.oro{background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:#3a2400;}
+  .btn:disabled{opacity:.5;cursor:default;}
+
+  .login-wrap{min-height:86vh;display:flex;align-items:center;justify-content:center;padding:10px;}
+  .login{max-width:460px;width:100%;background:var(--negro-2);border:1px solid var(--borde);
+    border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.6);padding:0 34px 34px;overflow:hidden;}
+  /* El logo del torneo trae fondo negro sólido: "screen" lo funde con la
+     tarjeta y deja solo la corona y las letras. */
+  .login .marca{margin:0 -34px 4px;padding:22px 20px 8px;text-align:center;
+    background:radial-gradient(ellipse at 50% 30%,rgba(139,47,201,.28),transparent 70%);}
+  .login .marca img{width:100%;max-width:330px;aspect-ratio:1.55;object-fit:cover;
+    object-position:center;mix-blend-mode:screen;display:block;margin:0 auto;}
+  .login .edicion{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--oro);
+    font-weight:700;text-align:center;margin-top:-4px;}
+  .login .evento{text-align:center;color:var(--texto-tenue);font-size:12.5px;margin-top:7px;
+    padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .login h2{color:var(--oro-claro);text-align:center;font-size:17px;margin:18px 0 20px;}
+  .login .grupo{margin-bottom:14px;}
+  .login label{margin:0 0 5px;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--texto-tenue);}
+  .login input{padding:13px 14px;font-size:15px;border-radius:11px;}
+  label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px;color:var(--texto);}
+  input{width:100%;padding:11px 12px;border:1px solid rgba(255,255,255,.16);border-radius:10px;
+    font-size:15px;font-family:inherit;background:var(--negro);color:var(--texto);}
+  input:focus{outline:none;border-color:var(--fucsia);}
+  .msg{color:#ff8080;font-size:13px;text-align:center;margin-top:10px;min-height:18px;}
+
+  .card{background:var(--negro-2);border:1px solid var(--borde);border-radius:14px;
+    padding:16px;margin-bottom:12px;}
+  .cat-item{background:var(--negro-3);border:1px solid var(--borde);border-radius:12px;
+    padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;
+    align-items:center;cursor:pointer;transition:.15s;}
+  .cat-item:hover{border-color:var(--fucsia);}
+  .cat-item .n{font-weight:700;}
+  .cat-item .cnt{font-size:12px;color:var(--texto-tenue);}
+  /* Verde: esta jueza ya cargó todas las coreografías de la categoría. */
+  .cat-item .avance{font-size:11.5px;font-weight:400;color:var(--texto-tenue);margin-top:3px;}
+  .cat-item.lista{border-color:#4ade80;background:rgba(74,222,128,.12);}
+  .cat-item.lista .n{color:#4ade80;}
+  .cat-item.lista .avance{color:#4ade80;font-weight:700;}
+
+  .cor-item{background:var(--negro-3);border:1px solid var(--borde);border-radius:12px;
+    padding:14px 16px;margin-bottom:10px;}
+  .cor-item.cargado{border-color:var(--ok);}
+  .cor-item .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .cor-item h3{font-size:15px;}
+  .cor-item .esc{font-size:12px;color:var(--texto-tenue);}
+  .cor-item .ok{font-size:11px;color:var(--ok);font-weight:700;}
+  .campos{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;align-items:flex-end;}
+  @media(max-width:520px){ .campos{grid-template-columns:repeat(2,1fr);} }
+  .campo{min-width:0;}
+  .campo .pista{font-size:9.5px;color:var(--texto-tenue);opacity:.6;text-align:center;margin-top:3px;letter-spacing:.3px;}
+  .campo .ayuda{text-transform:none;letter-spacing:0;font-size:10.5px;color:var(--oro);
+    background:rgba(226,182,79,.12);padding:1px 6px;border-radius:8px;font-weight:600;}
+  .totales{display:flex;gap:16px;justify-content:flex-end;margin-top:10px;font-size:12.5px;
+    color:var(--texto-tenue);text-transform:uppercase;letter-spacing:.5px;}
+  .totales b{color:var(--texto);font-family:Consolas,monospace;font-size:15px;margin-left:5px;}
+  .totales b.final{color:var(--oro-claro);font-size:18px;}
+  .campo label{margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--texto-tenue);}
+  .campo input{text-align:center;font-size:17px;font-weight:700;font-family:Consolas,monospace;}
+  .cor-item .btn{width:auto;padding:9px 18px;font-size:13px;flex-shrink:0;}
+  .cor-item .err{color:#ff8080;font-size:12px;margin-top:6px;display:none;}
+
+  .banner{background:var(--negro-3);border-left:3px solid var(--oro);border-radius:0 10px 10px 0;
+    padding:10px 14px;font-size:13px;color:var(--texto-tenue);margin-bottom:14px;}
+  .banner b{color:var(--oro-claro);}
+  .vacio{text-align:center;color:var(--texto-tenue);padding:30px 10px;font-size:14px;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+
+  /* El logo de Bellatrix es cuadrado y con fondo blanco: va en circulo, sin fundido. */
+  .login .marca img, .marca img, .logo img{width:120px!important;height:120px!important;max-width:120px!important;
+    aspect-ratio:1!important;object-fit:contain!important;mix-blend-mode:normal!important;
+    border-radius:50%!important;background:#fff!important;padding:6px;margin:0 auto;display:block;
+    box-shadow:0 0 0 3px rgba(214,36,122,.55),0 14px 34px rgba(0,0,0,.45);}
+
+
+  /* Los botones principales usan el degradado de la pagina, no el dorado de antes. */
+  .btn.oro,.btn.primario{background:linear-gradient(135deg,#d6247a,#8e3bb8)!important;color:#fff!important;
+    border:0!important;font-weight:800;}
+  .btn.oro:hover,.btn.primario:hover{filter:brightness(1.08);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ LOGIN ══ -->
+  <div id="loginView">
+    <div class="login-wrap">
+      <div class="login">
+        <div class="marca">
+          <img src="assets/logo-bellatrix.jpg" alt="Escuela de Gimnasia Bellatrix">
+        </div>
+        <div class="edicion">11° Torneo Aniversario</div>
+        <div class="evento">Rítmica y Artística · Domingo 11 de octubre de 2026<br>Club Social Monteros · Monteros, Tucumán</div>
+
+        <h2>Panel de Jueces</h2>
+
+        <div class="grupo">
+          <label>Usuario</label>
+          <input id="f_user" autocomplete="username" placeholder="usuario">
+        </div>
+        <div class="grupo">
+          <label>Contraseña</label>
+          <input id="f_pass" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button class="btn oro" onclick="login()">Ingresar</button>
+        <div class="msg" id="loginMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ELEGIR CATEGORÍA ══ -->
+  <div id="catView" style="display:none;">
+    <div class="topbar">
+      <div>
+        <h1 id="tituloArea">Panel de Jueces</h1>
+        <div class="sub" id="subArea"></div>
+      </div>
+      <button class="btn ghost" onclick="logout()">Salir</button>
+    </div>
+    <div class="banner">Elegí la <b>categoría</b> que vas a puntuar.</div>
+    <div id="listaCategorias"></div>
+    <div class="vacio" id="sinCategorias" style="display:none;">Todavía no hay categorías cargadas para este torneo.</div>
+  </div>
+
+  <!-- ══ CARGAR PUNTAJES DE UNA CATEGORÍA ══ -->
+  <div id="corView" style="display:none;">
+    <div class="topbar">
+      <div>
+        <h1 id="tituloCategoria">Categoría</h1>
+        <div class="sub" id="subCategoria"></div>
+      </div>
+      <button class="btn ghost" onclick="volverACategorias()">‹ Categorías</button>
+    </div>
+    <div class="banner">
+      Las notas van de <b>0,10 a 10,00</b>. Los decimales podés separarlos con
+      <b>coma o con punto</b>: 8,50 y 8.50 son lo mismo.
+      Una nota guardada <b>se puede corregir</b> todas las veces que haga falta:
+      la cambiás y tocás Actualizar.
+    </div>
+    <div id="listaCoreografias"></div>
+    <div class="vacio" id="sinCoreografias" style="display:none;">No hay coreografías cargadas en esta categoría todavía.</div>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let TOKEN = localStorage.getItem('jueza_token');
+  let SESION = JSON.parse(localStorage.getItem('jueza_sesion') || 'null');
+  let categoriaActual = null;
+
+  function auth(){ return { 'Authorization': 'Bearer ' + TOKEN }; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+
+  async function login(){
+    const usuario = $('f_user').value.trim(), password = $('f_pass').value;
+    $('loginMsg').textContent = '';
+    if(!usuario || !password){ $('loginMsg').textContent = 'Completá usuario y contraseña.'; return; }
+    try{
+      const r = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({usuario,password}) });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      if(d.rol !== 'jueza'){ $('loginMsg').textContent = 'Este usuario no es de jueza.'; return; }
+      TOKEN = d.token;
+      SESION = { usuario: d.usuario, nombre: d.nombre || d.usuario };
+      localStorage.setItem('jueza_token', TOKEN);
+      localStorage.setItem('jueza_sesion', JSON.stringify(SESION));
+      mostrarCategorias();
+    }catch(e){ $('loginMsg').textContent = e.message; }
+  }
+
+  function logout(){
+    localStorage.removeItem('jueza_token'); localStorage.removeItem('jueza_sesion');
+    location.reload();
+  }
+
+  async function mostrarCategorias(){
+    $('loginView').style.display = 'none';
+    $('corView').style.display = 'none';
+    $('catView').style.display = 'block';
+    $('tituloArea').textContent = 'Panel de Jueces';
+    $('subArea').textContent = SESION.nombre;
+    try{
+      const r = await fetch('/api/jueza/categorias', { headers: auth() });
+      if(r.status === 401){ logout(); return; }
+      const cats = await r.json();
+      $('sinCategorias').style.display = cats.length ? 'none' : 'block';
+      $('listaCategorias').innerHTML = cats.map(c =>
+        `<div class="cat-item${c.completa ? ' lista' : ''}" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')">
+          <div class="n">${esc(c.nombre)}
+            <div class="avance">${c.completa ? '✓ ya la puntuaste' : `${c.hechas || 0} de ${c.coreografias || 0} puntuadas`}</div>
+          </div>
+          <div class="cnt">›</div>
+        </div>`
+      ).join('');
+    }catch(e){ $('listaCategorias').innerHTML = '<div class="vacio">No se pudo cargar. Revisá tu conexión.</div>'; }
+  }
+
+  function volverACategorias(){ mostrarCategorias(); }
+
+  async function abrirCategoria(id, nombre){
+    categoriaActual = id;
+    $('catView').style.display = 'none';
+    $('corView').style.display = 'block';
+    $('tituloCategoria').textContent = nombre;
+    $('subCategoria').textContent = SESION.nombre;
+    await cargarCoreografias();
+  }
+
+  async function cargarCoreografias(){
+    try{
+      const r = await fetch('/api/jueza/categorias/' + categoriaActual + '/coreografias', { headers: auth() });
+      if(r.status === 401){ logout(); return; }
+      const cors = await r.json();
+      $('sinCoreografias').style.display = cors.length ? 'none' : 'block';
+      $('listaCoreografias').innerHTML = cors.map(c => pintarCoreografia(c)).join('');
+      cors.forEach(c => { if(c.miPuntaje) recalcular(c.id); });
+    }catch(e){ $('listaCoreografias').innerHTML = '<div class="vacio">No se pudo cargar.</div>'; }
+  }
+
+  // "8,50" y "8.50" son lo mismo. Devuelve null si está vacío o no es un número.
+  function aNumero(texto){
+    const t = String(texto ?? '').trim().replace(',', '.');
+    if(t === '') return null;
+    const n = Number(t);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  // Cómo se muestra una nota guardada: siempre con coma y 2 decimales.
+  function aTexto(valor){
+    return valor == null || valor === '' ? '' : Number(valor).toFixed(2).replace('.', ',');
+  }
+
+  // Un campo de nota. Los cuatro son iguales: 0,10 a 10,00 con 2 decimales.
+  function campo(id, etiqueta, valor, ayuda){
+    return `<div class="campo">
+      <label>${etiqueta}${ayuda ? ` <span class="ayuda">${ayuda}</span>` : ''}</label>
+      <input type="text" inputmode="decimal" autocomplete="off" maxlength="5"
+             placeholder="0,00" id="${id}" value="${aTexto(valor)}"
+             oninput="recalcular(${id.split('_')[1]})">
+      <div class="pista">coma o punto</div>
+    </div>`;
+  }
+
+  function pintarCoreografia(c){
+    const mp = c.miPuntaje;
+    const cargado = !!mp;
+    return `<div class="cor-item${cargado ? ' cargado' : ''}" id="item_${c.id}">
+      <div class="head">
+        <div><h3>${esc(c.nombre)}${c.exhibicion ? ' <span style="font-size:10px;color:var(--oro-claro);font-weight:700;">· EXHIBICIÓN</span>' : ''}</h3>${c.escuela ? `<div class="esc">${esc(c.escuela)}</div>` : ''}</div>
+        <div class="ok" id="okmsg_${c.id}">${cargado ? '✓ Cargado' : ''}</div>
+      </div>
+      <div class="campos">
+        ${campo('bd_' + c.id, 'BD', mp && mp.bd)}
+        ${campo('da_' + c.id, 'DA', mp && mp.da, c.aparato ? esc(c.aparato) : 'sin aparato')}
+        ${campo('eje_' + c.id, 'Ejecución', mp && mp.ejecucion)}
+        ${campo('art_' + c.id, 'Artístico', mp && mp.artistico)}
+      </div>
+      <div class="totales" id="tot_${c.id}"></div>
+      <div style="text-align:right;margin-top:10px;">
+        <button class="btn" id="btn_${c.id}" onclick="guardarPuntaje(${c.id})">${cargado ? 'Actualizar' : 'Guardar'}</button>
+      </div>
+      <div class="err" id="err_${c.id}"></div>
+    </div>`;
+  }
+
+  // Muestra Nota D y Nota Final mientras la jueza escribe, para que vea el
+  // total antes de guardar y detecte al toque un dedazo (un 80 en vez de 8,0).
+  function recalcular(id){
+    const n = campoId => { const v = aNumero($(campoId + '_' + id).value); return typeof v === 'number' && !Number.isNaN(v) && v > 0 ? v : null; };
+    const bd = n('bd'), da = n('da'), eje = n('eje'), art = n('art');
+    const box = $('tot_' + id);
+    if(bd == null || eje == null || art == null){ box.innerHTML = ''; return; }
+    const d = Math.round((bd + (da || 0)) * 100) / 100;
+    const final = Math.round((d + eje + art) * 100) / 100;
+    const conComa = n => n.toFixed(2).replace('.', ',');
+    box.innerHTML = `<span>Nota D <b>${conComa(d)}</b></span>
+      <span>Nota Final <b class="final">${conComa(final)}</b></span>`;
+  }
+
+  async function guardarPuntaje(coreografiaId){
+    const errBox = $('err_' + coreografiaId);
+    errBox.style.display = 'none';
+    const leer = campoId => {
+      const n = aNumero($(campoId + '_' + coreografiaId).value);
+      return n === null ? '' : n;   // '' = vacío (solo válido en DA)
+    };
+    const body = {
+      coreografia_id: coreografiaId,
+      bd: leer('bd'), da: leer('da'), ejecucion: leer('eje'), artistico: leer('art'),
+    };
+    for(const [etiqueta, valor] of [['BD',body.bd],['DA',body.da],['Ejecución',body.ejecucion],['Artístico',body.artistico]]){
+      if(Number.isNaN(valor)){
+        errBox.textContent = etiqueta + ': escribí solo el número, con coma o punto (ej: 8,50)';
+        errBox.style.display = 'block';
+        return;
+      }
+    }
+    try{
+      const r = await fetch('/api/jueza/puntaje', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify(body) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      $('item_' + coreografiaId).classList.add('cargado');
+      $('okmsg_' + coreografiaId).textContent = '✓ Guardado';
+      $('btn_' + coreografiaId).textContent = 'Actualizar';
+      // Reescribo lo que quedó guardado: la jueza ve exactamente qué se grabó
+      // (con coma y 2 decimales) y puede corregirlo encima cuando quiera.
+      const p = d.puntaje || {};
+      $('bd_'  + coreografiaId).value = aTexto(p.bd);
+      $('da_'  + coreografiaId).value = aTexto(p.da);
+      $('eje_' + coreografiaId).value = aTexto(p.ejecucion);
+      $('art_' + coreografiaId).value = aTexto(p.artistico);
+      recalcular(coreografiaId);
+      if(navigator.vibrate) navigator.vibrate(80);
+    }catch(e){
+      errBox.textContent = e.message || 'No se pudo guardar';
+      errBox.style.display = 'block';
+    }
+  }
+
+  // Enter para ingresar (en cualquiera de los dos campos)
+  ['f_user','f_pass'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('keydown', e=>{ if(e.key==='Enter') login(); }); });
+
+  // arranque
+  if(TOKEN && SESION) mostrarCategorias(); else $('loginView').style.display = 'block';
+</script>
+</body>
+</html>

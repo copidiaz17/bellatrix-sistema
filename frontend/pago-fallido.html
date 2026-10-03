@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El pago no se completó — Bellatrix 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{--negro:#0b0509;--negro-2:#150a12;--negro-3:#1e0f1a;--fucsia:#d6247a;--violeta:#8e3bb8;
+        --oro:#ffb3d6;--oro-claro:#ffd6ea;--texto:#f4e9f0;--texto-tenue:#c5a8ba;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--texto);min-height:100vh;padding:24px;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at 20% 10%,rgba(139,47,201,.32),transparent 55%),
+               radial-gradient(ellipse at 80% 80%,rgba(255,30,140,.28),transparent 55%),var(--negro);}
+  .card{background:var(--negro-2);border:1px solid rgba(226,182,79,.28);border-radius:20px;
+    box-shadow:0 24px 70px rgba(0,0,0,.5);padding:40px 30px;max-width:520px;width:100%;text-align:center;}
+  .ico{font-size:58px;}
+  h1{font-size:24px;margin:12px 0 10px;color:#ff8080;}
+  p{color:var(--texto-tenue);line-height:1.6;}
+  .btn{display:inline-block;margin-top:22px;font-weight:700;padding:13px 30px;border-radius:30px;
+    text-decoration:none;font-size:15px;background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:#3a2400;}
+  .btn-sec{background:transparent;color:var(--texto);border:1px solid rgba(255,255,255,.25);margin-left:8px;}
+  .detalle{background:var(--negro-3);border:1px solid rgba(255,255,255,.12);border-radius:12px;
+    padding:14px 16px;margin-top:22px;text-align:left;font-size:13px;color:var(--texto-tenue);line-height:1.7;}
+  .detalle b{color:var(--texto);}
+  .detalle code{font-family:Consolas,monospace;color:var(--oro-claro);word-break:break-all;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+  /* ── Mismos colores que la página principal ── */
+  :root{--fucsia:#d6247a;--fucsia-osc:#8e1d6b;--violeta:#8e3bb8;--violeta-2:#b0239a;
+        --fondo:#fdf4fa;--tinta:#2a1f4d;--tinta-suave:#6e6488;}
+  body{background:#fdf4fa;color:#2a1f4d;}
+  a.btn,button.btn,.btn-primario,.boton{background:linear-gradient(90deg,#d6247a,#8e3bb8)!important;
+    border:0!important;color:#fff!important;border-radius:999px!important;}
+  h1,h2{color:#b0239a;}
+</style></head>
+<body>
+<div class="card">
+  <div class="ico">😕</div>
+  <h1>El pago no se completó</h1>
+  <p>No se realizó ningún cobro. Podés intentar de nuevo con otro medio de pago.</p>
+
+  <div class="detalle" id="detalle" style="display:none;"></div>
+
+  <div>
+    <a href="/#entradas" class="btn">Intentar de nuevo</a>
+    <a href="/" class="btn btn-sec">Volver al inicio</a>
+  </div>
+
+  <p style="margin-top:24px;font-size:13px;">
+    ¿Seguís con problemas?
+    <a href="https://wa.me/5493854414082?text=Hola!%20Tuve%20un%20problema%20al%20pagar%20las%20entradas%20del%20Torneo%20Bellatrix"
+       target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">Escribinos por WhatsApp</a>
+  </p>
+</div>
+
+<script>
+  // ePagos manda el motivo en id_resp. Lo mostramos acá para no depender de
+  // ir a leer los logs del servidor.
+  const p = new URLSearchParams(location.search);
+  const cod = p.get('cod'), msg = p.get('msg'), orden = p.get('orden');
+
+  const CODIGOS = {
+    '02003': 'Error al validar el token de la operación.',
+    '02004': 'El pago fue cancelado o rechazado.',
+    '02005': 'Error interno al procesar el pago.',
+    '02006': 'Un dato de la operación no pasó la validación.',
+    '02007': 'Se canceló el pago.',
+    '02008': 'No coinciden el monto y el detalle de la operación.',
+    '02009': 'La forma de pago elegida no está disponible en este momento.',
+    '02010': 'Error del proveedor de pagos.'
+  };
+
+  if (cod || msg) {
+    const partes = [];
+    if (CODIGOS[cod]) partes.push('<b>' + CODIGOS[cod] + '</b>');
+    if (msg) partes.push('ePagos informó: “' + msg + '”');
+    if (cod) partes.push('Código: <code>' + cod + '</code>');
+    if (orden) partes.push('Operación: <code>' + orden + '</code>');
+    const d = document.getElementById('detalle');
+    d.innerHTML = partes.join('<br>');
+    d.style.display = 'block';
+  }
+</script>
+</body></html>

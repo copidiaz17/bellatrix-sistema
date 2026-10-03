@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bellatrix — 11° Torneo Aniversario</title>
+<meta name="description" content="11° Torneo Aniversario de la Escuela de Gimnasia Bellatrix. Domingo 11 de octubre en el Club Social Monteros, Tucumán. Gimnasia rítmica y artística. Entradas online.">
+<meta name="theme-color" content="#3a1450">
+<link rel="canonical" href="https://copidiaz17.github.io/bellatrix-2026/">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icono-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icono-192.png">
+<link rel="apple-touch-icon" href="assets/icono-apple-180.png">
+<!-- Vista previa al compartir el link. Así circula la página: por WhatsApp.
+     La imagen va con la dirección completa porque WhatsApp y Facebook no
+     resuelven rutas relativas; si la página cambia de dominio, cambiarla acá. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Escuela de Gimnasia Bellatrix">
+<meta property="og:url" content="https://copidiaz17.github.io/bellatrix-2026/">
+<meta property="og:title" content="11° Torneo Aniversario Bellatrix · Domingo 11 de octubre">
+<meta property="og:description" content="Gimnasia rítmica y artística en el Club Social Monteros. Tucumán, Santiago del Estero y Catamarca. Comprá tu entrada online.">
+<meta property="og:image" content="https://copidiaz17.github.io/bellatrix-2026/assets/compartir.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="11° Torneo Aniversario de la Escuela de Gimnasia Bellatrix, domingo 11 de octubre en el Club Social Monteros">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0a0a0c; --negro-2:#141416; --negro-3:#1c1c20;
+    --rojo:#d81f2a; --rojo-osc:#9e0f18; --rojo-luz:#ff4b57;
+    --crema:#f4f1ec; --gris:#a29ea6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--negro);color:var(--crema);line-height:1.6;}
+  .container{max-width:1120px;margin:0 auto;padding:0 24px;}
+
+  /* ══ HERO CON DOS VIDEOS ENCADENADOS ══
+     Dos <video> superpuestos. Se reproduce uno; cuando termina, se funde
+     con el otro y sigue. No llevan "loop": necesitamos el evento 'ended'
+     para saber cuándo cambiar. Van muted + playsinline porque si no,
+     iOS no los arranca solos. */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;
+    justify-content:center;text-align:center;overflow:hidden;background:#000;}
+  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    z-index:0;filter:grayscale(.35) contrast(1.05);
+    opacity:0;transition:opacity 1.2s ease-in-out;}
+  .hero video.visible{opacity:1;}
+  /* Dos capas encima: oscurecido para que el texto se lea, y tinte rojo
+     que le da la identidad de Bellatrix. */
+  .hero .velo{position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(216,31,42,.30), transparent 62%),
+      linear-gradient(180deg, rgba(10,10,12,.62) 0%, rgba(10,10,12,.42) 45%, rgba(10,10,12,.94) 100%);}
+  .hero .contenido{position:relative;z-index:2;padding:40px 20px;width:100%;}
+
+  .logo-marco{width:132px;height:132px;border-radius:50%;background:#fff;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 26px;
+    box-shadow:0 0 0 3px var(--rojo), 0 18px 50px rgba(216,31,42,.4);
+    animation:entrar .9s cubic-bezier(.2,.8,.2,1) both;}
+  .logo-marco img{width:114px;height:114px;object-fit:contain;}
+
+  .edicion{font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--rojo-luz);
+    font-weight:700;margin-bottom:10px;animation:entrar .9s .1s both;}
+  h1{font-size:clamp(52px,11vw,120px);font-weight:900;line-height:.88;letter-spacing:-3px;
+    animation:entrar .9s .2s both;}
+  h1 .num{display:block;color:var(--rojo);font-size:clamp(80px,17vw,190px);
+    text-shadow:0 0 60px rgba(216,31,42,.55);}
+  .sub{font-size:clamp(20px,3.4vw,34px);font-weight:300;font-style:italic;
+    color:var(--crema);margin-top:2px;animation:entrar .9s .3s both;}
+  .lema{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gris);
+    margin-top:18px;animation:entrar .9s .4s both;}
+
+  .datos{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:30px 0 26px;
+    animation:entrar .9s .5s both;}
+  .datos div{background:rgba(255,255,255,.07);border:1px solid rgba(216,31,42,.45);
+    backdrop-filter:blur(6px);border-radius:8px;padding:11px 20px;font-size:14.5px;}
+  .datos b{color:var(--rojo-luz);}
+
+  .cta{display:inline-block;background:var(--rojo);color:#fff;font-weight:800;font-size:17px;
+    padding:17px 46px;border-radius:6px;text-decoration:none;letter-spacing:.5px;
+    border:2px solid var(--rojo);transition:.25s;animation:entrar .9s .6s both;
+    box-shadow:0 14px 40px rgba(216,31,42,.35);}
+  .cta:hover{background:transparent;color:var(--rojo-luz);transform:translateY(-2px);}
+
+  @keyframes entrar{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
+
+  .bajar{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
+    color:var(--gris);font-size:26px;animation:flotar 1.8s ease-in-out infinite;}
+  @keyframes flotar{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,10px);}}
+
+  .bloque{padding:80px 0;background:var(--negro-2);}
+  .bloque h2{font-size:32px;font-weight:900;text-align:center;letter-spacing:-1px;}
+  .bloque h2 span{color:var(--rojo);}
+  .bloque p.int{text-align:center;color:var(--gris);margin-top:8px;}
+  .niveles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:40px;}
+  .nivel{background:var(--negro-3);border:1px solid rgba(255,255,255,.08);border-radius:10px;
+    padding:28px 22px;text-align:center;transition:.25s;}
+  .nivel:hover{border-color:var(--rojo);transform:translateY(-4px);
+    box-shadow:0 16px 40px rgba(216,31,42,.18);}
+  .nivel b{display:block;font-size:26px;color:var(--rojo);letter-spacing:1px;}
+  .nivel span{font-size:13px;color:var(--gris);}
+  .bloque.alt{background:var(--negro);}
+
+  /* ── Las dos disciplinas ── */
+  .discs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:40px;}
+  .disc{background:var(--negro-3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:30px 26px;}
+  .disc-tit{font-size:23px;font-weight:300;letter-spacing:-.5px;margin-bottom:16px;}
+  .disc-tit b{font-weight:900;color:var(--rojo);}
+  .disc-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gris);margin:20px 0 10px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chips span{background:rgba(216,31,42,.12);border:1px solid rgba(216,31,42,.4);
+    border-radius:20px;padding:6px 15px;font-size:13px;}
+  .chips span.ex{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:var(--gris);}
+
+  /* ── Jueces ── */
+  .jueces{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px;}
+  .juez{background:var(--negro-3);border:1px solid rgba(255,255,255,.08);border-radius:12px;
+    overflow:hidden;transition:.25s;}
+  .juez:hover{border-color:var(--rojo);transform:translateY(-4px);}
+  .juez img{width:100%;display:block;aspect-ratio:1/1.35;object-fit:cover;object-position:top center;}
+  .juez figcaption{padding:18px 20px;font-size:13px;color:var(--gris);line-height:1.5;}
+  .juez figcaption b{display:block;font-size:17px;color:var(--crema);margin-bottom:3px;letter-spacing:.3px;}
+  .juez.proximo{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;border-style:dashed;}
+  .juez.proximo .mas{font-size:64px;font-weight:900;color:rgba(216,31,42,.55);margin-top:30px;}
+
+  /* ── Sede ── */
+  .sede{display:grid;grid-template-columns:1.45fr 1fr;gap:20px;margin-top:40px;align-items:stretch;}
+  .mapa{border-radius:12px;overflow:hidden;border:1px solid rgba(216,31,42,.35);min-height:330px;}
+  .mapa iframe{width:100%;height:100%;min-height:330px;border:0;display:block;filter:grayscale(.25);}
+  .sede-datos{display:flex;flex-direction:column;gap:14px;}
+  .dato{background:var(--negro-3);border:1px solid rgba(255,255,255,.08);border-radius:12px;
+    padding:20px 22px;font-size:13.5px;color:var(--gris);line-height:1.6;}
+  .dato span{display:block;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--rojo-luz);margin-bottom:6px;}
+  .dato b{display:block;font-size:20px;color:var(--crema);font-weight:800;letter-spacing:-.3px;}
+  .btn-mapa{margin-top:auto;display:block;text-align:center;background:transparent;
+    border:1px solid var(--rojo);color:var(--rojo-luz);border-radius:8px;padding:15px;
+    text-decoration:none;font-weight:700;font-size:14.5px;transition:.25s;}
+  .btn-mapa:hover{background:var(--rojo);color:#fff;}
+  @media(max-width:760px){ .sede{grid-template-columns:1fr;} }
+
+  /* ── Entradas ── */
+  .entrada-caja{max-width:620px;margin:40px auto 0;background:var(--negro-3);
+    border:1px solid rgba(216,31,42,.35);border-radius:14px;padding:34px 30px;text-align:center;}
+  .precio .etq{display:block;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gris);}
+  .precio .valor{display:block;font-size:54px;font-weight:900;color:var(--rojo);line-height:1.1;}
+  .precio .nota{display:block;font-size:12.5px;color:var(--gris);font-style:italic;}
+  .pasos{text-align:left;margin:28px auto 26px;max-width:460px;padding-left:20px;font-size:14.5px;color:#ded9e0;}
+  .pasos li{margin-bottom:9px;}
+  .pasos b{color:var(--crema);}
+  .aviso{font-size:12.5px;color:var(--gris);margin-top:16px;font-style:italic;}
+
+  /* ── Pie ── */
+  footer{background:var(--negro-2);border-top:1px solid rgba(216,31,42,.3);padding:44px 0;text-align:center;}
+  footer img{width:74px;height:74px;border-radius:50%;background:#fff;padding:5px;object-fit:contain;margin-bottom:16px;}
+  footer div{font-size:13.5px;color:var(--gris);line-height:1.7;}
+  footer b{color:var(--crema);}
+  footer .lema-pie{margin-top:16px;color:var(--rojo-luz);font-style:italic;font-size:14px;}
+
+  /* ── OPCIÓN B: colores de los flyers de Bellatrix (fucsia y violeta sobre blanco) ── */
+  :root{ --rojo:#d6247a; --rojo-osc:#8e1d6b; --rojo-luz:#ff5aa8;
+         --negro:#fdf4fa; --negro-2:#ffffff; --negro-3:#ffffff; --crema:#2a1f4d; --gris:#6e6488; }
+  .hero{ --crema:#ffffff; --gris:#f0e6f5; color:#ffffff; }
+  .hero video{ filter:none; }
+  .hero .velo{ background:
+      radial-gradient(ellipse at 50% 40%, rgba(214,36,122,.34), transparent 64%),
+      linear-gradient(180deg, rgba(58,20,80,.50) 0%, rgba(90,30,110,.30) 45%, rgba(42,18,70,.80) 100%); }
+  .hero h1, .hero .sub, .hero .lema{ text-shadow:0 2px 18px rgba(40,10,60,.55); }
+  h1 .num{ text-shadow:0 0 60px rgba(214,36,122,.55); }
+  .logo-marco{ box-shadow:0 0 0 3px #d6247a, 0 18px 50px rgba(214,36,122,.40); }
+  .datos div{ border-color:rgba(255,90,168,.55); background:rgba(255,255,255,.12); }
+  .datos b{ color:#ffb3d6; }
+  .cta{ background:linear-gradient(90deg,#d6247a,#8e3bb8); border-color:transparent; box-shadow:0 14px 40px rgba(142,59,184,.35); }
+  .cta:hover{ background:#fff; color:#8e1d6b; }
+  .bloque h2 span, .disc-tit b{ color:#b0239a; }
+  .bloque.alt{ background:#fbf1f8; }
+  .nivel,.disc,.juez,.dato,.entrada-caja{ border-color:#f0dcea; box-shadow:0 10px 28px rgba(120,40,110,.08); }
+  .nivel:hover,.juez:hover{ border-color:#d6247a; box-shadow:0 16px 40px rgba(214,36,122,.18); }
+  .nivel b{ color:#8e3bb8; }
+  .chips span{ background:rgba(214,36,122,.08); border-color:rgba(214,36,122,.35); }
+  .chips span.ex{ background:#f4eefa; border-color:#e2d6ef; color:#6e6488; }
+  .juez.proximo{ border-color:#e7c9dd; }
+  .juez.proximo .mas{ color:rgba(214,36,122,.55); }
+  .mapa{ border-color:#f0c6de; }
+  .dato span{ color:#b0239a; }
+  .btn-mapa{ border-color:#d6247a; color:#b0239a; }
+  .precio .valor{ color:#b0239a; }
+  .pasos{ color:#3d3560; }
+  footer{ background:linear-gradient(135deg,#3a1450,#7a1f6a); border-top:0; }
+  footer div{ color:#e9d9f1; } footer b{ color:#ffffff; }
+  footer .lema-pie{ color:#ffb3d6; }
+
+  /* ── Cuenta regresiva de la portada ── */
+  .faltan{display:inline-flex;align-items:center;gap:10px;margin-top:22px;padding:8px 18px;
+    border-radius:30px;background:rgba(255,255,255,.14);border:1px solid rgba(255,90,168,.55);
+    backdrop-filter:blur(6px);font-size:14.5px;letter-spacing:.5px;animation:entrar .9s .45s both;}
+  .faltan[hidden]{display:none;}
+  .faltan b{color:#ffb3d6;font-size:17px;}
+  .faltan::before{content:"";width:8px;height:8px;border-radius:50%;background:#ff5aa8;
+    animation:latir 1.8s infinite;}
+  @keyframes latir{0%{box-shadow:0 0 0 0 rgba(255,90,168,.7);}70%,100%{box-shadow:0 0 0 10px rgba(255,90,168,0);}}
+
+  /* Las fotos traen width/height para reservar el lugar antes de cargar;
+     sin height:auto, el alto del atributo le ganaría al aspect-ratio. */
+  .juez img{height:auto;}
+
+  /* ── Botón de compra fijo en el celular ──
+     Aparece al dejar atrás la portada y se va cuando ya se ve la caja de
+     entradas: quien baja a mirar los jueces no tiene que volver a buscarlo. */
+  .cta-fija{display:none;}
+  @media(max-width:760px){
+    .cta-fija{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;
+      align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-radius:12px;
+      background:linear-gradient(90deg,#d6247a,#8e3bb8);color:#fff;text-decoration:none;
+      font-weight:800;font-size:16px;box-shadow:0 12px 30px rgba(58,20,80,.35);
+      transform:translateY(160%);transition:transform .35s cubic-bezier(.2,.8,.2,1);}
+    .cta-fija.ver{transform:none;}
+    .cta-fija small{font-weight:600;font-size:13px;opacity:.9;}
+    footer{padding-bottom:110px;}
+  }
+
+  /* Quien pidió menos movimiento en el teléfono no ve animaciones (y el
+     video ni se descarga: lo resuelve el script). */
+  @media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth;} }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     CAPA MODERNA — tipografía, profundidad, 3D y movimiento con scroll.
+     Va al final a propósito: pisa lo de arriba sin tocarlo, así se puede
+     sacar entera si algo no gusta.
+     ══════════════════════════════════════════════════════════════════ */
+  body{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;
+       font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;}
+  h1,h2,.sub,.disc-tit,.nivel b,.precio .valor,.dato b,.juez figcaption b,.modal-caja h3{
+       font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;}
+  h1{letter-spacing:-.045em;}
+  h1 .num{letter-spacing:-.06em;}
+  .bloque h2{font-size:clamp(30px,4.6vw,52px);letter-spacing:-.035em;line-height:1.04;}
+  .bloque p.int{font-size:clamp(15px,1.5vw,18px);max-width:52ch;margin-left:auto;margin-right:auto;}
+  .edicion,.lema,.disc-sub,.dato span,.precio .etq{letter-spacing:.22em;}
+
+  /* ── Profundidad: sombras teñidas, no grises ── */
+  .nivel,.disc,.juez,.dato,.entrada-caja{
+    border-radius:18px;
+    box-shadow:0 1px 2px rgba(120,40,110,.05),0 12px 28px -12px rgba(120,40,110,.22);}
+
+  /* ── Tarjetas con inclinación 3D (las mueve el puntero) ── */
+  .tilt{transform-style:preserve-3d;will-change:transform;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .3s;}
+  .tilt:hover{transition-duration:.12s;
+    box-shadow:0 2px 6px rgba(120,40,110,.08),0 28px 60px -18px rgba(142,59,184,.38);}
+  .tilt > *{transform:translateZ(22px);}
+  .tilt-wrap{perspective:900px;}
+
+  /* ── Aparición escalonada al llegar con el scroll ── */
+  .rev{opacity:0;transform:translateY(20px);}
+  .rev.visible{opacity:1;transform:none;
+    transition:opacity .75s cubic-bezier(.2,.8,.2,1),transform .75s cubic-bezier(.2,.8,.2,1);
+    transition-delay:var(--d,0ms);}
+
+  /* ── La entrada, como una entrada de verdad ── */
+  /* El troquelado va justo debajo del precio, como el talón de una entrada. */
+  #entradas .entrada-caja{--corte:33%;position:relative;overflow:hidden;isolation:isolate;
+    background:
+      radial-gradient(circle at 0 var(--corte),transparent 15px,#fff 16px) left/51% 100% no-repeat,
+      radial-gradient(circle at 100% var(--corte),transparent 15px,#fff 16px) right/51% 100% no-repeat;
+    border:0;filter:drop-shadow(0 18px 40px rgba(142,59,184,.20));}
+  #entradas .entrada-caja::before{content:"";position:absolute;left:7%;right:7%;top:var(--corte);
+    border-top:2px dashed rgba(214,36,122,.25);}
+  #entradas .entrada-caja::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.65) 50%,transparent 65%);
+    transform:translateX(-120%);transition:transform .9s cubic-bezier(.2,.8,.2,1);}
+  #entradas .entrada-caja:hover::after{transform:translateX(120%);}
+  .precio .valor{font-size:clamp(46px,7vw,72px);letter-spacing:-.04em;
+    background:linear-gradient(120deg,#d6247a,#8e3bb8);-webkit-background-clip:text;
+    background-clip:text;color:transparent;}
+
+  /* ── Botones ── */
+  .cta{border-radius:999px;padding:18px 48px;
+    background-size:200% 100%;transition:background-position .5s,transform .25s,box-shadow .25s;}
+  .cta:hover{background-position:100% 0;transform:translateY(-3px);
+    box-shadow:0 20px 44px rgba(142,59,184,.42);}
+  .cta:active{transform:translateY(0) scale(.985);}
+  .btn-mapa{border-radius:999px;transition:background .25s,color .25s,transform .25s;}
+  .btn-mapa:hover{transform:translateY(-2px);}
+  .chips span{transition:transform .2s,background .2s;}
+  .chips span:hover{transform:translateY(-2px);}
+  :where(a,button,select,input):focus-visible{outline:3px solid #d6247a;outline-offset:3px;border-radius:8px;}
+
+  /* ── Fotos de jueces: mismo encuadre y brillo mientras cargan ── */
+  .juez img{aspect-ratio:1/1.28;object-position:50% 22%;background:
+    linear-gradient(100deg,#f6eaf3 30%,#fdf4fa 50%,#f6eaf3 70%) 0 0/200% 100%;
+    animation:brillo 1.4s linear infinite;}
+  .juez img.ok{animation:none;background:none;}
+  @keyframes brillo{to{background-position:-200% 0;}}
+
+  /* ── Mapa: se carga recién cuando se llega, con un cartel mientras tanto ── */
+  .mapa{position:relative;background:linear-gradient(135deg,#f9eef6,#f3e6fa);}
+  .mapa .cargando{position:absolute;inset:0;display:grid;place-items:center;
+    color:#8e3bb8;font-size:14px;font-weight:600;letter-spacing:.04em;}
+
+  /* ── Barra fija del celular: ahora dice el precio ── */
+  @media(max-width:760px){
+    .cta-fija{border-radius:999px;padding:15px 22px;
+      box-shadow:0 14px 34px rgba(58,20,80,.42);}
+    .cta-fija small{background:rgba(255,255,255,.22);padding:4px 11px;border-radius:999px;}
+  }
+
+
+  /* ══ BLOQUE 2: atmósfera, textura y títulos que se develan ══ */
+
+  /* Manchas de color muy difuminadas detrás de todo. Se mueven lentísimo y
+     solo con transform, que es lo único que no hace trabajar al celular. */
+  html{overflow-x:clip;}   /* las manchas y las curvas se salen a propósito: se recortan acá */
+  .aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;}
+  .aurora i{position:absolute;display:block;border-radius:50%;filter:blur(90px);opacity:.5;}
+  .aurora i:nth-child(1){width:52vmax;height:52vmax;left:-8vmax;top:-6vmax;
+    background:radial-gradient(circle,#ffb3d6,transparent 68%);animation:vagar1 26s ease-in-out infinite;}
+  .aurora i:nth-child(2){width:46vmax;height:46vmax;right:-10vmax;top:22vmax;
+    background:radial-gradient(circle,#c9a6f5,transparent 68%);animation:vagar2 32s ease-in-out infinite;}
+  .aurora i:nth-child(3){width:40vmax;height:40vmax;left:28vmax;bottom:-10vmax;
+    background:radial-gradient(circle,#ffd6ea,transparent 70%);animation:vagar3 38s ease-in-out infinite;}
+  @keyframes vagar1{0%,100%{transform:none;}50%{transform:translate3d(6vmax,4vmax,0) scale(1.12);}}
+  @keyframes vagar2{0%,100%{transform:none;}50%{transform:translate3d(-7vmax,-5vmax,0) scale(1.08);}}
+  @keyframes vagar3{0%,100%{transform:none;}50%{transform:translate3d(4vmax,-6vmax,0) scale(1.15);}}
+
+  /* Las secciones dejan pasar un poco de ese color: sin esto el blanco las tapa. */
+  .bloque{background:rgba(255,255,255,.80);}
+  .bloque.alt{background:rgba(251,241,248,.72);}
+  .hero{z-index:1;}
+
+  /* Grano: evita que los degradados se vean en escalones y da terminación. */
+  body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23r)'/%3E%3C/svg%3E");}
+
+  /* Títulos que se develan palabra por palabra, con máscara. */
+  .bloque h2.rev{transform:none;}
+  /* Las envolturas de palabra no pintan: el color lo lleva solo <b class="col">. */
+  .bloque h2 span{color:inherit;}
+  .bloque h2 .col{color:#b0239a;font-weight:inherit;}
+  .pal{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.08em;}
+  .pal > span{display:inline-block;transform:translateY(108%);
+    transition:transform .72s cubic-bezier(.2,.8,.2,1);transition-delay:var(--i,0ms);}
+  .visible .pal > span, h2.visible .pal > span{transform:none;}
+
+  /* Corte curvo entre secciones, en lugar del escalón de color. */
+  .bloque + .bloque{position:relative;}
+  .bloque + .bloque::before{content:"";position:absolute;left:0;right:0;top:-38px;height:76px;
+    background:inherit;border-radius:50%/100% 100% 0 0;pointer-events:none;}
+
+  @media (prefers-reduced-motion: reduce){
+    .aurora i{animation:none!important;}
+    .pal > span{transform:none!important;}
+  }
+
+  /* ── Nada de esto se mueve si el teléfono pide menos movimiento ── */
+  @media (prefers-reduced-motion: reduce){
+    .rev{opacity:1!important;transform:none!important;}
+    .tilt{transform:none!important;}
+  }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<section class="hero">
+  <video id="vA" class="visible" muted playsinline preload="auto" poster="assets/poster.jpg"></video>
+  <video id="vB" muted playsinline preload="auto"></video>
+  <div class="velo"></div>
+
+  <div class="contenido">
+    <div class="logo-marco">
+      <picture>
+        <source type="image/webp" srcset="assets/logo-bellatrix.webp">
+        <img src="assets/logo-bellatrix.jpg" alt="Escuela de Gimnasia Bellatrix" width="114" height="114">
+      </picture>
+    </div>
+    <div class="edicion">Escuela de Gimnasia Bellatrix · Monteros, Tucumán</div>
+    <h1><span class="num">11°</span>TORNEO</h1>
+    <div class="sub">Aniversario</div>
+    <div class="lema">Viví la gimnasia, compartí la pasión</div>
+    <div class="faltan" id="faltan" hidden></div>
+
+    <div class="datos">
+      <div>📅 Domingo <b>11 de octubre</b></div>
+      <div>📍 <b>Club Social</b> Monteros</div>
+      <div>🤸 Rítmica <b>+</b> Artística</div>
+    </div>
+
+    <a class="cta" href="#entradas" data-comprar>Comprar entradas</a>
+  </div>
+  <div class="bajar">⌄</div>
+</section>
+
+<!-- ══ TRES PROVINCIAS ══ -->
+<section class="bloque">
+  <div class="container">
+    <h2>Tres <span>provincias</span> sobre el mismo tapiz</h2>
+    <p class="int">Un torneo que cruza el noroeste.</p>
+    <div class="niveles tilt-wrap">
+      <div class="nivel"><b>TUCUMÁN</b><span>Sede del torneo</span></div>
+      <div class="nivel"><b>SANTIAGO</b><span>del Estero</span></div>
+      <div class="nivel"><b>CATAMARCA</b><span>Delegación participante</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LAS DOS DISCIPLINAS ══ -->
+<section class="bloque alt">
+  <div class="container">
+    <h2>Dos <span>disciplinas</span>, un solo día</h2>
+    <p class="int">Todas las categorías, desde los 4 años.</p>
+
+    <div class="discs tilt-wrap">
+      <div class="disc">
+        <div class="disc-tit">Gimnasia <b>Rítmica</b></div>
+        <div class="chips">
+          <span>Nivel B</span><span>Nivel C</span><span class="ex">Exhibiciones</span>
+        </div>
+        <div class="disc-sub">Modalidades</div>
+        <div class="chips">
+          <span>Individual</span><span>Dúo</span><span>Trío</span><span>Conjunto</span>
+        </div>
+      </div>
+
+      <div class="disc">
+        <div class="disc-tit">Gimnasia <b>Artística</b></div>
+        <div class="chips">
+          <span>Nivel Escuela</span><span>Nivel 1</span>
+        </div>
+        <div class="disc-sub">Aparatos</div>
+        <div class="chips">
+          <span>Suelo</span><span>Salto</span><span>Viga</span><span>Barra</span><span>Honguito</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JUECES ══ -->
+<section class="bloque">
+  <div class="container">
+    <h2>Los <span>jueces</span></h2>
+    <p class="int">Cinco jueces nacionales evaluando en pista.</p>
+
+    <div class="jueces tilt-wrap">
+      <!-- WebP pesa la mitad; el JPG queda para los navegadores que no lo leen -->
+      <figure class="juez">
+        <picture>
+          <source type="image/webp" srcset="assets/juez-damian-acosta.webp">
+          <img src="assets/juez-damian-acosta.jpg" alt="Damián Acosta, Juez Nacional Nivel C"
+               width="720" height="1080" loading="lazy" decoding="async">
+        </picture>
+        <figcaption><b>Damián Acosta</b>Juez Nacional Nivel C · Individual y conjunto</figcaption>
+      </figure>
+      <figure class="juez">
+        <picture>
+          <source type="image/webp" srcset="assets/juez-luisina-cuevas.webp">
+          <img src="assets/juez-luisina-cuevas.jpg" alt="Luisina Cuevas, Jueza Nacional Nivel C"
+               width="720" height="1080" loading="lazy" decoding="async">
+        </picture>
+        <figcaption><b>Luisina Cuevas</b>Jueza Nacional Nivel C · Individual y conjunto</figcaption>
+      </figure>
+      <figure class="juez">
+        <picture>
+          <source type="image/webp" srcset="assets/juez-thiara-gonzalez-rodriguez.webp">
+          <img src="assets/juez-thiara-gonzalez-rodriguez.jpg" alt="Thiara González Rodríguez, Jueza Nacional Nivel B individual y Nivel C conjunto"
+               width="720" height="1082" loading="lazy" decoding="async">
+        </picture>
+        <figcaption><b>Thiara González Rodríguez</b>Jueza Nacional Nivel B individual · Nivel C conjunto</figcaption>
+      </figure>
+      <figure class="juez proximo">
+        <div class="mas">+2</div>
+        <figcaption><b>Próximamente</b>Los dos jueces restantes se anuncian en los próximos días</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CÓMO LLEGAR ══ -->
+<section class="bloque alt" id="sede">
+  <div class="container">
+    <h2>Cómo <span>llegar</span></h2>
+    <p class="int">Club Social Monteros · Rivadavia 438, Monteros, Tucumán</p>
+
+    <div class="sede">
+      <div class="mapa" id="mapa"
+           data-src="https://www.google.com/maps?q=Club%20Social%20Monteros%2C%20Rivadavia%20438%2C%20Monteros%2C%20Tucum%C3%A1n&output=embed">
+        <div class="cargando">Cargando el mapa…</div>
+      </div>
+      <div class="sede-datos">
+        <div class="dato">
+          <span>Dirección</span>
+          <b>Rivadavia 438</b>
+          Monteros, Tucumán
+        </div>
+        <div class="dato">
+          <span>Día y horario</span>
+          <b>Domingo 11 de octubre</b>
+          Horario a confirmar
+        </div>
+        <a class="btn-mapa" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/?api=1&query=Club+Social+Monteros+Rivadavia+438+Monteros+Tucum%C3%A1n">
+          📍 Abrir en Google Maps
+        </a>
+        <!-- Google Calendar por defecto; en iPhone y Mac el script lo cambia por el .ics -->
+        <a class="btn-mapa" id="agenda" target="_blank" rel="noopener"
+           href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=11%C2%B0%20Torneo%20Aniversario%20Bellatrix&amp;dates=20261011/20261012&amp;location=Club%20Social%20Monteros%2C%20Rivadavia%20438%2C%20Monteros%2C%20Tucum%C3%A1n&amp;details=Gimnasia%20r%C3%ADtmica%20y%20art%C3%ADstica.%20Horario%20a%20confirmar.%20Entradas%3A%20https%3A%2F%2Fcopidiaz17.github.io%2Fbellatrix-2026%2F">
+          📅 Agendar en mi calendario
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ENTRADAS ══ -->
+<section class="bloque alt" id="entradas">
+  <div class="container">
+    <h2>Tu <span>entrada</span></h2>
+    <p class="int">Una sola entrada para todo el torneo: rítmica y artística.</p>
+
+    <div class="entrada-caja">
+      <div class="precio">
+        <span class="etq">Entrada general</span>
+        <b class="valor" data-precio>$10.000</b>
+        <span class="nota" data-cargo>+ $1.000 de cargo por servicio &middot; <b>Total $11.000</b></span>
+      </div>
+      <ol class="pasos">
+        <li>Elegís cuántas entradas querés y dejás tu nombre y tu mail.</li>
+        <li>Pagás desde el celular con tu billetera virtual.</li>
+        <li><b>Las entradas te llegan al mail al instante</b>, con un código QR cada una.</li>
+        <li>En la puerta mostrás el QR desde el teléfono. Listo.</li>
+      </ol>
+      <a class="cta" href="#" data-comprar>Comprar entradas</a>
+      <p class="aviso" id="mediosPago" style="display:none;margin-top:18px;">
+        <img id="logosPago" alt="Medios de pago" style="max-width:100%;height:auto;">
+      </p>
+    </div>
+  </div>
+</section>
+
+<a class="cta-fija" id="ctaFija" href="#" data-comprar tabindex="-1" aria-hidden="true">
+  Comprar entradas <small data-total>Domingo 11/10</small>
+</a>
+
+<footer>
+  <div class="container">
+    <picture>
+      <source type="image/webp" srcset="assets/logo-bellatrix.webp">
+      <img src="assets/logo-bellatrix.jpg" alt="Bellatrix" width="74" height="74" loading="lazy" decoding="async">
+    </picture>
+    <div>
+      <b>Escuela de Gimnasia Bellatrix</b><br>
+      11° Torneo Aniversario · Domingo 11 de octubre de 2026<br>
+      Club Social Monteros · Monteros, Tucumán
+    </div>
+    <div class="lema-pie">¡Viví la gimnasia, compartí la pasión!</div>
+  </div>
+</footer>
+
+<script>
+  // En celular se sirven las versiones de 360p: pesan la quinta parte.
+  const chico = window.matchMedia('(max-width:800px)').matches;
+  const suf = chico ? '-360' : '';
+  // Orden: rítmica → artística → rítmica. "pos" encuadra los clips verticales:
+  // en pantalla ancha se recortan arriba y abajo, y así no se pierde la cabeza.
+  // Segundos que se muestra cada clip antes de pasar al siguiente
+  // (los archivos duran unos 20).
+  const DURACION = 15;
+  const CLIPS = [
+    { src: 'assets/coreo-1' + suf + '.mp4' },
+    { src: 'assets/coreo-artistica' + suf + '.mp4', pos: '50% 30%' },
+    { src: 'assets/coreo-2' + suf + '.mp4' },
+  ];
+
+  const vA = document.getElementById('vA');
+  const vB = document.getElementById('vB');
+  let actual = 0;
+  let visible = vA, oculto = vB;
+
+  function cargar(video, i){
+    video.src = CLIPS[i].src;
+    video.style.objectPosition = CLIPS[i].pos || '50% 50%';
+  }
+
+  // Con ahorro de datos o con "reducir movimiento" pedido en el teléfono, el
+  // video ni se descarga (son unos 4 MB por vuelta en celular): queda el
+  // poster, que es el primer cuadro del primer clip.
+  const conexion = navigator.connection || {};
+  const sinVideo = !!conexion.saveData ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Con dos <video> alcanza para cualquier cantidad de clips: siempre hay uno
+  // a la vista y el otro ya cargado con el que viene.
+  if (!sinVideo) {
+    cargar(vA, 0);
+    cargar(vB, 1);
+  }
+
+  let cambiando = false;
+  function siguiente(){
+    if (cambiando) return;
+    cambiando = true;
+    setTimeout(() => { cambiando = false; }, 1400);
+    actual = (actual + 1) % CLIPS.length;
+    const entra = oculto, sale = visible;
+    entra.currentTime = 0;
+    entra.play().catch(()=>{});
+    entra.classList.add('visible');
+    sale.classList.remove('visible');
+    visible = entra; oculto = sale;
+    // Recién cuando terminó el fundido, el que salió se prepara con el
+    // clip siguiente: así no se ve el cambio de video por debajo.
+    setTimeout(() => { sale.pause(); cargar(sale, (actual + 1) % CLIPS.length); }, 1300);
+  }
+  // Pasa al siguiente al cumplir DURACION; "ended" queda de respaldo por si
+  // algún clip resulta más corto.
+  [vA, vB].forEach(v => {
+    v.addEventListener('timeupdate', () => {
+      if (v === visible && v.currentTime >= DURACION) siguiente();
+    });
+    v.addEventListener('ended', () => { if (v === visible) siguiente(); });
+  });
+
+  if (!sinVideo) vA.play().catch(()=>{});
+
+  // ── Qué se ve en pantalla ──
+  // Fuera de la portada el video se pausa: seguía corriendo (y bajando datos)
+  // mientras se leía el resto de la página. El mismo vigía decide el botón
+  // fijo de compra del celular.
+  const hero = document.querySelector('.hero');
+  const entradas = document.getElementById('entradas');
+  const ctaFija = document.getElementById('ctaFija');
+  let heroALaVista = true, entradasALaVista = false;
+
+  function actualizarCtaFija(){
+    const ver = !heroALaVista && !entradasALaVista;
+    ctaFija.classList.toggle('ver', ver);
+    // Escondido abajo de la pantalla no tiene que recibir el foco del teclado
+    ctaFija.tabIndex = ver ? 0 : -1;
+    ctaFija.setAttribute('aria-hidden', ver ? 'false' : 'true');
+  }
+
+  const vigia = new IntersectionObserver(cambios => {
+    cambios.forEach(c => {
+      if (c.target === hero) {
+        heroALaVista = c.isIntersecting;
+        if (!sinVideo) {
+          if (heroALaVista) visible.play().catch(()=>{});
+          else visible.pause();
+        }
+      } else {
+        entradasALaVista = c.isIntersecting;
+      }
+    });
+    actualizarCtaFija();
+  });
+  vigia.observe(hero);
+  vigia.observe(entradas);
+
+  // ── Cuenta regresiva ──
+  // Los días se cuentan con la fecha de Argentina (UTC-3, sin horario de
+  // verano), no con la medianoche UTC: si no, a las 21 h ya decía un día menos.
+  (function(){
+    const el = document.getElementById('faltan');
+    const ahoraAR = new Date(Date.now() - 3 * 3600 * 1000);
+    const hoy = Date.UTC(ahoraAR.getUTCFullYear(), ahoraAR.getUTCMonth(), ahoraAR.getUTCDate());
+    const dias = Math.round((Date.UTC(2026, 9, 11) - hoy) / 86400000);
+    if (dias < 0) return;   // ya pasó: no se muestra
+    el.innerHTML = dias === 0 ? '<b>¡Es hoy!</b>'
+                 : dias === 1 ? '<b>¡Es mañana!</b>'
+                 : 'Faltan <b>' + dias + '</b> días';
+    el.hidden = false;
+  })();
+
+  // ── Agendar ──
+  // En iPhone y Mac el .ics abre el calendario del sistema; en Android solo
+  // se descargaría, por eso ahí (y en el resto) va a Google Calendar.
+  if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
+    const agenda = document.getElementById('agenda');
+    agenda.href = 'assets/torneo-bellatrix.ics';
+    agenda.removeAttribute('target');
+  }
+</script>
+
+<style>
+  /* ── Compra de entradas ── */
+  .modal-fondo{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(3px);
+    z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:26px 14px;overflow-y:auto;}
+  .modal-fondo.abierto{display:flex;}
+  .modal-caja{background:var(--negro-2);border:1px solid rgba(214,36,122,.35);border-radius:16px;
+    max-width:470px;width:100%;padding:28px 24px 24px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.5);}
+  .modal-caja h3{font-size:1.5rem;margin:0 0 4px;color:var(--crema);}
+  .modal-x{position:absolute;top:10px;right:14px;background:none;border:0;color:var(--gris);
+    font-size:28px;line-height:1;cursor:pointer;}
+  .modal-x:hover{color:var(--rojo-luz);}
+  .como-pago{background:rgba(214,36,122,.08);border:1px solid rgba(214,36,122,.3);border-radius:12px;
+    padding:14px 16px;margin:16px 0 20px;font-size:13.5px;}
+  .como-pago .titulin{font-weight:700;color:var(--rojo-luz);margin-bottom:8px;}
+  .como-pago ol{margin:0;padding-left:18px;} .como-pago li{margin:5px 0;}
+  .como-pago .ojo{margin-top:10px;padding-top:10px;border-top:1px solid rgba(214,36,122,.25);}
+  .modal-caja label{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--gris);margin:14px 0 5px;font-weight:700;}
+  .modal-caja input,.modal-caja select{width:100%;padding:11px 13px;border-radius:9px;font-size:15px;
+    background:var(--negro-3);border:1px solid rgba(255,255,255,.14);color:var(--crema);}
+  .modal-caja input:focus,.modal-caja select:focus{outline:none;border-color:var(--rojo);}
+  .alerta-mail{background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.35);border-radius:9px;
+    padding:9px 11px;font-size:12.5px;margin-bottom:7px;}
+  #avisoMail{font-size:13px;margin-top:6px;} #avisoMail.mal{color:#ffc107;}
+  #avisoMail button{background:none;border:0;color:var(--rojo-luz);text-decoration:underline;cursor:pointer;font-size:13px;}
+  .linea{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;color:var(--gris);}
+  .linea.total{border-top:1px solid rgba(255,255,255,.14);margin-top:7px;padding-top:9px;
+    font-size:17px;font-weight:800;color:var(--crema);}
+  #totalLinea{margin:18px 0 6px;}
+  #errorMsg{display:none;margin-top:10px;font-size:14px;}
+  .btn-pagar{width:100%;margin-top:14px;padding:14px;border:0;border-radius:999px;cursor:pointer;
+    background:linear-gradient(135deg,var(--rojo),var(--rojo-osc));color:#fff;font-size:16px;font-weight:800;}
+  .btn-pagar[disabled]{opacity:.6;cursor:default;}
+</style>
+
+<div class="modal-fondo" id="modalCompra">
+  <div class="modal-caja">
+    <button class="modal-x" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
+    <h3>Comprar entradas</h3>
+    <p style="color:var(--gris);font-size:13px;margin:0;">11° Torneo Aniversario Bellatrix · <span data-precio>$10.000</span> c/u</p>
+
+    <div class="como-pago">
+      <div class="titulin">💳 Cómo vas a pagar</div>
+      <ol>
+        <li>Completás tus datos y tocás <b>Ir a pagar</b>.</li>
+        <li>Se abre la pantalla de pago: elegí <b>“Billetera”</b>.</li>
+        <li>Después tocá <b>“Otras billeteras”</b> (no la de ePagos).</li>
+        <li>Ahí aparece el <b>código QR</b>: lo escaneás con Mercado Pago, Ualá, MODO
+            o la app de tu banco y pagás desde ahí.</li>
+        <li>Listo: <b>las entradas te llegan al mail</b>.</li>
+      </ol>
+      <div class="ojo">📱 Conviene comprar desde una computadora o desde otro celular,
+        porque el QR hay que escanearlo con la billetera del teléfono.</div>
+    </div>
+
+    <form id="formCompra" onsubmit="return false;">
+      <label>Cantidad</label>
+      <select id="f_cantidad">
+        <option>1</option><option>2</option><option>3</option>
+        <option>4</option><option>5</option><option>6</option>
+      </select>
+      <label>Nombre y apellido</label>
+      <input id="f_nombre" required placeholder="Tu nombre y apellido">
+      <label>Email</label>
+      <div class="alerta-mail">⚠️ <b>Revisá que esté bien escrito.</b> Las entradas se envían
+        únicamente a este correo.</div>
+      <input id="f_email" type="email" required placeholder="tu@email.com" autocomplete="email">
+      <div id="avisoMail"></div>
+      <label>DNI <span style="opacity:.6;font-weight:400;text-transform:none;">(opcional)</span></label>
+      <input id="f_dni" placeholder="Sin puntos" inputmode="numeric">
+      <div id="totalLinea"></div>
+      <button type="button" class="btn-pagar" data-metodo="epagos">💳 Ir a pagar</button>
+      <p id="errorMsg"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  // El precio y el cargo reales llegan de /api/config: manda el .env.
+  let PRECIO = 10000, CARGO_PCT = 10;
+  const $ = id => document.getElementById(id);
+  const fmt = n => '$' + n.toLocaleString('es-AR');
+  function abrirModal(){ $('modalCompra').classList.add('abierto'); actualizarTotal(); }
+  function cerrarModal(){ $('modalCompra').classList.remove('abierto'); }
+
+  // Detector de errores de tipeo en el mail: en el torneo de julio varios
+  // escribieron mal el correo y nunca recibieron las entradas.
+  const DOMINIOS = ['gmail.com','hotmail.com','outlook.com','outlook.es','yahoo.com',
+                    'yahoo.com.ar','live.com','icloud.com','hotmail.es','protonmail.com'];
+  function distancia(a,b){
+    const m = Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);
+    for(let j=0;j<=b.length;j++) m[0][j]=j;
+    for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+      m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    return m[a.length][b.length];
+  }
+  function sugerirDominio(mail){
+    const p = String(mail).trim().toLowerCase().split('@');
+    if(p.length!==2 || !p[1]) return null;
+    if(DOMINIOS.includes(p[1])) return null;
+    for(const bueno of DOMINIOS) if(distancia(p[1],bueno)<=2) return p[0]+'@'+bueno;
+    return null;
+  }
+  function revisarMail(){
+    const caja=$('avisoMail'), sug=sugerirDominio($('f_email').value);
+    if(!sug){ caja.className=''; caja.innerHTML=''; return; }
+    caja.className='mal';
+    caja.innerHTML='¿Quisiste escribir <b>'+sug+'</b>? <button type="button" onclick="corregirMail(\''+sug+'\')">Sí, corregir</button>';
+  }
+  function corregirMail(b){ $('f_email').value=b; $('avisoMail').className=''; $('avisoMail').innerHTML=''; }
+
+  function actualizarTotal(){
+    const c=+$('f_cantidad').value, sub=c*PRECIO, cargo=Math.round(sub*CARGO_PCT/100);
+    $('totalLinea').innerHTML =
+      '<div class="linea"><span>Valor de la entrada'+(c>1?' (x'+c+')':'')+'</span><span>'+fmt(sub)+'</span></div>'+
+      '<div class="linea"><span>Costo de servicio ('+CARGO_PCT+'%)</span><span>'+fmt(cargo)+'</span></div>'+
+      '<div class="linea total"><span>Total</span><span>'+fmt(sub+cargo)+'</span></div>';
+  }
+  $('f_cantidad').addEventListener('change', actualizarTotal);
+  $('f_email').addEventListener('blur', revisarMail);
+  $('f_email').addEventListener('input', ()=>{ const c=$('avisoMail'); if(c.className){ c.className=''; c.innerHTML=''; } });
+  $('modalCompra').addEventListener('click', e=>{ if(e.target.id==='modalCompra') cerrarModal(); });
+  document.querySelectorAll('[data-comprar]').forEach(b=>b.addEventListener('click', e=>{ e.preventDefault(); abrirModal(); }));
+
+  function validar(){
+    const err=$('errorMsg');
+    if(!$('f_nombre').value || !$('f_email').value){
+      err.style.color='#ff6b6b'; err.textContent='Completá tu nombre y tu email.'; err.style.display='block'; return false;
+    }
+    err.style.display='none'; return true;
+  }
+
+  document.querySelectorAll('[data-metodo]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!validar()) return;
+    const err=$('errorMsg'), txt=b.innerHTML;
+    b.disabled=true; b.textContent='Creando orden...';
+    try{
+      const r = await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ nombre:$('f_nombre').value, email:$('f_email').value,
+          dni:$('f_dni').value, cantidad:+$('f_cantidad').value, metodo:b.dataset.metodo })});
+      const data = await r.json();
+      if(!r.ok) throw new Error(data.error || '');
+      // ePagos no abre con un redirect: hay que POSTear un formulario.
+      if(data.checkout && data.checkout.url){
+        const f=document.createElement('form'); f.method='POST'; f.action=data.checkout.url;
+        Object.entries(data.checkout.campos).forEach(([k,v])=>{
+          const i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=v; f.appendChild(i);
+        });
+        document.body.appendChild(f); f.submit(); return;
+      }
+      throw new Error();
+    }catch(ex){
+      err.style.color='#ff6b6b'; err.textContent=ex.message || 'Hubo un error. Probá de nuevo.';
+      err.style.display='block'; b.disabled=false; b.innerHTML=txt;
+    }
+  }));
+
+  fetch('/api/config').then(r=>r.json()).then(cfg=>{
+    if(cfg.precio) PRECIO = cfg.precio;
+    if(cfg.cargoPct != null) CARGO_PCT = cfg.cargoPct;
+    const cargo = Math.round(PRECIO*CARGO_PCT/100);
+    document.querySelectorAll('[data-precio]').forEach(el=>el.textContent = fmt(PRECIO));
+    document.querySelectorAll('[data-cargo]').forEach(el=>
+      el.innerHTML = '+ ' + fmt(cargo) + ' de cargo por servicio &middot; <b>Total ' + fmt(PRECIO+cargo) + '</b>');
+    if(cfg.logosPago){
+      const img = $('logosPago');
+      img.onload  = ()=>{ $('mediosPago').style.display='block'; };
+      img.onerror = ()=>{ $('mediosPago').style.display='none'; };
+      img.src = cfg.logosPago;
+    }
+    actualizarTotal();
+  }).catch(()=>{});
+
+  fetch('/api/visita', { method:'POST' }).catch(()=>{});
+</script>
+
+
+<script>
+/* ── Capa moderna: aparición con el scroll, 3D con el puntero y mapa diferido.
+      Todo se apaga solo si el teléfono pide menos movimiento. ── */
+(() => {
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1) Aparición escalonada
+  const grupos = ['.niveles > *', '.discs > *', '.jueces > *', '.sede > *',
+                  '.bloque h2', '.bloque p.int', '.entrada-caja'];
+  const elementos = [];
+  grupos.forEach(sel => document.querySelectorAll(sel).forEach((el, i) => {
+    el.classList.add('rev'); el.style.setProperty('--d', (i * 80) + 'ms'); elementos.push(el);
+  }));
+  if (quieto) {
+    elementos.forEach(el => el.classList.add('visible'));
+  } else {
+    const ojo = new IntersectionObserver((filas, obs) => {
+      filas.forEach(f => { if (f.isIntersecting) { f.target.classList.add('visible'); obs.unobserve(f.target); } });
+    }, { threshold: .12, rootMargin: '0px 0px -8% 0px' });
+    elementos.forEach(el => ojo.observe(el));
+  }
+
+  // 2) Inclinación 3D: solo con mouse, nunca con el dedo
+  const conMouse = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if (conMouse && !quieto) {
+    document.querySelectorAll('.nivel, .disc, .juez').forEach(c => {
+      c.classList.add('tilt');
+      c.addEventListener('pointermove', e => {
+        const r = c.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        c.style.transform = `rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateY(-6px) scale(1.012)`;
+      });
+      c.addEventListener('pointerleave', () => { c.style.transform = ''; });
+    });
+  }
+
+  // 3) El mapa se carga recién cuando se llega: antes dejaba un recuadro blanco
+  const mapa = document.getElementById('mapa');
+  if (mapa) {
+    const traer = () => {
+      const f = document.createElement('iframe');
+      f.src = mapa.dataset.src; f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      f.title = 'Ubicación del Club Social Monteros';
+      f.addEventListener('load', () => mapa.querySelector('.cargando')?.remove());
+      mapa.appendChild(f);
+    };
+    new IntersectionObserver((f, o) => {
+      if (f[0].isIntersecting) { traer(); o.disconnect(); }
+    }, { rootMargin: '300px' }).observe(mapa);
+  }
+
+  // 4) Las fotos de jueces dejan de brillar cuando terminan de bajar
+  document.querySelectorAll('.juez img').forEach(img => {
+    if (img.complete) img.classList.add('ok');
+    else img.addEventListener('load', () => img.classList.add('ok'));
+  });
+
+  // 5) La barra fija del celular muestra el total
+  fetch('/api/config').then(r => r.json()).then(cfg => {
+    const precio = cfg.precio || 10000, pct = cfg.cargoPct ?? 10;
+    const total = precio + Math.round(precio * pct / 100);
+    document.querySelectorAll('[data-total]').forEach(el =>
+      el.textContent = '$' + total.toLocaleString('es-AR'));
+  }).catch(() => {});
+})();
+</script>
+
+<script>
+/* ── Bloque 2: títulos por palabra y números que cuentan ── */
+(() => {
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1) Partir cada h2 en palabras, respetando la palabra de color
+  document.querySelectorAll('.bloque h2').forEach(h2 => {
+    const piezas = [];
+    // Si un trozo no viene precedido de un espacio, se pega al anterior: así
+    // la coma de "disciplinas, un solo día" no queda suelta.
+    const sumar = (texto, pegado, color) => {
+      if (pegado && piezas.length) {
+        const ult = piezas[piezas.length - 1];
+        ult.html += color ? `<b class="col">${texto}</b>` : texto;
+      } else {
+        piezas.push({ html: color ? `<b class="col">${texto}</b>` : texto });
+      }
+    };
+    let cola = ' ';
+    h2.childNodes.forEach(n => {
+      if (n.nodeType === 3) {
+        const bruto = n.textContent;
+        const palabras = bruto.split(/\s+/).filter(Boolean);
+        palabras.forEach((w, i) => sumar(w, i === 0 && !/^\s/.test(bruto)));
+        cola = bruto;
+      } else if (n.nodeType === 1) {
+        sumar(n.textContent, !/\s$/.test(cola), true);
+        cola = '';
+      }
+    });
+    h2.innerHTML = piezas.map((p, i) =>
+      `<span class="pal"><span style="--i:${i * 70}ms">${p.html}</span></span>`
+    ).join(' ');
+  });
+
+  // 2) Números que cuentan hasta su valor al entrar en pantalla
+  const contar = (el, hasta, sufijo = '', ms = 900) => {
+    if (quieto) { el.textContent = hasta + sufijo; return; }
+    const t0 = performance.now();
+    const paso = ahora => {
+      const k = Math.min(1, (ahora - t0) / ms);
+      const suave = 1 - Math.pow(1 - k, 3);           // frena al final
+      el.textContent = Math.round(hasta * suave) + sufijo;
+      if (k < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  };
+
+  const num = document.querySelector('h1 .num');
+  if (num) { const m = num.textContent.match(/\d+/); if (m) contar(num, +m[0], '°', 1100); }
+
+  // La cuenta regresiva la escribe otro script; se espera a que ponga el número.
+  const caja = document.getElementById('faltan');
+  if (caja) {
+    const mirar = new MutationObserver(() => {
+      const b = caja.querySelector('b');
+      if (b && !b.dataset.contado) {
+        const n = parseInt(b.textContent, 10);
+        if (!isNaN(n)) { b.dataset.contado = '1'; b.textContent = '0'; contar(b, n); }
+      }
+    });
+    mirar.observe(caja, { childList: true, subtree: true, characterData: true });
+  }
+})();
+</script>
+</body>
+</html>

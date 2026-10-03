@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Torneo — Categorías y Resultados — Bellatrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0b0509;--negro-2:#150a12;--negro-3:#1e0f1a;
+    --fucsia:#d6247a;--fucsia-osc:#8e1d6b;
+    --oro:#ffb3d6;--oro-claro:#ffd6ea;
+    --texto:#f4e9f0;--texto-tenue:#c5a8ba;--borde:rgba(255,179,214,.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--texto);min-height:100vh;
+    background:radial-gradient(ellipse at 15% 0%,rgba(139,47,201,.22),transparent 55%),
+               radial-gradient(ellipse at 85% 100%,rgba(255,30,140,.18),transparent 55%),var(--negro);}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+  .topbar h1{font-size:20px;background:linear-gradient(90deg,var(--fucsia),var(--oro-claro));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .btn{background:var(--fucsia);color:#fff;border:none;border-radius:24px;padding:9px 18px;
+    font-weight:700;cursor:pointer;font-size:14px;font-family:inherit;}
+  .btn:hover{background:var(--fucsia-osc);}
+  .btn.ghost{background:transparent;color:var(--texto);border:1px solid var(--borde);}
+  .btn.ghost:hover{border-color:var(--fucsia);color:var(--fucsia);}
+  .btn.chico{padding:5px 12px;font-size:12px;}
+  .btn.peligro{background:transparent;border:1px solid #dc2626;color:#ff8080;}
+
+  .card{background:var(--negro-2);border:1px solid var(--borde);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .card h2{font-size:16px;color:var(--oro-claro);margin-bottom:12px;}
+  .fila{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px;}
+  label{display:block;font-size:11px;text-transform:uppercase;color:var(--texto-tenue);margin-bottom:4px;}
+  input,select{padding:9px 10px;border:1px solid rgba(255,255,255,.16);border-radius:8px;
+    font-size:14px;font-family:inherit;background:var(--negro);color:var(--texto);}
+  input:focus,select:focus{outline:none;border-color:var(--fucsia);}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08);}
+  th{color:var(--oro-claro);font-size:11.5px;text-transform:uppercase;}
+  td.num{text-align:right;font-family:Consolas,monospace;}
+  /* Premiación: la categoría ya leída queda en verde. */
+  .cat-fila.anunciada{border-color:#4ade80;background:rgba(74,222,128,.12);}
+  .cat-fila.anunciada > span{color:#4ade80;}
+  .btn-anunciar{background:none;border:1px solid rgba(255,255,255,.22);color:var(--texto-tenue);
+    border-radius:20px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .btn-anunciar:hover{border-color:#4ade80;color:#4ade80;}
+  .btn-anunciar.si{border-color:#4ade80;color:#4ade80;font-weight:700;}
+  tr.top1{background:rgba(226,182,79,.14);}
+  tr.top2{background:rgba(226,182,79,.07);}
+  tr.top3{background:rgba(226,182,79,.03);}
+  .puesto{font-weight:800;color:var(--oro-claro);}
+  .incompleto{color:var(--texto-tenue);font-style:italic;font-size:11px;}
+  .cat-fila{display:flex;justify-content:space-between;align-items:center;
+    background:var(--negro-3);border:1px solid var(--borde);border-radius:10px;
+    padding:10px 14px;margin-bottom:8px;cursor:pointer;}
+  .cat-fila:hover{border-color:var(--fucsia);}
+  .cat-fila.activa{border-color:var(--fucsia);background:rgba(255,30,140,.08);}
+  .vacio{color:var(--texto-tenue);font-size:13px;padding:14px 0;text-align:center;}
+
+  /* ── LOGIN ── */
+  .login-wrap{min-height:86vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login{max-width:460px;width:100%;background:var(--negro-2);border:1px solid var(--borde);
+    border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.6);padding:0 34px 34px;overflow:hidden;}
+  /* El logo del torneo viene con fondo negro sólido: "screen" lo funde con la
+     tarjeta y deja solo la corona y las letras. */
+  .login .marca{margin:0 -34px 4px;padding:22px 20px 8px;text-align:center;
+    background:radial-gradient(ellipse at 50% 30%,rgba(139,47,201,.28),transparent 70%);}
+  .login .marca img{width:100%;max-width:330px;aspect-ratio:1.55;object-fit:cover;
+    object-position:center;mix-blend-mode:screen;display:block;margin:0 auto;}
+  .login .edicion{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--oro);
+    font-weight:700;text-align:center;margin-top:-4px;}
+  .login .evento{text-align:center;color:var(--texto-tenue);font-size:12.5px;margin-top:7px;
+    padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .login h2{color:var(--oro-claro);text-align:center;font-size:17px;margin:18px 0 20px;}
+  .login label{font-size:11.5px;margin-bottom:5px;}
+  .login .campo{margin-bottom:14px;}
+  .login input{width:100%;padding:13px 14px;font-size:15px;border-radius:11px;}
+  .msg{color:#ff8080;font-size:13px;text-align:center;margin-top:12px;min-height:18px;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+
+  /* El logo de Bellatrix es cuadrado y con fondo blanco: va en circulo, sin fundido. */
+  .login .marca img, .marca img, .logo img{width:120px!important;height:120px!important;max-width:120px!important;
+    aspect-ratio:1!important;object-fit:contain!important;mix-blend-mode:normal!important;
+    border-radius:50%!important;background:#fff!important;padding:6px;margin:0 auto;display:block;
+    box-shadow:0 0 0 3px rgba(214,36,122,.55),0 14px 34px rgba(0,0,0,.45);}
+
+
+  /* Los botones principales usan el degradado de la pagina, no el dorado de antes. */
+  .btn.oro,.btn.primario{background:linear-gradient(135deg,#d6247a,#8e3bb8)!important;color:#fff!important;
+    border:0!important;font-weight:800;}
+  .btn.oro:hover,.btn.primario:hover{filter:brightness(1.08);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ LOGIN (propio, no pasa por ventas) ══ -->
+  <div id="loginView" style="display:none;">
+    <div class="login-wrap">
+      <div class="login">
+        <div class="marca">
+          <img src="assets/logo-bellatrix.jpg" alt="Escuela de Gimnasia Bellatrix">
+        </div>
+        <div class="edicion">11° Torneo Aniversario</div>
+        <div class="evento">Rítmica y Artística · Domingo 11 de octubre de 2026<br>Club Social Monteros · Monteros, Tucumán</div>
+
+        <h2>Categorías y Resultados</h2>
+
+        <div class="campo">
+          <label>Usuario</label>
+          <input id="f_user" autocomplete="username" placeholder="usuario">
+        </div>
+        <div class="campo">
+          <label>Contraseña</label>
+          <input id="f_pass" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button class="btn" style="width:100%;padding:13px;font-size:15px;" onclick="login()">Ingresar</button>
+        <div class="msg" id="loginMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panelView" style="display:none;">
+  <div class="topbar">
+    <h1>🏆 Torneo — Categorías y Resultados</h1>
+    <div style="display:flex;gap:8px;">
+      <a class="btn ghost" href="jueza.html" target="_blank"
+         style="text-decoration:none;display:inline-flex;align-items:center;">📝 Panel de jueces</a>
+      <button class="btn ghost" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <!-- Las notas no se cargan acá: cada jueza entra a jueza.html con su propio
+       usuario y solo ve el área que le toca. Este panel arma el torneo y muestra
+       los resultados que salen de esas cargas. -->
+  <div class="card" style="border-left:3px solid var(--oro);">
+    <b style="color:var(--oro-claro);">¿Dónde se cargan las notas?</b>
+    <div style="font-size:13.5px;color:var(--texto-tenue);margin-top:6px;line-height:1.5;">
+      En <b>Panel de jueces</b> (botón de arriba, o
+      <b>bellatrix-2026.onrender.com/jueza.html</b>). Cada jueza entra con su
+      usuario y ve solo su área: Dificultad carga BD y DA, Ejecución y Artístico
+      cargan una sola nota. Los resultados aparecen acá, en cada categoría.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Nueva categoría</h2>
+    <div class="fila">
+      <div><label>Nivel</label><input id="f_nivel" placeholder="Escuela / C"></div>
+      <div><label>Categoría (edad)</label><input id="f_categoriaEdad" placeholder="Mini / AC2 / Juvenil..."></div>
+      <div><label>Modalidad</label><input id="f_modalidad" placeholder="Individual / Dúo / Trío / Conjunto"></div>
+      <div><label>Aparato (opcional)</label><input id="f_aparato" placeholder="Aro / Pelota / Cinta..."></div>
+      <button class="btn" onclick="crearCategoria()">+ Agregar categoría</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;">
+    <div class="card">
+      <h2>Categorías</h2>
+      <div id="listaCategorias"></div>
+      <div class="vacio" id="sinCategorias" style="display:none;">Sin categorías todavía.</div>
+      <div id="contadorAnuncios" style="font-size:12px;color:var(--texto-tenue);margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);"></div>
+    </div>
+
+    <div class="card" id="panelCategoria" style="display:none;">
+      <h2 id="tituloCat">—</h2>
+
+      <div class="fila">
+        <div style="flex:2;"><label>Nombre (gimnasta o conjunto)</label><input id="f_cornombre" placeholder="Nombre"></div>
+        <div style="flex:1;"><label>Escuela (opcional)</label><input id="f_corescuela" placeholder="Escuela"></div>
+        <div><label>&nbsp;</label><label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;text-transform:none;color:var(--texto);white-space:nowrap;"><input type="checkbox" id="f_corexhibicion" style="width:auto;"> Exhibición (no compite)</label></div>
+        <button class="btn chico" onclick="crearCoreografia()">+ Agregar</button>
+      </div>
+
+      <table id="tablaResultados">
+        <thead><tr><th>Puesto</th><th>Nombre</th><th>Escuela</th><th class="num">D</th><th class="num">E</th><th class="num">A</th><th class="num">Final</th><th></th></tr></thead>
+        <tbody id="tbResultados"></tbody>
+      </table>
+      <div class="vacio" id="sinCoreografias" style="display:none;">Sin coreografías en esta categoría.</div>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <span id="cajaAnunciar"></span>
+        <button class="btn ghost chico" onclick="actualizarResultados()">↻ Actualizar</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  // Token propio (torneo_*), separado del de ventas (bellatrix_*): la directora
+  // nunca ve ni comparte sesión con el panel de ventas.
+  let TOKEN = localStorage.getItem('torneo_token');
+  let ROL = localStorage.getItem('torneo_rol');
+
+  async function login(){
+    const usuario = $('f_user').value.trim(), password = $('f_pass').value;
+    $('loginMsg').textContent = '';
+    if(!usuario || !password){ $('loginMsg').textContent = 'Completá usuario y contraseña.'; return; }
+    try{
+      const r = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({usuario,password}) });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      if(d.rol !== 'admin' && d.rol !== 'director'){ $('loginMsg').textContent = 'Este usuario no tiene acceso al torneo.'; return; }
+      TOKEN = d.token; ROL = d.rol;
+      localStorage.setItem('torneo_token', TOKEN);
+      localStorage.setItem('torneo_rol', ROL);
+      mostrarPanel();
+    }catch(e){ $('loginMsg').textContent = e.message; }
+  }
+
+  function logout(){
+    localStorage.removeItem('torneo_token'); localStorage.removeItem('torneo_rol');
+    location.reload();
+  }
+
+  function mostrarPanel(){
+    $('loginView').style.display = 'none';
+    $('panelView').style.display = 'block';
+    cargarCategorias();
+  }
+
+  function auth(){ return { 'Authorization': 'Bearer ' + TOKEN }; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  const fmt = n => n == null ? '—' : Number(n).toFixed(2).replace('.', ',');
+
+  let categoriaActual = null;
+
+  async function cargarCategorias(){
+    const r = await fetch('/api/admin/categorias', { headers: auth() });
+    if(r.status === 401){ logout(); return; }
+    const cats = await r.json();
+    $('sinCategorias').style.display = cats.length ? 'none' : 'block';
+    $('listaCategorias').innerHTML = cats.map(c =>
+      `<div class="cat-fila${c.id === categoriaActual ? ' activa' : ''}${anunciadas().includes(c.id) ? ' anunciada' : ''}" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')">
+        <span>${esc(c.nombre)}</span>
+        <span style="display:flex;gap:6px;align-items:center;">
+          ${anunciadas().includes(c.id) ? '<span style="color:#4ade80;font-weight:800;">✓</span>' : ''}
+          ${ROL === 'admin' ? `<button class="btn peligro chico" onclick="event.stopPropagation(); borrarCategoria(${c.id})">✕</button>` : ''}
+        </span>
+      </div>`
+    ).join('');
+    pintarContadorAnuncios(cats);
+  }
+
+  async function crearCategoria(){
+    const nivel = $('f_nivel').value.trim(), categoriaEdad = $('f_categoriaEdad').value.trim(), modalidad = $('f_modalidad').value.trim(), aparato = $('f_aparato').value.trim();
+    if(!nivel || !modalidad){ alert('Completá nivel y modalidad.'); return; }
+    const r = await fetch('/api/admin/categorias', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({nivel, categoriaEdad, modalidad, aparato}) });
+    if(!r.ok){ alert('No se pudo crear la categoría.'); return; }
+    $('f_nivel').value=''; $('f_categoriaEdad').value=''; $('f_modalidad').value=''; $('f_aparato').value='';
+    cargarCategorias();
+  }
+
+  async function borrarCategoria(id){
+    if(!confirm('¿Borrar esta categoría y todas sus coreografías?')) return;
+    await fetch('/api/admin/categorias/' + id, { method:'DELETE', headers: auth() });
+    if(categoriaActual === id){ categoriaActual = null; $('panelCategoria').style.display = 'none'; }
+    cargarCategorias();
+  }
+
+  async function abrirCategoria(id, nombre){
+    categoriaActual = id;
+    $('panelCategoria').style.display = 'block';
+    $('tituloCat').textContent = nombre;
+    cargarCategorias();
+    pintarBotonAnunciar();
+    await actualizarResultados();
+  }
+
+  async function crearCoreografia(){
+    const nombre = $('f_cornombre').value.trim(), escuela = $('f_corescuela').value.trim(), exhibicion = $('f_corexhibicion').checked;
+    if(!nombre){ alert('Falta el nombre.'); return; }
+    const r = await fetch('/api/admin/coreografias', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({categoria_id: categoriaActual, nombre, escuela, exhibicion}) });
+    if(!r.ok){ alert('No se pudo agregar.'); return; }
+    $('f_cornombre').value=''; $('f_corescuela').value=''; $('f_corexhibicion').checked=false;
+    actualizarResultados();
+  }
+
+  async function borrarCoreografia(id){
+    if(!confirm('¿Borrar esta coreografía?')) return;
+    await fetch('/api/admin/coreografias/' + id, { method:'DELETE', headers: auth() });
+    actualizarResultados();
+  }
+
+  async function actualizarResultados(){
+    if(!categoriaActual) return;
+    const r = await fetch('/api/admin/resultados/' + categoriaActual, { headers: auth() });
+    const filas = await r.json();
+    $('sinCoreografias').style.display = filas.length ? 'none' : 'block';
+    // Orden: primero las que tienen puesto (por puesto asc), después las incompletas.
+    const ordenadas = [...filas].sort((a,b) => {
+      if(a.puesto && b.puesto) return a.puesto - b.puesto;
+      if(a.puesto) return -1; if(b.puesto) return 1;
+      return 0;
+    });
+    $('tbResultados').innerHTML = ordenadas.map(f => {
+      const claseTop = f.puesto === 1 ? 'top1' : f.puesto === 2 ? 'top2' : f.puesto === 3 ? 'top3' : '';
+      return `<tr class="${claseTop}">
+        <td class="puesto">${f.exhibicion ? '—' : (f.puesto || '—')}</td>
+        <td>${esc(f.nombre)}${f.exhibicion ? ' <span style="color:var(--oro-claro);font-size:10px;">· EXHIBICIÓN</span>' : ''}</td>
+        <td>${esc(f.escuela || '')}</td>
+        <td class="num">${fmt(f.notaD)}</td>
+        <td class="num">${fmt(f.notaE)}</td>
+        <td class="num">${fmt(f.notaA)}</td>
+        <td class="num"><b>${fmt(f.notaFinal)}</b>${f.juezas > 1 ? `<div style="font-size:10px;color:var(--texto-tenue);font-weight:400;">prom. ${f.juezas} juezas</div>` : ''}</td>
+        <td>${ROL === 'admin' ? `<button class="btn peligro chico" onclick="borrarCoreografia(${f.id})">✕</button>` : ''}</td>
+      </tr>${filaDetalle(f)}${!f.completo ? `<tr><td></td><td colspan="6" class="incompleto">${f.cargas ? `${f.cargas} jueza(s) empezaron a cargar, ninguna terminó las 4 notas` : 'Sin puntajes cargados'}</td><td></td></tr>` : ''}`;
+    }).join('');
+  }
+
+  // ── Premiación: qué CATEGORÍAS ya se leyeron ──
+  // Vive en este navegador (localStorage): no toca la base ni las notas, y
+  // sobrevive a recargar la página. Si se cambia de dispositivo, se reinicia.
+  const CLAVE_ANUNCIOS = 'bellatrix_cat_anunciadas';
+  function anunciadas(){
+    try { return JSON.parse(localStorage.getItem(CLAVE_ANUNCIOS) || '[]'); }
+    catch(e){ return []; }
+  }
+  function alternarAnunciada(id){
+    const a = anunciadas();
+    const i = a.indexOf(id);
+    if(i >= 0) a.splice(i, 1); else a.push(id);
+    try { localStorage.setItem(CLAVE_ANUNCIOS, JSON.stringify(a)); } catch(e){}
+    cargarCategorias();
+    pintarBotonAnunciar();
+  }
+
+  // El botón vive dentro del panel de la categoría abierta, al lado de Actualizar.
+  function pintarBotonAnunciar(){
+    const el = $('cajaAnunciar');
+    if(!el) return;
+    if(!categoriaActual){ el.innerHTML = ''; return; }
+    const ya = anunciadas().includes(categoriaActual);
+    el.innerHTML = ya
+      ? `<button class="btn-anunciar si" onclick="alternarAnunciada(${categoriaActual})"
+           title="Desmarcar">✓ categoría anunciada</button>`
+      : `<button class="btn-anunciar" onclick="alternarAnunciada(${categoriaActual})"
+           title="Marcar esta categoría como ya anunciada en la premiación">marcar como anunciada</button>`;
+  }
+  function limpiarAnuncios(){
+    if(!confirm('¿Desmarcar todas las categorías anunciadas?')) return;
+    try { localStorage.removeItem(CLAVE_ANUNCIOS); } catch(e){}
+    cargarCategorias();
+  }
+  function pintarContadorAnuncios(cats){
+    const el = $('contadorAnuncios');
+    if(!el) return;
+    const marcadas = anunciadas();
+    const n = cats.filter(c => marcadas.includes(c.id)).length;
+    el.innerHTML = n
+      ? `Categorías anunciadas: <b style="color:#4ade80;">${n}</b> de ${cats.length}
+         &nbsp;<button class="btn-anunciar" onclick="limpiarAnuncios()">desmarcar todas</button>`
+      : `Categorías: ${cats.length}`;
+  }
+
+  // Desglose: qué puso cada jueza. La nota final es el promedio de estos votos,
+  // así que conviene poder verlos para entender de dónde sale cada número.
+  function filaDetalle(f){
+    if(!f.detalle || !f.detalle.length) return '';
+    const votos = f.detalle.map(v =>
+      `<div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:3px 0;">
+         <b style="min-width:130px;">${esc(v.jueza)}</b>
+         <span style="opacity:.75;">BD ${fmt(v.bd)}</span>
+         <span style="opacity:.75;">DA ${v.da == null ? '—' : fmt(v.da)}</span>
+         <span style="opacity:.75;">Ejec. ${fmt(v.ejecucion)}</span>
+         <span style="opacity:.75;">Art. ${fmt(v.artistico)}</span>
+         ${v.completa ? `<b style="color:var(--oro-claro);">= ${fmt(v.total)}</b>`
+                      : '<span style="color:#ffb84d;">· sin terminar</span>'}
+       </div>`).join('');
+    return `<tr><td></td><td colspan="7" style="padding:6px 10px 12px;">
+      <div style="background:rgba(255,255,255,.05);border-left:3px solid var(--oro-claro);
+                  border-radius:0 8px 8px 0;padding:8px 12px;font-size:12.5px;">${votos}</div>
+      </td></tr>`;
+  }
+
+  // Enter para ingresar (en cualquiera de los dos campos)
+  ['f_user','f_pass'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('keydown', e=>{ if(e.key==='Enter') login(); }); });
+
+  // arranque
+  if(TOKEN && ROL) mostrarPanel(); else $('loginView').style.display = 'block';
+</script>
+</body>
+</html>

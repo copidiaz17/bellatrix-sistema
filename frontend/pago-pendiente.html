@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesando tu pago — Bellatrix 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{--negro:#0b0509;--negro-2:#150a12;--negro-3:#1e0f1a;--fucsia:#d6247a;--violeta:#8e3bb8;
+        --oro:#ffb3d6;--oro-claro:#ffd6ea;--texto:#f4e9f0;--texto-tenue:#c5a8ba;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--texto);min-height:100vh;padding:24px;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at 20% 10%,rgba(139,47,201,.35),transparent 55%),
+               radial-gradient(ellipse at 80% 80%,rgba(255,30,140,.32),transparent 55%),var(--negro);}
+  .card{background:var(--negro-2);border:1px solid rgba(226,182,79,.3);border-radius:20px;
+    box-shadow:0 24px 70px rgba(0,0,0,.5);padding:40px 30px;max-width:520px;width:100%;text-align:center;}
+  h1{font-size:24px;margin:14px 0 10px;color:var(--oro-claro);}
+  p{color:var(--texto-tenue);line-height:1.6;}
+  .spinner{width:54px;height:54px;margin:0 auto;border:5px solid rgba(255,255,255,.12);
+    border-top-color:var(--fucsia);border-radius:50%;animation:girar 1s linear infinite;}
+  @keyframes girar{to{transform:rotate(360deg)}}
+  .ico{font-size:58px;}
+  .aviso{background:rgba(255,30,140,.1);border:1px solid rgba(255,30,140,.28);border-radius:12px;
+    padding:14px 16px;margin-top:22px;font-size:14px;color:var(--texto-tenue);text-align:left;}
+  .aviso b{color:var(--texto);}
+  .btn{display:inline-block;margin-top:22px;background:var(--fucsia);color:#fff;font-weight:700;
+    padding:13px 30px;border-radius:30px;text-decoration:none;font-size:15px;border:none;cursor:pointer;font-family:inherit;}
+  .btn-oro{background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:#3a2400;}
+  .qrs{display:grid;gap:16px;margin-top:20px;}
+  .qr{background:#fff;border-radius:14px;padding:14px;}
+  .qr img{width:100%;max-width:230px;}
+  .qr .n{color:#0b0509;font-weight:700;font-size:13px;margin-bottom:6px;}
+  .reloj{font-size:13px;color:var(--texto-tenue);margin-top:14px;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+  /* ── Mismos colores que la página principal ── */
+  :root{--fucsia:#d6247a;--fucsia-osc:#8e1d6b;--violeta:#8e3bb8;--violeta-2:#b0239a;
+        --fondo:#fdf4fa;--tinta:#2a1f4d;--tinta-suave:#6e6488;}
+  body{background:#fdf4fa;color:#2a1f4d;}
+  a.btn,button.btn,.btn-primario,.boton{background:linear-gradient(90deg,#d6247a,#8e3bb8)!important;
+    border:0!important;color:#fff!important;border-radius:999px!important;}
+  h1,h2{color:#b0239a;}
+</style></head>
+<body>
+<div class="card" id="card">
+  <div class="spinner"></div>
+  <h1>Estamos confirmando tu pago</h1>
+  <p id="msg">No cierres esta página. Verificamos automáticamente cada pocos segundos.</p>
+
+  <div class="aviso">
+    <b>No hace falta que esperes acá.</b> Apenas se confirme el pago te enviamos las
+    entradas con el código QR <b>a tu email</b>, y también quedan disponibles en
+    <a href="/mis-entradas.html" style="color:var(--fucsia);">Mis Entradas</a>.
+  </div>
+
+  <div id="cajaBoleta" style="display:none;margin-top:18px;">
+    <a id="linkBoleta" class="btn btn-oro" target="_blank" rel="noopener">🧾 Descargar la boleta de pago</a>
+    <p style="font-size:13px;margin-top:8px;">Tiene el código y las instrucciones para pagar.</p>
+  </div>
+
+  <div class="reloj" id="reloj"></div>
+  <a href="/" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,.25);">Volver al inicio</a>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const ordenId = params.get('orden');
+  const $ = id => document.getElementById(id);
+  let intentos = 0;
+
+  // Efectivo / homebanking / transferencia: ePagos devolvió la boleta con las
+  // instrucciones de pago y el backend la dejó disponible.
+  if (params.get('boleta') === '1' && ordenId) {
+    $('linkBoleta').href = '/boleta/' + encodeURIComponent(ordenId);
+    $('cajaBoleta').style.display = 'block';
+    $('msg').textContent = 'Descargá la boleta y pagá con ese código. Cuando se acredite, te enviamos las entradas.';
+  }
+
+  function mostrarExito(data){
+    const qrs = (data.qrs || []).map((q,i) =>
+      '<div class="qr"><div class="n">Entrada '+(i+1)+' de '+data.qrs.length+'</div>'+
+      '<img src="'+q.url+'" alt="Código QR de la entrada '+(i+1)+'"></div>').join('');
+    $('card').innerHTML =
+      '<div class="ico">🎟️</div>'+
+      '<h1 style="color:#4ade80;">¡Pago confirmado!</h1>'+
+      '<p>Listo '+(data.nombre ? data.nombre.split(' ')[0] : '')+', tus entradas ya están emitidas.<br>'+
+      'También te las enviamos a <b style="color:var(--texto);">'+(data.email||'tu mail')+'</b>.</p>'+
+      '<div class="qrs">'+qrs+'</div>'+
+      '<p style="margin-top:18px;font-size:14px;">Mostrá el QR en la puerta desde tu celular o impreso.</p>'+
+      '<a href="/mis-entradas.html" class="btn btn-oro">Ver mis entradas</a>';
+  }
+
+  async function revisar(){
+    if(!ordenId){ $('msg').textContent = 'No pudimos identificar la compra. Revisá tu email o entrá a Mis Entradas.'; return; }
+    intentos++;
+    try{
+      // Este endpoint verifica el pago contra la API de ePagos y, si está
+      // acreditado, emite las entradas. Es la red de seguridad por si el
+      // webhook todavía no llegó.
+      const r = await fetch('/api/orders/'+encodeURIComponent(ordenId)+'/confirmar', { method:'POST' });
+      const data = await r.json();
+      if(data.estado === 'pagada' && (data.qrs||[]).length){ mostrarExito(data); return; }
+    }catch(e){ /* seguimos intentando */ }
+
+    // Vamos espaciando: rápido al principio, más lento después.
+    const espera = intentos < 10 ? 5000 : (intentos < 25 ? 15000 : 60000);
+    $('reloj').textContent = 'Verificado '+intentos+' ' + (intentos===1?'vez':'veces') + ' · próxima revisión en '+(espera/1000)+' s';
+    setTimeout(revisar, espera);
+  }
+  revisar();
+</script>
+</body></html>

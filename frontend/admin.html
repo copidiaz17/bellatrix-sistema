@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel — Bellatrix 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0b0509;--negro-2:#150a12;--negro-3:#1e0f1a;
+    --fucsia:#d6247a;--fucsia-osc:#8e1d6b;--violeta:#8e3bb8;--violeta-osc:#5b1a86;
+    --oro:#ffb3d6;--oro-claro:#ffd6ea;
+    --texto:#f4e9f0;--texto-tenue:#c5a8ba;--borde:rgba(255,179,214,.28);
+    --ok:#16a34a;--err:#dc2626;--warn:#d97706;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:var(--texto);min-height:100vh;
+    background:radial-gradient(ellipse at 15% 0%,rgba(139,47,201,.22),transparent 55%),
+               radial-gradient(ellipse at 85% 100%,rgba(255,30,140,.18),transparent 55%),var(--negro);}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+  .topbar h1{font-size:20px;background:linear-gradient(90deg,var(--fucsia),var(--oro-claro));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .btn{background:var(--fucsia);color:#fff;border:none;border-radius:24px;padding:9px 18px;
+    font-weight:700;cursor:pointer;font-size:14px;font-family:inherit;transition:.15s;}
+  .btn:hover{background:var(--fucsia-osc);}
+  .btn.ghost{background:transparent;color:var(--texto);border:1px solid var(--borde);}
+  .btn.ghost:hover{border-color:var(--fucsia);color:var(--fucsia);background:transparent;}
+  .btn.oro{background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:#3a2400;}
+
+  /* LOGIN */
+  .login{max-width:380px;margin:60px auto;background:var(--negro-2);border:1px solid var(--borde);
+    border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.55);padding:34px 28px;}
+  .login img{display:block;width:150px;height:150px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--oro);margin:0 auto 14px;}
+  .login h2{color:var(--oro-claro);text-align:center;margin-bottom:6px;font-size:20px;}
+  .login p{text-align:center;color:var(--texto-tenue);font-size:13px;margin-bottom:18px;}
+  label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px;color:var(--texto);}
+  input{width:100%;padding:11px 12px;border:1px solid rgba(255,255,255,.16);border-radius:10px;
+    font-size:15px;font-family:inherit;background:var(--negro);color:var(--texto);}
+  input:focus{outline:none;border-color:var(--fucsia);}
+  input::placeholder{color:#6b5060;}
+  .msg{color:#ff8080;font-size:13px;text-align:center;margin-top:10px;min-height:18px;}
+
+  /* CARDS */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px;}
+  .card{background:var(--negro-2);border:1px solid var(--borde);border-radius:14px;
+    padding:16px 12px;text-align:center;min-width:0;transition:.15s;}
+  .card:hover{border-color:var(--fucsia);}
+  .card .n{font-size:24px;font-weight:800;color:var(--oro-claro);line-height:1.15;overflow-wrap:anywhere;}
+  .card .l{font-size:12px;color:var(--texto-tenue);margin-top:2px;}
+
+  /* TABLA */
+  .toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .toolbar input{flex:1;min-width:160px;}
+  .tablebox{background:var(--negro-2);border:1px solid var(--borde);border-radius:14px;overflow:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07);white-space:nowrap;}
+  th{background:var(--negro-3);color:var(--oro-claro);font-size:12px;position:sticky;top:0;}
+  tbody tr:hover{background:rgba(255,30,140,.06);}
+  td.num,th.num{text-align:right;}
+
+  /* CONTROL / SCANNER */
+  #reader{width:100%;max-width:360px;margin:0 auto;border-radius:14px;overflow:hidden;border:1px solid var(--borde);}
+  .result{max-width:360px;margin:14px auto;border-radius:16px;padding:22px;text-align:center;
+    color:#fff;font-weight:700;display:none;}
+  .result.ok{background:var(--ok);} .result.err{background:var(--err);} .result.warn{background:var(--warn);}
+  .result .big{font-size:40px;} .result .nom{font-size:16px;margin-top:4px;font-weight:600;}
+  .counter{text-align:center;font-size:14px;color:var(--texto-tenue);margin:8px 0;}
+  .counter b{color:var(--oro-claro);}
+  .manual{max-width:360px;margin:10px auto;display:flex;gap:8px;}
+  .hint{text-align:center;font-size:12px;color:var(--texto-tenue);margin-top:6px;}
+
+  /* MODAL */
+  .modal{display:none;position:fixed;inset:0;background:rgba(6,3,6,.82);z-index:100;
+    align-items:center;justify-content:center;padding:16px;}
+  .modal-box{background:var(--negro-2);border:1px solid var(--borde);border-radius:16px;
+    max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:22px;text-align:center;}
+  /* Los QR son fucsia sobre blanco: van sobre fondo claro para que se escaneen bien. */
+  .qr-caja{display:inline-block;margin:8px;text-align:center;vertical-align:top;
+    background:#fff;border-radius:12px;padding:10px;}
+  .qr-caja .pie{font-size:12px;font-weight:700;color:#3a2400;margin-top:4px;}
+  .aviso-prueba{display:none;text-align:center;background:rgba(226,182,79,.1);
+    border:1px solid var(--borde);border-radius:12px;padding:16px;margin-bottom:16px;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+
+  /* El logo de Bellatrix es cuadrado y con fondo blanco: va en circulo, sin fundido. */
+  .login .marca img, .marca img, .logo img{width:120px!important;height:120px!important;max-width:120px!important;
+    aspect-ratio:1!important;object-fit:contain!important;mix-blend-mode:normal!important;
+    border-radius:50%!important;background:#fff!important;padding:6px;margin:0 auto;display:block;
+    box-shadow:0 0 0 3px rgba(214,36,122,.55),0 14px 34px rgba(0,0,0,.45);}
+
+
+  /* Los botones principales usan el degradado de la pagina, no el dorado de antes. */
+  .btn.oro,.btn.primario{background:linear-gradient(135deg,#d6247a,#8e3bb8)!important;color:#fff!important;
+    border:0!important;font-weight:800;}
+  .btn.oro:hover,.btn.primario:hover{filter:brightness(1.08);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ LOGIN ══ -->
+  <div id="loginView">
+    <div class="login">
+      <img src="assets/logo-bellatrix.jpg" alt="Escuela de Gimnasia Bellatrix">
+      <h2>Panel de staff</h2>
+      <p>Bellatrix · 11° Torneo Aniversario</p>
+      <label>Usuario</label>
+      <input id="f_user" autocomplete="username" placeholder="admin o control">
+      <label>Contraseña</label>
+      <input id="f_pass" type="password" autocomplete="current-password" placeholder="••••••••">
+      <button class="btn oro" style="width:100%;margin-top:16px;" onclick="login()">Ingresar</button>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div id="adminView" style="display:none;">
+    <div class="topbar">
+      <h1>📊 Ventas · Bellatrix</h1>
+      <div>
+        <button class="btn ghost" onclick="cargarResumen()">↻ Actualizar</button>
+        <button class="btn ghost" onclick="generarManual()">💵 Venta manual</button>
+        <button class="btn ghost" onclick="repescar()">🔁 Revisar pagos pendientes</button>
+        <button class="btn ghost adminonly" onclick="archivarPendientes()">🗄️ Archivar pendientes</button>
+        <button class="btn ghost adminonly" onclick="exportarCSV()">⬇ CSV</button>
+        <button class="btn ghost adminonly" onclick="generarPrueba()">🧪 Entrada de prueba</button>
+        <button class="btn ghost adminonly" onclick="emitirCortesia()">🎫 Emitir cortesía</button>
+        <a class="btn ghost adminonly" href="torneo.html" style="text-decoration:none;">🏆 Torneo (jueces)</a>
+        <button class="btn" onclick="logout()">Salir</button>
+      </div>
+    </div>
+    <div class="cards adminonly">
+      <div class="card"><div class="n" id="c_entradas">—</div><div class="l">Entradas vendidas</div></div>
+      <div class="card"><div class="n" id="c_recaudado">—</div><div class="l">Recaudado</div></div>
+      <div class="card"><div class="n" id="c_ordenes">—</div><div class="l">Compras</div></div>
+      <div class="card"><div class="n" id="c_escaneadas">—</div><div class="l">Ingresaron</div></div>
+      <div class="card"><div class="n" id="c_visitas">—</div><div class="l">Visitas a la página</div></div>
+      <div class="card"><div class="n" id="c_unicos">—</div><div class="l">Visitantes únicos</div></div>
+      <div class="card"><div class="n" id="c_visitas_hoy">—</div><div class="l">Visitas hoy</div></div>
+    </div>
+    <div id="porMedio" class="adminonly" style="margin:6px 0 14px;"></div>
+    <div style="display:none">
+    </div>
+
+    <div id="pruebaBox" class="aviso-prueba">
+      <div style="font-weight:700;color:var(--oro-claro);margin-bottom:8px;">🧪 Entrada de prueba — no cuenta en el panel, escaneala para probar</div>
+      <div id="pruebaQrs"></div>
+      <div style="margin-top:8px;"><button class="btn ghost" onclick="document.getElementById('pruebaBox').style.display='none'">Cerrar</button></div>
+    </div>
+
+  </div>
+
+  <!-- ══ CONTROL (escaneo con botón) ══ -->
+  <div id="controlView" style="display:none;">
+    <div class="topbar">
+      <h1>🎟️ Control de acceso</h1>
+      <div>
+        <button class="btn ghost" onclick="cargarResumen()">↻ Actualizar</button>
+        <button class="btn" onclick="logout()">Salir</button>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:14px;">
+      <button class="btn oro" id="btnAbrirCam" onclick="abrirCamara()" style="font-size:16px;padding:13px 26px;">📷 Abrir cámara para escanear</button>
+    </div>
+    <div id="scanZone" style="display:none;">
+      <div id="reader"></div>
+      <div class="counter">Ingresaron: <b id="ingresados">0</b> en esta sesión</div>
+      <div class="result" id="scanResult"><div class="big" id="scanIco"></div><div id="scanMsg"></div><div class="nom" id="scanNom"></div>
+        <button class="btn" id="btnSiguiente" onclick="scanSiguiente()" style="margin-top:12px;background:#fff;color:#111;">Escanear siguiente ▸</button>
+      </div>
+      <div class="manual">
+        <input id="codigoManual" placeholder="…o pegá el código del QR">
+        <button class="btn" onclick="validarManual()">Validar</button>
+      </div>
+      <div class="hint">Apuntá la cámara al QR de la entrada. Permití el acceso a la cámara.</div>
+      <div style="text-align:center;margin-top:10px;"><button class="btn ghost" onclick="cerrarCamara()">✕ Cerrar cámara</button></div>
+    </div>
+  </div>
+
+  <!-- ══ LISTADO de compradores (compartido: admin / venta / control) ══ -->
+  <div id="listadoSection" style="display:none;">
+    <div class="toolbar">
+      <input id="buscar" placeholder="🔎 Buscar por mail, nombre o DNI…" oninput="pintarTabla()">
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>DNI</th><th class="num">Entradas</th><th class="num">Total</th><th></th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-tenue);">Cargando…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODAL: mostrar los QR de una compra ══ -->
+<div id="qrModal" class="modal" onclick="if(event.target===this)cerrarQR()">
+  <div class="modal-box">
+    <div id="qrModalTitulo" style="font-weight:800;color:var(--oro-claro);font-size:17px;margin-bottom:4px;"></div>
+    <div id="qrModalSub" style="font-size:13px;color:var(--texto-tenue);margin-bottom:14px;"></div>
+    <div id="qrModalBody"></div>
+    <div style="border-top:1px solid rgba(255,255,255,.1);margin-top:16px;padding-top:14px;text-align:left;">
+      <div style="font-size:13px;color:var(--texto-tenue);margin-bottom:6px;">📧 <b style="color:var(--texto);">¿Puso mal el email?</b> Reenviá las entradas al correcto:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input id="reenvEmail" type="email" placeholder="email correcto" style="flex:1;min-width:200px;">
+        <button class="btn" onclick="reenviarMail()">Reenviar</button>
+      </div>
+      <div id="reenvMsg" style="font-size:13px;margin-top:8px;min-height:18px;"></div>
+    </div>
+    <button class="btn ghost" style="margin-top:14px;" onclick="cerrarQR()">Cerrar</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  // Claves propias de este evento: si abre el panel del torneo en el mismo
+  // navegador, las sesiones no se pisan.
+  let TOKEN = localStorage.getItem('bellatrix_token');
+  let ROL   = localStorage.getItem('bellatrix_rol');
+
+  function auth(){ return { 'Authorization': 'Bearer ' + TOKEN }; }
+
+  async function login(){
+    const usuario = $('f_user').value.trim(), password = $('f_pass').value;
+    $('loginMsg').textContent = '';
+    if(!usuario || !password){ $('loginMsg').textContent = 'Completá usuario y contraseña.'; return; }
+    try{
+      const r = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({usuario,password}) });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      TOKEN = d.token; ROL = d.rol;
+      localStorage.setItem('bellatrix_token', TOKEN);
+      localStorage.setItem('bellatrix_rol', ROL);
+      router();
+    }catch(e){ $('loginMsg').textContent = e.message; }
+  }
+
+  function logout(){
+    localStorage.removeItem('bellatrix_token'); localStorage.removeItem('bellatrix_rol');
+    if(window._scanner){ try{ window._scanner.stop(); }catch(e){} }
+    location.reload();
+  }
+
+  function router(){
+    $('loginView').style.display = 'none';
+    $('adminView').style.display = 'none';
+    $('controlView').style.display = 'none';
+    $('listadoSection').style.display = 'none';
+    if(ROL === 'admin'){ $('adminView').style.display = 'block'; $('listadoSection').style.display = 'block'; cargarResumen(); }
+    else if(ROL === 'venta'){ $('adminView').style.display = 'block'; $('listadoSection').style.display = 'block'; document.querySelectorAll('.adminonly').forEach(el => el.style.display = 'none'); cargarResumen(); }
+    else if(ROL === 'control'){ $('controlView').style.display = 'block'; $('listadoSection').style.display = 'block'; cargarResumen(); }  // la cámara se abre con el botón
+    else { $('loginView').style.display = 'block'; }
+  }
+
+  // ── ADMIN ──
+  let DATA = { ordenes: [] };
+  const fmt = n => '$' + Number(n||0).toLocaleString('es-AR');
+  const fecha = s => { const d = new Date(s); return d.toLocaleDateString('es-AR') + ' ' + d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); };
+
+  async function cargarResumen(){
+    try{
+      const r = await fetch('/api/admin/resumen', { headers: auth() });
+      if(r.status === 401){ logout(); return; }
+      DATA = await r.json();
+      $('c_entradas').textContent   = DATA.totalEntradas;
+      $('c_recaudado').textContent  = fmt(DATA.totalRecaudado);
+      $('c_ordenes').textContent    = DATA.cantidadOrdenes;
+      $('c_escaneadas').textContent = DATA.escaneadas;
+      $('c_visitas').textContent      = DATA.totalVisitas ?? '—';
+      $('c_unicos').textContent       = DATA.visitantesUnicos ?? '—';
+      $('c_visitas_hoy').textContent  = DATA.visitasHoy ?? '—';
+      pintarMedios();
+      pintarTabla();
+    }catch(e){ alert('No se pudo cargar el resumen'); }
+  }
+
+  async function generarPrueba(){
+    const n = parseInt(prompt('¿Cuántas entradas de prueba? (1 a 5)', '1'), 10);
+    if(!n || n < 1) return;
+    const cantidad = Math.min(Math.max(n, 1), 5);
+    try{
+      const r = await fetch('/api/admin/entrada-prueba', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({ cantidad }) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok || !d.qrs) throw new Error(d.error || 'Error');
+      $('pruebaQrs').innerHTML = d.qrs.map(q =>
+        '<div class="qr-caja"><img src="'+q.url+'" style="width:180px;height:180px;">' +
+        '<div class="pie">entrada '+q.indice+' de '+d.cantidad+'</div></div>'
+      ).join('');
+      $('pruebaBox').style.display = 'block';
+      $('pruebaBox').scrollIntoView({ behavior:'smooth' });
+    }catch(e){ alert('No se pudo generar la entrada de prueba'); }
+  }
+
+  async function emitirCortesia(){
+    const nombre = prompt('Nombre de la invitada (aparece en el mail):', '');
+    if(nombre === null) return;
+    const email = prompt('Email a donde enviar la entrada:', '');
+    if(!email || !email.includes('@')){ if(email!==null) alert('Email inválido'); return; }
+    const n = parseInt(prompt('¿Cuántas entradas de cortesía? (1 a 10)', '1'), 10);
+    if(!n || n < 1) return;
+    const cantidad = Math.min(Math.max(n,1),10);
+    if(!confirm('Emitir '+cantidad+' entrada(s) de CORTESÍA (sin costo, no cuenta como venta) y enviarla a '+email+' ?')) return;
+    try{
+      const r = await fetch('/api/admin/entrada-cortesia', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({ nombre, email, cantidad }) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      alert('✅ Cortesía emitida y enviada a '+d.email+' ('+d.cantidad+' entrada/s).');
+    }catch(e){ alert('No se pudo emitir la cortesía: ' + (e.message||'')); }
+  }
+
+  function pintarTabla(){
+    const q = ($('buscar').value || '').toLowerCase().trim();
+    const rows = (DATA.ordenes || []).filter(o =>
+      !q || (o.email||'').toLowerCase().includes(q) || (o.nombre||'').toLowerCase().includes(q) || String(o.dni||'').includes(q));
+    $('tbody').innerHTML = rows.length ? rows.map(o =>
+      `<tr><td>${fecha(o.fecha)}</td><td>${esc(o.nombre)}</td><td>${esc(o.email)}</td><td>${esc(o.dni)}</td><td class="num">${o.cantidad}</td><td class="num">${fmt(o.total)}</td>`
+      + `<td style="text-align:center;white-space:nowrap;">`
+      + `<button class="btn ghost" style="padding:4px 10px;font-size:12px;" onclick="mostrarQR('${o.id}')">👁 Ver QR</button> `
+      + botonIngreso(o)
+      + `</td></tr>`
+    ).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-tenue);">Sin resultados</td></tr>';
+  }
+
+  // ── Ingreso a mano (venta en la puerta) ──
+  // Marca las entradas de la orden como ingresadas sin escanearlas: la persona
+  // compró ahí mismo y no tiene sentido hacerla esperar el mail para leer su QR.
+  function botonIngreso(o){
+    const ing = o.ingresadas || 0;
+    if(ing >= o.cantidad)
+      return `<span style="color:#4ade80;font-size:12px;font-weight:700;">✅ Ingresó</span>`;
+    const parcial = ing > 0 ? ` ${ing}/${o.cantidad}` : '';
+    return `<button class="btn ghost" style="padding:4px 10px;font-size:12px;border-color:#4ade80;color:#4ade80;" `
+         + `onclick="marcarIngreso('${o.id}')">🚪 Ingresó${parcial}</button>`;
+  }
+
+  async function marcarIngreso(id){
+    const o = (DATA.ordenes||[]).find(x => x.id === id) || {};
+    const faltan = (o.cantidad||0) - (o.ingresadas||0);
+    if(!confirm(`¿Dar por ingresada${faltan>1?'s':''} ${faltan} entrada${faltan>1?'s':''} de ${o.nombre||'esta compra'}?`
+      + `\n\nQuedan marcadas como usadas y ya no se van a poder escanear en la puerta.`)) return;
+    try{
+      const r = await fetch('/api/admin/orden/' + id + '/ingresar', { method:'POST', headers: auth() });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      await cargarResumen();
+      alert(`✅ ${d.marcadas} entrada(s) marcada(s) como ingresada(s).`
+        + (d.yaEstaban ? `\n${d.yaEstaban} ya estaba(n) usada(s).` : ''));
+    }catch(e){ alert('No se pudo marcar el ingreso: ' + (e.message||'')); }
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function exportarCSV(){
+    const filas = [['Fecha','Nombre','Email','DNI','Entradas','Total']];
+    (DATA.ordenes||[]).forEach(o => filas.push([fecha(o.fecha), o.nombre, o.email, o.dni, o.cantidad, o.total]));
+    const csv = filas.map(f => f.map(c => `"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'}));
+    a.download = 'ventas-bellatrix-2026.csv'; a.click();
+  }
+
+  // ── Mostrar los QR de una compra (para gente que llegó sin su entrada) ──
+  let ordenModalActual = null;
+  async function mostrarQR(ordenId){
+    try{
+      const r = await fetch('/api/admin/orden/' + encodeURIComponent(ordenId) + '/qrs', { headers: auth() });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      ordenModalActual = ordenId;
+      if($('reenvEmail')){ $('reenvEmail').value = d.email || ''; }
+      if($('reenvMsg')){ $('reenvMsg').textContent = ''; }
+      $('qrModalTitulo').textContent = d.nombre + ' — ' + d.cantidad + ' entrada(s)';
+      $('qrModalSub').textContent = 'DNI ' + d.dni + ' · ' + d.email + ' · escaneá cada QR en la puerta';
+      $('qrModalBody').innerHTML = d.qrs.map(q =>
+        '<div class="qr-caja"><img src="' + q.url + '" style="width:220px;height:220px;' + (q.usado ? 'opacity:.35;' : '') + '">' +
+        '<div class="pie" style="color:' + (q.usado ? '#b91c1c' : '#3a2400') + ';">entrada ' + q.indice + ' de ' + d.cantidad + (q.usado ? ' · YA USADA' : '') + '</div></div>'
+      ).join('');
+      $('qrModal').style.display = 'flex';
+    }catch(e){ alert('No se pudieron mostrar los QR: ' + (e.message || '')); }
+  }
+  function cerrarQR(){ $('qrModal').style.display = 'none'; }
+
+  // ── Reenviar las entradas al email correcto (para quien lo puso mal) ──
+  async function reenviarMail(){
+    const email = ($('reenvEmail').value || '').trim();
+    const msg = $('reenvMsg');
+    if(!email || !email.includes('@')){ msg.style.color = '#ff8080'; msg.textContent = 'Ingresá un email válido.'; return; }
+    if(!ordenModalActual){ msg.style.color = '#ff8080'; msg.textContent = 'No hay una compra seleccionada.'; return; }
+    msg.style.color = 'var(--texto-tenue)'; msg.textContent = 'Enviando…';
+    try{
+      const r = await fetch('/api/admin/orden/' + encodeURIComponent(ordenModalActual) + '/reenviar', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({ email }) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      msg.style.color = '#4ade80'; msg.textContent = '✅ Enviado a ' + d.email + ' (' + d.cantidad + ' entrada/s). Que revise también spam.';
+      cargarResumen(); // refresca el listado con el email ya corregido
+    }catch(e){ msg.style.color = '#ff8080'; msg.textContent = 'No se pudo reenviar: ' + (e.message || ''); }
+  }
+
+  // ── Desglose por medio de pago: para conciliar contra la rendición de ePagos,
+  //    donde el plazo de depósito cambia según el instrumento.
+  function pintarMedios(){
+    const caja = $('porMedio'); if(!caja) return;
+    const m = (DATA && DATA.porMedio) || [];
+    if(!m.length){ caja.innerHTML=''; return; }
+    const plata = n => '$' + Number(n).toLocaleString('es-AR');
+    const tarjeta = x =>
+      '<div style="background:var(--negro-3);border:1px solid var(--borde);border-radius:10px;padding:9px 13px;">' +
+        '<b style="color:var(--oro-claro);text-transform:capitalize;">' + esc(x.medio) + '</b>' +
+        (x.id ? '<span style="font-size:10px;color:var(--texto-tenue);"> · id ' + esc(x.id) + '</span>' : '') +
+        '<div style="font-size:12.5px;color:var(--texto-tenue);">' + x.entradas + ' entradas · ' + plata(x.importe) + '</div>' +
+      '</div>';
+    caja.innerHTML =
+      '<div style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--texto-tenue);margin-bottom:6px;">Cómo pagaron</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + m.map(tarjeta).join('') + '</div>';
+  }
+
+  // ── Archivar pendientes: deja el contador en cero para poder medir
+  //    cuántos tienen problemas de acá en adelante. No borra nada: la
+  //    repesca las sigue mirando por si alguna se paga.
+  async function archivarPendientes(){
+    const aviso = 'Archivar las órdenes pendientes de más de 30 minutos? '
+      + 'No se borra nada: si alguna se paga, la entrada sale igual. '
+      + 'Solo deja el contador en cero para poder medir de acá en adelante.';
+    if(!confirm(aviso)) return;
+    try{
+      const r = await fetch('/api/admin/archivar-pendientes', { method:'POST', headers: auth() });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      alert('Se archivaron ' + d.archivadas + ' orden(es). El contador arranca de cero.');
+      cargarResumen();
+    }catch(e){ alert(e.message || 'No se pudo archivar'); }
+  }
+
+  // ── Repesca a pedido: "pagué y no me llegó la entrada" ──
+  // El sistema ya lo hace solo cada minuto; esto es para no esperar.
+  async function repescar(){
+    try{
+      const r = await fetch('/api/admin/repescar', { method:'POST', headers: auth() });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      alert(d.emitidas
+        ? `Se emitieron ${d.emitidas} entrada(s) que estaban pagas y no habían salido.`
+        : d.revisadas
+          ? `Se revisaron ${d.revisadas} orden(es) pendiente(s). Ninguna figura paga todavía en ePagos.`
+          : 'No hay órdenes pendientes.');
+      cargarResumen();
+    }catch(e){ alert(e.message || 'No se pudo revisar'); }
+  }
+
+  // ── Venta manual: transferencia → genera y envía las entradas, y las registra ──
+  async function generarManual(){
+    const nombre = prompt('Nombre del comprador:', '');
+    if(nombre === null) return;
+    if(!nombre.trim()){ alert('Falta el nombre.'); return; }
+    const email = prompt('Email a donde enviar las entradas:', '');
+    if(email === null) return;
+    if(!email || !email.includes('@')){ alert('Email inválido.'); return; }
+    const n = parseInt(prompt('¿Cuántas entradas?', '1'), 10);
+    if(!n || n < 1) return;
+    if(!confirm('Generar ' + n + ' entrada(s) por transferencia para ' + nombre + ' y enviarlas a ' + email + '?\n(Se registran como venta y aparecen en el listado.)')) return;
+    try{
+      const r = await fetch('/api/admin/entrada-manual', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({ nombre: nombre.trim(), email: email.trim(), cantidad: n }) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      alert('✅ ' + d.cantidad + ' entrada(s) generadas y enviadas a ' + d.email + '.\nTotal $' + Number(d.total).toLocaleString('es-AR') + '.');
+      cargarResumen();
+    }catch(e){ alert('No se pudo generar la venta manual: ' + (e.message || '')); }
+  }
+
+  // ── CONTROL (escaneo) ──
+  // Flujo puerta: escanea 1 → PAUSA la cámara y muestra solo el resultado →
+  // el operador toca "Escanear siguiente" → recién ahí se reanuda la cámara. (Evita doble escaneo.)
+  let ingresados = 0, procesando = false, pausada = false;
+  function arrancarCamara(){
+    window._scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 250 },
+      onScan, () => {}).catch(() => {
+        $('scanResult').style.display='block'; $('scanResult').className='result err';
+        $('scanMsg').textContent='No se pudo abrir la cámara. Usá el campo manual.';
+      });
+  }
+  function iniciarEscaner(){
+    if(typeof Html5Qrcode === 'undefined'){ $('scanResult').style.display='block'; $('scanResult').className='result err'; $('scanMsg').textContent='No cargó el lector de QR (revisá internet).'; return; }
+    window._scanner = new Html5Qrcode('reader');
+    arrancarCamara();
+  }
+  // Abrir la cámara recién al tocar el botón (no automáticamente)
+  function abrirCamara(){
+    if(window._scanner) return;            // ya está abierta
+    $('scanZone').style.display = 'block';
+    $('btnAbrirCam').style.display = 'none';
+    $('reader').style.display = '';
+    $('scanResult').style.display = 'none';
+    iniciarEscaner();
+  }
+  function cerrarCamara(){
+    if(window._scanner){ try{ window._scanner.stop(); }catch(e){} window._scanner = null; }
+    $('scanZone').style.display = 'none';
+    $('btnAbrirCam').style.display = '';
+    $('scanResult').style.display = 'none';
+    pausada = false; procesando = false;
+  }
+  function onScan(txt){
+    if(procesando) return;
+    procesando = true;
+    try { window._scanner.pause(true); pausada = true; } catch(e){}  // congela la cámara al detectar
+    $('reader').style.display = 'none';                // oculta la cámara → solo se ve el resultado
+    validar(txt).finally(() => { procesando = false; });
+  }
+  // El operador confirma → se reactiva la cámara para el próximo.
+  function scanSiguiente(){
+    $('scanResult').style.display = 'none';
+    if(pausada){ $('reader').style.display = ''; try { window._scanner.resume(); } catch(e){ arrancarCamara(); } pausada = false; }
+  }
+  function validarManual(){ const c = $('codigoManual').value.trim(); if(c) validar(c); $('codigoManual').value=''; }
+
+  async function validar(codigo){
+    try{
+      const r = await fetch('/api/validar', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({codigo}) });
+      if(r.status === 401){ logout(); return; }
+      const d = await r.json();
+      const box = $('scanResult'); box.style.display='block';
+      if(d.ok){ box.className='result ok'; $('scanIco').textContent='✅'; $('scanMsg').textContent='INGRESO OK'; ingresados++; $('ingresados').textContent=ingresados; }
+      else if(d.estado==='usado'){ box.className='result warn'; $('scanIco').textContent='⚠️'; $('scanMsg').textContent='YA INGRESÓ'; }
+      else { box.className='result err'; $('scanIco').textContent='❌'; $('scanMsg').textContent = (d.msg||'ENTRADA NO VÁLIDA').toUpperCase(); }
+      let info = d.nombre || '';
+      if(d.cantidad > 1 && d.usadas != null) info += '  ·  ' + d.usadas + ' de ' + d.cantidad;
+      $('scanNom').textContent = info;
+      if(navigator.vibrate) navigator.vibrate(d.ok ? 120 : [80,60,80]);
+    }catch(e){
+      const box = $('scanResult'); box.style.display='block'; box.className='result err';
+      $('scanIco').textContent='❌'; $('scanMsg').textContent='ERROR DE CONEXIÓN'; $('scanNom').textContent='';
+    }
+  }
+
+  // arranque
+  if(TOKEN && ROL) router(); else $('loginView').style.display='block';
+</script>
+</body>
+</html>

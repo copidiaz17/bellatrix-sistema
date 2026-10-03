@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Pago confirmado! — Bellatrix 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+<style>
+  :root{--fucsia:#d6006e;--fucsia-osc:#9e0052;--rosa:#fdeef6;--tinta:#2a0a1c;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,var(--rosa),#fff);min-height:100vh;color:var(--tinta);padding:24px;}
+  .wrap{max-width:520px;margin:24px auto;}
+  .card{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(214,0,110,.15);padding:36px 30px;text-align:center;}
+  #spinner{display:inline-block;width:46px;height:46px;border:5px solid #f3d6e6;border-top-color:var(--fucsia);border-radius:50%;animation:girar 1s linear infinite;margin-bottom:14px;}
+  @keyframes girar{to{transform:rotate(360deg);}}
+  .ico{font-size:60px;}
+  h1{color:var(--fucsia);font-size:26px;margin:8px 0;}
+  p{color:#5a3548;font-size:15px;margin-bottom:6px;}
+  .entradas{margin-top:24px;display:grid;gap:16px;}
+  .entrada{border:2px solid #f3d6e6;border-radius:16px;padding:18px;background:#fff;}
+  .entrada h3{color:var(--fucsia);font-size:15px;margin-bottom:10px;}
+  .entrada img{width:200px;max-width:80%;}
+  .entrada .cod{font-size:10px;color:#bbb;margin-top:6px;word-break:break-all;}
+  .btn{display:inline-block;margin-top:24px;background:var(--fucsia);color:#fff;font-weight:700;padding:13px 30px;border-radius:30px;text-decoration:none;}
+  .btn:hover{background:var(--fucsia-osc);}
+  .nota{background:var(--rosa);border-radius:12px;padding:12px;font-size:13px;color:#7a5066;margin-top:18px;}
+
+  /* ── Misma tipografía que la página principal ── */
+  body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
+  h1,h2,h3,.titulo,.edicion,.valor,.n{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;
+    letter-spacing:-.02em;}
+
+  /* ── Mismos colores que la página principal ── */
+  :root{--fucsia:#d6247a;--fucsia-osc:#8e1d6b;--violeta:#8e3bb8;--violeta-2:#b0239a;
+        --fondo:#fdf4fa;--tinta:#2a1f4d;--tinta-suave:#6e6488;}
+  body{background:#fdf4fa;color:#2a1f4d;}
+  a.btn,button.btn,.btn-primario,.boton{background:linear-gradient(90deg,#d6247a,#8e3bb8)!important;
+    border:0!important;color:#fff!important;border-radius:999px!important;}
+  h1,h2{color:#b0239a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div id="spinner"></div>
+    <div id="ico" class="ico" style="display:none;"></div>
+    <h1 id="titulo">Procesando tu pago…</h1>
+    <p id="msg">Estamos confirmando tu pago con MercadoPago.</p>
+    <div id="entradas" class="entradas"></div>
+    <div id="nota" class="nota" style="display:none;">📱 Mostrá cada QR en la puerta del estadio, desde el celular o impreso. También te los enviamos por mail.</div>
+    <a href="/" class="btn">Volver al inicio</a>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const orden = params.get('orden');
+  const paymentId = params.get('payment_id') || params.get('collection_id');
+
+  function mostrarEntradas(o){
+    document.getElementById('spinner').style.display = 'none';
+    const ico = document.getElementById('ico');
+    ico.style.display = 'block'; ico.textContent = '✅';
+    document.getElementById('titulo').textContent = '¡Pago confirmado, ' + (o.nombre || '') + '! 🎉';
+    document.getElementById('msg').innerHTML =
+      'Tus <b>' + o.cantidad + '</b> entrada(s) están listas. Te las enviamos a <b>' + o.email + '</b>.';
+
+    const cont = document.getElementById('entradas');
+    (o.qrs || []).forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'entrada';
+      div.innerHTML = '<h3>🎟️ Entrada ' + (i+1) + ' de ' + o.cantidad + '</h3>' +
+                      '<img src="' + q.url + '" alt="QR entrada ' + (i+1) + '">' +
+                      '<div class="cod">' + q.codigo + '</div>';
+      cont.appendChild(div);
+    });
+    document.getElementById('nota').style.display = 'block';
+  }
+
+  async function confirmar(intentos){
+    if(!orden){ document.getElementById('msg').textContent = 'No se recibió el número de orden.'; document.getElementById('spinner').style.display='none'; return; }
+    try{
+      // Pide al backend que verifique el pago con MP y emita (no depende del webhook)
+      const r = await fetch('/api/orders/' + orden + '/confirmar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payment_id: paymentId }),
+      });
+      if(r.ok){
+        const o = await r.json();
+        if(o.estado === 'pagada'){ mostrarEntradas(o); return; }
+      }
+    }catch(e){}
+    if(intentos > 0) setTimeout(() => confirmar(intentos - 1), 2500);
+    else {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('ico').style.display = 'block';
+      document.getElementById('ico').textContent = '⌛';
+      document.getElementById('titulo').textContent = 'Pago en proceso';
+      document.getElementById('msg').innerHTML = 'Si pagaste en efectivo, apenas se acredite te llegan las entradas al mail. Si pagaste con tarjeta y ves esto, recargá esta página en un momento.';
+    }
+  }
+  confirmar(8);
+</script>
+</body>
+</html>
