@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de certificación ePagos — Bellatrix</title>
+<style>
+  :root{--tinta:#141018;--gris:#5c5560;--linea:#e5e1e8;--fondo:#f7f6f9;--acento:#0f766e;--acento-luz:#e6f4f2;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--fondo);color:var(--tinta);line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 60px;}
+  header{background:linear-gradient(135deg,#0b5650,var(--acento));color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:18px;}
+  header h1{font-size:22px;font-weight:800;}
+  header p{opacity:.92;font-size:14px;margin-top:5px;}
+  .aviso{background:#fef3c7;border:1px solid #fbbf24;border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:13.5px;}
+  .caso{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+  .caso .id{font-family:Consolas,monospace;font-weight:800;color:var(--acento);font-size:13px;}
+  .caso h3{font-size:16px;margin:3px 0 6px;}
+  .caso p{font-size:13.5px;color:var(--gris);}
+  .caso .pasos{background:var(--fondo);border-radius:9px;padding:11px 14px;margin:10px 0;font-size:13px;}
+  .caso .pasos b{color:var(--tinta);}
+  .esperado{font-size:13px;color:#166534;background:#f0fdf4;border-left:3px solid #16a34a;padding:8px 12px;border-radius:0 8px 8px 0;margin-top:8px;}
+  button{background:var(--acento);color:#fff;border:none;border-radius:22px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:10px;}
+  button:hover{background:#0b5650;} button:disabled{background:#9ca3af;cursor:default;}
+  .tarjetas{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;}
+  .tarjetas code{background:var(--fondo);padding:2px 6px;border-radius:5px;font-family:Consolas,monospace;}
+  .err{color:#b91c1c;font-size:13px;margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Plan de certificación ePagos</h1>
+  <p>Los casos obligatorios que faltan para que liberen las credenciales de producción.</p>
+</header>
+
+<div class="aviso">
+  <b>⚠️ Corre contra producción con ePagos en SANDBOX.</b><br>Los pagos son de mentira, pero las operaciones quedan registradas en ePagos y son las que hay que reportar.<br>
+  Cada botón crea la operación con el monto y el identificador que pide el plan, y te lleva al
+  checkout de ePagos. Después de cada prueba, <b>anotá el número de transacción</b> que aparece,
+  porque es lo que hay que reportarle a ePagos.
+</div>
+
+<div class="aviso" style="background:#fee2e2;border-color:#f87171;"><b>Si una prueba se acredita, el sistema emite una entrada de verdad</b> y te llega el mail con el QR. Es normal: la operación fue real. Avisame al terminar y limpio esas órdenes de la base para que no cuenten como ventas.</div>
+<div class="tarjetas">
+  <b>Tarjetas de prueba</b><br>
+  ✅ Aprueban → VISA crédito <code>4507 9900 0000 4905</code> · VISA débito <code>4517 7210 0485 6075</code><br>
+  ❌ <b>Rechaza</b> → MASTERCARD <code>5323 6222 7777 7785</code><br>
+  CVV <code>123</code> · Vencimiento <code>12-2026</code>
+</div>
+
+<div class="caso">
+  <div class="id">11003 · OBLIGATORIO</div>
+  <h3>Tarjeta — prueba de rechazo</h3>
+  <p>Verifica que el sistema maneje bien un pago rechazado.</p>
+  <div class="pasos">Elegí <b>tarjeta de crédito</b> y usá la <b>MASTERCARD</b> <code>5323 6222 7777 7785</code> · CVV <code>123</code> · vto <code>12/26</code>. <b>Esa tarjeta rechaza siempre.</b><br><br>El nombre del titular da igual: ePagos confirmó que <b>no se valida</b> contra los datos de la tarjeta. Lo de «CALL» no servía.</div>
+  <div class="esperado">Esperado: operación <b>rechazada</b> y vuelta a la página de error.</div>
+  <button onclick="ir(this,'11003',{todosLosMedios:true,sinDatosPagador:true})">Iniciar caso 11003</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
+  <div class="id">11004 · OBLIGATORIO</div>
+  <h3>Tarjeta — prueba de cancelación</h3>
+  <p style="color:#b45309;"><b>En espera:</b> ePagos confirmó que el botón de cancelar es un bug del Sandbox y lo está corrigiendo su equipo de Desarrollo. No intentes este caso hasta que avisen.</p>
+  <div class="pasos">Elegí <b>tarjeta</b> (crédito o débito) y, en la pantalla de datos, apretá <b>Cancelar</b> o cerrá sin completar.</div>
+  <div class="esperado">Esperado: operación <b>cancelada</b> (estado C) y vuelta a la página de error.</div>
+  <button onclick="ir(this,'11004',{todosLosMedios:true})">Iniciar caso 11004</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
+  <div class="id">11005 · OBLIGATORIO</div>
+  <h3>Efectivo / Homebanking — generación</h3>
+  <p>Este caso habilita <b>todos</b> los medios, aunque en la venta real estén excluidos.</p>
+  <div class="pasos">Elegí <b>efectivo</b> u <b>homebanking</b> y completá. <b>Probá descargar la boleta</b> con las instrucciones de pago: el plan lo pide expresamente.</div>
+  <div class="esperado">Esperado: operación <b>adeudada</b> (estado O) y boleta descargable.</div>
+  <button onclick="ir(this,'11005',{todosLosMedios:true})">Iniciar caso 11005</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
+  <div class="id">11006 · OBLIGATORIO</div>
+  <h3>Efectivo / Homebanking — cancelación</h3>
+  <p style="color:#b45309;"><b>En espera:</b> mismo bug del botón de cancelar.</p>
+  <div class="pasos">Elegí <b>efectivo</b> u <b>homebanking</b> y después <b>cancelá</b> la operación.</div>
+  <div class="esperado">Esperado: operación <b>cancelada</b> y vuelta a la página de error.</div>
+  <button onclick="ir(this,'11006',{todosLosMedios:true})">Iniciar caso 11006</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
+  <div class="id">11007 · OBLIGATORIO</div>
+  <h3>Operación con fecha de vencimiento</h3>
+  <p>Manda <code>opc_fecha_vencimiento</code> con la fecha de hoy.</p>
+  <div class="pasos">Pagá normalmente con <b>tarjeta de débito</b>, sin poner CALL.</div>
+  <div class="esperado">Esperado: operación <b>acreditada</b> y vuelta a la página de éxito.</div>
+  <button onclick="ir(this,'11007',{vencimiento:hoy()})">Iniciar caso 11007</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso" style="border-color:#16a34a;background:#f0fdf4;">
+  <div class="id" style="color:#166534;">YA HECHOS</div>
+  <h3>No hace falta repetirlos</h3>
+  <p><b>11001</b> token · <b>11002</b> acreditación con tarjeta (tx 6408203) ·
+     <b>11008</b> transferencia, quedó adeudada (tx 6407659) ·
+     <b>21001</b> búsqueda por rango de fechas · <b>21002</b> pagos adicionales ·
+     <b>31001</b> exento por usar Obtener Pago.</p>
+</div>
+
+<script>
+  function hoy(){ return new Date().toISOString().slice(0,10); }
+  async function ir(btn, caso, extra){
+    const err = btn.parentElement.querySelector('.err');
+    err.textContent = '';
+    btn.disabled = true; const t = btn.textContent; btn.textContent = 'Creando operación…';
+    try{
+      const r = await fetch('/api/dev/certificacion/' + caso, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(extra||{})
+      });
+      const d = await r.json();
+      if(!r.ok) throw new Error(d.error || 'Error');
+      const f = document.createElement('form');
+      f.method='POST'; f.action=d.checkout.url; f.target='_blank';
+      Object.entries(d.checkout.campos).forEach(([k,v])=>{
+        const i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=v; f.appendChild(i);
+      });
+      document.body.appendChild(f); f.submit();
+      // Se vuelve a habilitar: los casos se pueden repetir cuantas veces haga falta.
+      const info = btn.parentElement.querySelector('.hist');
+      if(info) info.textContent = 'Última operación creada: ' + d.orderId;
+      setTimeout(()=>{ btn.disabled=false; btn.textContent='Repetir caso ' + caso; }, 1200);
+    }catch(e){
+      err.textContent = 'No se pudo: ' + (e.message||'') + '. ¿Está corriendo el servidor local?';
+      btn.disabled=false; btn.textContent=t;
+    }
+  }
+</script>
+</div>
+</body>
+</html>

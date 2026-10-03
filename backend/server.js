@@ -425,10 +425,15 @@ async function manejarRetorno(req, res, exito) {
 // ═══════════════════════════════════════════════════════════════
 //  DEV: banco de pruebas del plan de certificación de ePagos.
 //  Cada caso pide un monto e identificador_externo_2 concretos.
-//  🔒 Deshabilitado en producción.
+//  🔒 Vive solo mientras ePagos esté en SANDBOX: ahí las operaciones son de
+//  mentira. En cuanto se pasa a prod, estos endpoints desaparecen solos y la
+//  central de pruebas deja de funcionar. (La certificación hay que correrla
+//  contra la URL pública, por eso no alcanza con mirar NODE_ENV.)
 // ═══════════════════════════════════════════════════════════════
+const EPAGOS_SANDBOX = (process.env.EPAGOS_ENV || 'sandbox').toLowerCase() !== 'prod'
+
 app.post('/api/dev/certificacion/:caso', async (req, res) => {
-  if (IS_PROD) return res.sendStatus(404)
+  if (!EPAGOS_SANDBOX) return res.sendStatus(404)
   try {
     const caso = String(req.params.caso)
     if (!/^\d{5}$/.test(caso)) return res.status(400).json({ error: 'Caso inválido' })
