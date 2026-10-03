@@ -51,6 +51,17 @@
 </div>
 
 <div class="caso">
+  <div class="id">11002 · OBLIGATORIO</div>
+  <h3>Tarjeta — prueba de acreditación</h3>
+  <p>El caso principal: un pago que sale bien de punta a punta.</p>
+  <div class="pasos">Elegí <b>Crédito / débito</b> y usá la <b>VISA</b> <code>4507 9900 0000 4905</code> · CVV <code>123</code> · vto <code>12/26</code> · <b>1 cuota</b>. El titular puede ser cualquier nombre.</div>
+  <div class="esperado">Esperado: operación <b>acreditada</b> y vuelta a la página de pago exitoso. <b>Emite una entrada real con QR y manda el mail</b> — está bien, después se limpia.</div>
+  <button onclick="ir(this,'11002',{todosLosMedios:true})">Iniciar caso 11002</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
   <div class="id">11003 · OBLIGATORIO</div>
   <h3>Tarjeta — prueba de rechazo</h3>
   <p>Verifica que el sistema maneje bien un pago rechazado.</p>
@@ -64,7 +75,7 @@
 <div class="caso">
   <div class="id">11004 · OBLIGATORIO</div>
   <h3>Tarjeta — prueba de cancelación</h3>
-  <p style="color:#b45309;"><b>En espera:</b> ePagos confirmó que el botón de cancelar es un bug del Sandbox y lo está corrigiendo su equipo de Desarrollo. No intentes este caso hasta que avisen.</p>
+  <p style="color:#b45309;"><b>Ojo:</b> en septiembre, con Olympia, ePagos reconoció que el botón de cancelar del Sandbox estaba fallado y lo estaban corrigiendo. Probalo igual: si no cancela, lo reportamos y listo.</p>
   <div class="pasos">Elegí <b>tarjeta</b> (crédito o débito) y, en la pantalla de datos, apretá <b>Cancelar</b> o cerrá sin completar.</div>
   <div class="esperado">Esperado: operación <b>cancelada</b> (estado C) y vuelta a la página de error.</div>
   <button onclick="ir(this,'11004',{todosLosMedios:true})">Iniciar caso 11004</button>
@@ -105,12 +116,35 @@
   <div class="err"></div>
 </div>
 
+<div class="caso">
+  <div class="id">11008 · OPCIONAL (pero conviene)</div>
+  <h3>Transferencias — generación</h3>
+  <p>Es el camino del QR, el medio por el que se va a vender casi todo. Por eso vale la pena hacerlo igual.</p>
+  <div class="pasos">Elegí <b>Transferencias</b> → <b>Transferencias 3.0</b> y, cuando pida el CUIT de la cuenta de origen, poné <code>30715084291</code>.</div>
+  <div class="esperado">Esperado: la operación queda <b>adeudada</b> y vuelve a la página de pago pendiente.</div>
+  <button onclick="ir(this,'11008',{todosLosMedios:true})">Iniciar caso 11008</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
+<div class="caso">
+  <div class="id">11009 · OPCIONAL</div>
+  <h3>Debin — generación</h3>
+  <p>Solo si llegamos a habilitar Debin. Hoy está dentro de Transferencias.</p>
+  <div class="pasos">Elegí <b>Transferencias</b> → <b>Debin</b> y usá un CUIT y CBU de la tabla de pruebas de ePagos.</div>
+  <div class="esperado">Esperado: la operación queda <b>adeudada</b>.</div>
+  <button onclick="ir(this,'11009',{todosLosMedios:true})">Iniciar caso 11009</button>
+  <div class="hist" style="font-size:12px;color:#0f766e;margin-top:6px;font-family:Consolas,monospace;"></div>
+  <div class="err"></div>
+</div>
+
 <div class="caso" style="border-color:#16a34a;background:#f0fdf4;">
-  <div class="id" style="color:#166534;">YA HECHOS</div>
+  <div class="id" style="color:#166534;">YA HECHOS EN BELLATRIX</div>
   <h3>No hace falta repetirlos</h3>
-  <p><b>11001</b> token · <b>11002</b> acreditación con tarjeta (tx 6408203) ·
-     <b>11008</b> transferencia, quedó adeudada (tx 6407659) ·
-     <b>21001</b> búsqueda por rango de fechas · <b>21002</b> pagos adicionales ·
+  <p><b>11001</b> generación de token ·
+     <b>21001</b> búsqueda de pagos por rango de fechas (11 operaciones) ·
+     <b>21002</b> pagos adicionales ·
+     <b>22001/22003</b> las direcciones de aviso responden ·
      <b>31001</b> exento por usar Obtener Pago.</p>
 </div>
 
