@@ -295,7 +295,8 @@
   :where(a,button,select,input):focus-visible{outline:3px solid #d6247a;outline-offset:3px;border-radius:8px;}
 
   /* ── Fotos de jueces: mismo encuadre y brillo mientras cargan ── */
-  .juez img{aspect-ratio:1/1.28;object-position:50% 22%;background:
+  /* Los flyers son 2:3: se muestran enteros, si no se corta el nombre y el nivel. */
+  .juez img{aspect-ratio:2/3;object-fit:cover;object-position:50% 50%;background:
     linear-gradient(100deg,#f6eaf3 30%,#fdf4fa 50%,#f6eaf3 70%) 0 0/200% 100%;
     animation:brillo 1.4s linear infinite;}
   .juez img.ok{animation:none;background:none;}
