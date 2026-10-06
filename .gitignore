@@ -14,3 +14,5 @@ backend/ver-prod.mjs
 backend/limpiar-base.mjs
 backend/crearUsuariosProd.mjs
 backend/cancelar-api.mjs
+backend/.env.bak
+*.bak

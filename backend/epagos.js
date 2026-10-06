@@ -150,6 +150,12 @@ export async function construirCheckout(orden, { okUrl, errorUrl, detalle = [] }
   // tarjeta de crédito (tipo 2), que acredita a 18 días hábiles.
   if (process.env.EPAGOS_TIPOS_EXCLUIDOS) campos.tp_excluidos = process.env.EPAGOS_TIPOS_EXCLUIDOS
 
+  // Lista blanca, una por una. El checkout de ePagos usa fp_permitidas (no
+  // fp_excluidas): se enumeran las que SÍ se aceptan y desaparece todo lo demás.
+  // Las que usamos: 44 Transferencias 3.0 (es también "Otras billeteras", el QR)
+  // y los débitos 14 VISA, 41 Mastercard, 28 Cabal, 15 Maestro, 52 Habitualista.
+  if (process.env.EPAGOS_FORMAS_PERMITIDAS) campos.fp_permitidas = process.env.EPAGOS_FORMAS_PERMITIDAS
+
   // El detalle va como JSON urlencodeado (así lo pide la documentación).
   if (detalle.length) campos.detalle_operacion = encodeURIComponent(JSON.stringify(detalle))
 
