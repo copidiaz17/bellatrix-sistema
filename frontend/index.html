@@ -267,7 +267,7 @@
 
   /* ── La entrada, como una entrada de verdad ── */
   /* El troquelado va justo debajo del precio, como el talón de una entrada. */
-  #entradas .entrada-caja{--corte:33%;position:relative;overflow:hidden;isolation:isolate;
+  #entradas .entrada-caja{--corte:30%;position:relative;overflow:hidden;isolation:isolate;
     background:
       radial-gradient(circle at 0 var(--corte),transparent 15px,#fff 16px) left/51% 100% no-repeat,
       radial-gradient(circle at 100% var(--corte),transparent 15px,#fff 16px) right/51% 100% no-repeat;
@@ -538,6 +538,10 @@
         <b class="valor" data-precio>$10.000</b>
         <span class="nota" data-cargo>+ $1.000 de cargo por servicio &middot; <b>Total $11.000</b></span>
       </div>
+      <div class="edades">
+        👧 <b>Los menores pagan entrada desde los 6 años.</b>
+        Hasta los 5 inclusive entran sin cargo.
+      </div>
       <ol class="pasos">
         <li>Elegís cuántas entradas querés y dejás tu nombre y tu mail.</li>
         <li>Pagás desde el celular con tu billetera virtual.</li>
@@ -545,9 +549,6 @@
         <li>En la puerta mostrás el QR desde el teléfono. Listo.</li>
       </ol>
       <a class="cta" href="#" data-comprar>Comprar entradas</a>
-      <p class="aviso" id="mediosPago" style="display:none;margin-top:18px;">
-        <img id="logosPago" alt="Medios de pago" style="max-width:100%;height:auto;">
-      </p>
     </div>
   </div>
 </section>
@@ -712,6 +713,10 @@
   .como-pago .titulin{font-weight:700;color:var(--rojo-luz);margin-bottom:8px;}
   .como-pago ol{margin:0;padding-left:18px;} .como-pago li{margin:5px 0;}
   .como-pago .ojo{margin-top:10px;padding-top:10px;border-top:1px solid rgba(214,36,122,.25);}
+  /* Quién paga entrada, en la tarjeta de precio */
+  .edades{background:#fdf4fa;border:1px solid #f0dcea;border-radius:12px;
+    padding:12px 16px;margin:18px auto 0;max-width:460px;font-size:13.5px;
+    line-height:1.55;color:#3d3560;text-align:left;}
   /* Lo primero que se lee al abrir la compra: con qué dispositivo conviene comprar. */
   .aviso-equipo{background:#fff6d9;border:1px solid #f0c674;border-radius:12px;
     padding:13px 15px;margin:16px 0 0;font-size:13.5px;line-height:1.55;color:#5a4214;}
@@ -739,6 +744,9 @@
     <button class="modal-x" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
     <h3>Comprar entradas</h3>
     <p style="color:var(--gris);font-size:13px;margin:0;">11° Torneo Aniversario Bellatrix · <span data-precio>$10.000</span> c/u</p>
+    <p style="color:var(--crema);font-size:13px;margin:8px 0 0;">
+      👧 <b>Los menores pagan desde los 6 años.</b> Hasta los 5 inclusive, sin cargo.
+    </p>
 
     <!-- El aviso del dispositivo va PRIMERO: si se entera recién al final,
          ya arrancó la compra desde el teléfono equivocado y abandona. -->
@@ -875,12 +883,6 @@
     document.querySelectorAll('[data-precio]').forEach(el=>el.textContent = fmt(PRECIO));
     document.querySelectorAll('[data-cargo]').forEach(el=>
       el.innerHTML = '+ ' + fmt(cargo) + ' de cargo por servicio &middot; <b>Total ' + fmt(PRECIO+cargo) + '</b>');
-    if(cfg.logosPago){
-      const img = $('logosPago');
-      img.onload  = ()=>{ $('mediosPago').style.display='block'; };
-      img.onerror = ()=>{ $('mediosPago').style.display='none'; };
-      img.src = cfg.logosPago;
-    }
     actualizarTotal();
   }).catch(()=>{});
 
