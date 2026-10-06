@@ -106,9 +106,13 @@
       if(data.estado === 'pagada' && (data.qrs||[]).length){ mostrarExito(data); return; }
     }catch(e){ /* seguimos intentando */ }
 
-    // Vamos espaciando: rápido al principio, más lento después.
-    const espera = intentos < 10 ? 5000 : (intentos < 25 ? 15000 : 60000);
-    $('reloj').textContent = 'Verificado '+intentos+' ' + (intentos===1?'vez':'veces') + ' · próxima revisión en '+(espera/1000)+' s';
+    // Vamos espaciando: muy rápido al principio, más lento después. Con QR la
+    // acreditación tarda entre 10 y 60 segundos, así que en ese tramo se
+    // pregunta cada 2 s y la entrada aparece apenas se acredita.
+    const espera = intentos < 30 ? 2000 : (intentos < 45 ? 10000 : 60000);
+    $('reloj').textContent = intentos < 30
+      ? 'Esperando la confirmación del pago… no cierres esta pantalla'
+      : 'Verificado '+intentos+' veces · próxima revisión en '+(espera/1000)+' s';
     setTimeout(revisar, espera);
   }
   revisar();

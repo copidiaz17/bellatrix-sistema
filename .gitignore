@@ -8,3 +8,9 @@ capturas/
 render-env.txt
 frontend/index.antes-moderno.html
 frontend/index.bloque1.html
+render-env*.txt
+respaldos/
+backend/ver-prod.mjs
+backend/limpiar-base.mjs
+backend/crearUsuariosProd.mjs
+backend/cancelar-api.mjs
