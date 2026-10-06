@@ -239,28 +239,115 @@ async function enviarMailPendiente(orden) {
 
 async function enviarMail(orden, qrs) {
   const t = await getTransporter()
+
+  // El logo va adjunto (cid) porque muchos clientes de mail bloquean las
+  // imágenes externas; así se ve siempre.
   const attachments = qrs.map((q, i) => ({
     filename: `entrada-${i + 1}.png`, path: q.archivo, cid: `qr${i}`,
   }))
+  const logo = join(__dirname, '..', 'frontend', 'assets', 'logo-bellatrix.jpg')
+  if (existsSync(logo)) attachments.push({ filename: 'bellatrix.jpg', path: logo, cid: 'logo' })
+
   const htmlQrs = qrs.map((q, i) => `
-    <div style="text-align:center;margin:18px;padding:16px;border:1px solid #f3d6e6;border-radius:12px;">
-      <p style="color:#d6006e;font-weight:700;">Entrada ${i + 1} de ${orden.cantidad}</p>
-      <img src="cid:qr${i}" width="220" alt="QR">
-      <p style="font-size:11px;color:#999;">${q.codigo}</p>
-    </div>`).join('')
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;">
+      <tr><td align="center" style="background:#ffffff;border:3px solid #111111;border-radius:14px;padding:18px 14px;">
+        <div style="font:700 13px/1.2 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b3121a;">
+          Entrada ${i + 1} de ${orden.cantidad}
+        </div>
+        <img src="cid:qr${i}" width="240" height="240" alt="Código QR de la entrada ${i + 1}"
+             style="display:block;margin:12px auto 8px;">
+        <div style="font:400 10px/1.4 Consolas,monospace;color:#9a9a9a;word-break:break-all;max-width:320px;margin:auto;">
+          ${q.codigo}
+        </div>
+      </td></tr>
+    </table>`).join('')
+
+  const html = `
+  <div style="background:#fdf4fa;padding:22px 12px;font-family:'Segoe UI',Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;margin:auto;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(120,40,110,.12);">
+
+      <!-- Encabezado -->
+      <tr><td align="center" style="background:linear-gradient(135deg,#d6247a,#8e3bb8);background-color:#a72f9b;padding:26px 20px;">
+        <img src="cid:logo" width="74" height="74" alt="Escuela de Gimnasia Bellatrix"
+             style="display:block;margin:0 auto 12px;border-radius:50%;background:#fff;padding:4px;">
+        <div style="font:800 22px/1.2 Arial,sans-serif;color:#ffffff;">11° Torneo Aniversario</div>
+        <div style="font:400 14px/1.5 Arial,sans-serif;color:#ffd6ea;margin-top:4px;">Escuela de Gimnasia Bellatrix</div>
+      </td></tr>
+
+      <!-- Saludo -->
+      <tr><td style="padding:26px 26px 6px;">
+        <div style="font:800 19px/1.3 Arial,sans-serif;color:#2a1f4d;">¡Listo, ${escapeHtml((orden.nombre || '').split(' ')[0])}! 🎉</div>
+        <p style="font:400 15px/1.6 Arial,sans-serif;color:#3d3560;margin:10px 0 0;">
+          Tu compra se confirmó. Abajo están ${orden.cantidad > 1 ? `tus <b>${orden.cantidad} entradas</b>` : 'tu <b>entrada</b>'},
+          cada una con su código QR.
+        </p>
+      </td></tr>
+
+      <!-- Datos del evento -->
+      <tr><td style="padding:18px 26px 0;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fdf4fa;border:1px solid #f0dcea;border-radius:12px;">
+          <tr><td style="padding:16px 18px;font:400 14px/1.9 Arial,sans-serif;color:#3d3560;">
+            📅 <b>${escapeHtml(EVENTO_CUANDO)}</b>, desde las <b>10:00</b><br>
+            📍 <b>${escapeHtml(EVENTO_LUGAR)}</b><br>
+            🤸 Gimnasia <b>rítmica y artística</b> · una sola entrada para todo el torneo
+          </td></tr>
+        </table>
+      </td></tr>
+
+      <!-- Entradas -->
+      <tr><td style="padding:22px 26px 0;">
+        ${htmlQrs}
+      </td></tr>
+
+      <!-- Cómo entrar -->
+      <tr><td style="padding:4px 26px 0;">
+        <div style="font:700 12px/1.2 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b0239a;margin-bottom:8px;">
+          Cómo entrar
+        </div>
+        <ul style="font:400 14px/1.7 Arial,sans-serif;color:#3d3560;margin:0;padding-left:20px;">
+          <li>Mostrá el QR en la puerta, desde el celular o impreso.</li>
+          <li>Cada QR sirve <b>una sola vez</b>: si venís con más gente, cada persona necesita el suyo.</li>
+          <li>Te recomendamos llegar unos minutos antes para no hacer cola.</li>
+          <li>Si se te pierde el mail, entrá a <b>Mis entradas</b> con tu correo y recuperalas.</li>
+        </ul>
+      </td></tr>
+
+      <!-- Botón -->
+      <tr><td align="center" style="padding:22px 26px 6px;">
+        <a href="${FRONTEND_URL}/mis-entradas.html"
+           style="display:inline-block;background:#d6247a;color:#ffffff;text-decoration:none;font:700 15px/1 Arial,sans-serif;padding:14px 30px;border-radius:999px;">
+          Ver mis entradas
+        </a>
+      </td></tr>
+
+      <!-- Pie -->
+      <tr><td align="center" style="padding:18px 26px 26px;">
+        <div style="font:400 12px/1.6 Arial,sans-serif;color:#8d85a6;">
+          ¡Viví la gimnasia, compartí la pasión!<br>
+          N° de compra: ${escapeHtml(orden.id)}
+        </div>
+      </td></tr>
+    </table>
+  </div>`
+
+  const texto = `¡Listo, ${(orden.nombre || '').split(' ')[0]}!
+
+Tu compra se confirmó: ${orden.cantidad} entrada(s) para el 11° Torneo Aniversario Bellatrix.
+${EVENTO_CUANDO}, desde las 10:00 · ${EVENTO_LUGAR}
+
+Las entradas con su código QR van adjuntas a este mail. Mostralas en la puerta
+desde el celular o impresas. Cada QR sirve una sola vez.
+
+Si no ves las imágenes, entrá a ${FRONTEND_URL}/mis-entradas.html con tu correo.
+
+N° de compra: ${orden.id}`
 
   const info = await t.sendMail({
     from: `"${EVENTO_NOMBRE}" <${process.env.EMAIL_USER || EVENTO_MAIL_FROM}>`,
     to: orden.email,
-    subject: `🎟️ Tus ${orden.cantidad} entrada(s) — ${EVENTO_NOMBRE}`,
-    html: `
-      <div style="font-family:Segoe UI,Arial,sans-serif;max-width:560px;margin:auto;">
-        <h2 style="color:#d6006e;">¡Gracias por tu compra, ${escapeHtml(orden.nombre)}! 🎀</h2>
-        <p>Estas son tus entradas para <b>${escapeHtml(EVENTO_NOMBRE)}</b> (${escapeHtml(EVENTO_CUANDO)} · ${escapeHtml(EVENTO_LUGAR)}).
-        Mostrá el QR en la puerta desde tu celular o impreso.</p>
-        ${htmlQrs}
-        <p style="font-size:12px;color:#999;">Orden ${orden.id}</p>
-      </div>`,
+    subject: `🎟️ ${orden.cantidad > 1 ? `Tus ${orden.cantidad} entradas` : 'Tu entrada'} para el 11° Torneo Bellatrix`,
+    text: texto,
+    html,
     attachments,
   })
   orden.emailPreview = nodemailer.getTestMessageUrl(info) || null
@@ -290,8 +377,10 @@ async function confirmarYEmitir(orden, paymentId = null, pago = null) {
     const codigo = firmarQR(base) // QR firmado (HMAC) → no se puede falsificar
     const nombreArchivo = `${orden.id}-${i}.png`
     const archivo = join(QR_DIR, nombreArchivo)
+    // Rojo oscuro, no rojo puro: los lectores necesitan contraste contra el
+    // blanco y un rojo claro falla con cámaras malas o poca luz.
     await QRCode.toFile(archivo, codigo, {
-      width: 420, margin: 1, color: { dark: '#d6006e', light: '#ffffff' },
+      width: 480, margin: 2, color: { dark: '#b3121a', light: '#ffffff' },
     })
     qrs.push({ orden_id: orden.id, indice: i, codigo, base, archivo, url: `/qrs/${nombreArchivo}`, usado: false, usadoEn: null })
   }
