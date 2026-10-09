@@ -9,6 +9,8 @@ import { sequelize } from '../database.js'
 const Categoria = sequelize.define('Categoria', {
   id:            { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   nombre:        { type: DataTypes.STRING, allowNull: false },  // "C · AC2 · Individual · Aro"
+  // Rítmica o Artística: cada juez ve solo las categorías de su disciplina.
+  disciplina:    { type: DataTypes.STRING, allowNull: false, defaultValue: 'Rítmica' },
   nivel:         { type: DataTypes.STRING, allowNull: false },  // Escuela, C, ...
   categoriaEdad: { type: DataTypes.STRING, allowNull: true },   // Baby, Pre Mini, Mini, AC2, AC3, Juvenil, Mayor
   modalidad:     { type: DataTypes.STRING, allowNull: false },  // Individual, Dúo, Trío, Conjunto

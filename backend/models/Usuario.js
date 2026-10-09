@@ -12,7 +12,9 @@ const Usuario = sequelize.define('Usuario', {
   rol:      { type: DataTypes.ENUM('admin', 'control', 'venta', 'jueza'), allowNull: false },
   // Solo se usa cuando rol = 'jueza'. Define qué campos carga esa jueza.
   area:     { type: DataTypes.ENUM('dificultad', 'ejecucion', 'artistico'), allowNull: true },
-  nombre:   { type: DataTypes.STRING, allowNull: true }, // nombre a mostrar (ej. en el login de jueza)
+  nombre:   { type: DataTypes.STRING, allowNull: true },  // nombre a mostrar (ej. en el login de jueza)
+  // Solo para jueces: 'Rítmica' o 'Artística'. Vacío = ve todas las categorías.
+  disciplina: { type: DataTypes.STRING, allowNull: true },
 }, {
   tableName: 'usuarios',
   timestamps: true,

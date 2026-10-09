@@ -1203,11 +1203,15 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
 
 // ── JUEZA: ver coreografías de una categoría y cargar su puntaje ──
 app.get('/api/jueza/categorias', requireAuth(['jueza', 'admin']), async (req, res) => {
-  const categorias = await Categoria.findAll({ order: [['orden', 'ASC'], ['id', 'ASC']] })
+  // Cada juez ve SOLO su disciplina: el de artística no tiene por qué ver las
+  // 81 coreografías de rítmica, ni al revés. Sin disciplina cargada, ve todo.
+  const quien = await Usuario.findOne({ where: { usuario: req.usuario.usuario } })
+  const filtro = quien?.disciplina ? { where: { disciplina: quien.disciplina } } : {}
+  const categorias = await Categoria.findAll({ ...filtro, order: [['orden', 'ASC'], ['id', 'ASC']] })
 
   // Avance de ESTA jueza: cuántas coreografías de cada categoría ya dejó
   // completas. Las de exhibición no se puntúan, así que no cuentan.
-  const usuario = await Usuario.findOne({ where: { usuario: req.usuario.usuario } })
+  const usuario = quien
   const coreografias = await Coreografia.findAll({
     where: { exhibicion: false },
     include: [{ model: Puntaje, as: 'puntajes', where: { usuario_id: usuario?.id || 0 }, required: false }],
