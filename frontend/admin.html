@@ -84,6 +84,14 @@
   .qr-caja .pie{font-size:12px;font-weight:700;color:#3a2400;margin-top:4px;}
   .aviso-prueba{display:none;text-align:center;background:rgba(226,182,79,.1);
     border:1px solid var(--borde);border-radius:12px;padding:16px;margin-bottom:16px;}
+  /* En el celular la tabla de acreditación no entra entera: se dejan la fecha
+     y lo que cobra cada uno, que es lo que se mira. El detalle está en el CSV. */
+  .chico-si{display:none;}
+  @media (max-width:560px){
+    .chico-no{display:none;}
+    .chico-si{display:inline;}
+    #modalAcred th,#modalAcred td{padding:9px 7px;}
+  }
 
   /* ── Misma tipografía que la página principal ── */
   body,input,select,button,textarea{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;}
@@ -131,6 +139,7 @@
         <button class="btn ghost" onclick="generarManual()">💵 Venta manual</button>
         <button class="btn ghost" onclick="repescar()">🔁 Revisar pagos pendientes</button>
         <button class="btn ghost adminonly" onclick="archivarPendientes()">🗄️ Archivar pendientes</button>
+        <button class="btn ghost adminonly" onclick="verAcreditacion()">🏦 Acreditación</button>
         <button class="btn ghost adminonly" onclick="exportarCSV()">⬇ CSV</button>
         <button class="btn ghost adminonly" onclick="generarPrueba()">🧪 Entrada de prueba</button>
         <button class="btn ghost adminonly" onclick="emitirCortesia()">🎫 Emitir cortesía</button>
@@ -369,6 +378,95 @@
     a.download = 'ventas-bellatrix-2026.csv'; a.click();
   }
 
+  // ── Calendario de acreditación ──────────────────────────────────────────
+  // Cuándo deposita ePagos y cuánto le queda a cada uno. La cuenta la hace el
+  // servidor (es la misma que figura en la rendición) y acá solo se muestra.
+  let ACRED = null;
+  async function verAcreditacion(){
+    try{
+      const r = await fetch('/api/admin/acreditacion', { headers: auth() });
+      if(r.status === 401){ logout(); return; }
+      ACRED = await r.json();
+      if(ACRED.error) throw new Error(ACRED.error);
+      pintarAcreditacion();
+      $('modalAcred').style.display = 'flex';
+    }catch(e){ alert('No se pudo traer la acreditación: ' + (e.message||'')); }
+  }
+  function cerrarAcred(){ $('modalAcred').style.display = 'none'; }
+
+  function pintarAcreditacion(){
+    const d = ACRED;
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const dia = f => {
+      const [a,m,x] = f.split('-');
+      const fecha = new Date(+a, +m-1, +x);
+      const nombres = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+      const pasado = fecha < hoy;
+      // En el celular el "ya depositado" se come el ancho: ahí va solo el tilde.
+      const ya = pasado ? ' <span style="color:#16a34a;"><span class="chico-no">· ya depositado</span><span class="chico-si">✓</span></span>' : '';
+      return `${nombres[fecha.getDay()]} ${x}/${m}${ya}`;
+    };
+    // Acá la plata va con los dos decimales: es lo que entra a la cuenta.
+    const pesos = n => '$' + Number(n||0).toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const filas = d.dias.map(x => `
+      <tr>
+        <td>${dia(x.fecha)}</td>
+        <td class="num chico-no">${x.compras}</td>
+        <td class="num chico-no">${pesos(x.bruto)}</td>
+        <td class="num chico-no" style="color:var(--texto-tenue);">-${pesos(x.comision)}</td>
+        <td class="num" style="font-weight:800;color:var(--oro-claro);">${pesos(x.emilia)}</td>
+        <td class="num">${pesos(x.jose)}</td>
+      </tr>`).join('');
+    $('acredCuerpo').innerHTML = `
+      <p style="font-size:13px;color:var(--texto-tenue);margin-bottom:10px;">
+        QR y transferencias se acreditan al <b>día hábil siguiente</b> · tarjeta de débito, a los <b>5 días hábiles</b>.
+        Los montos ya tienen descontada la comisión de ePagos y el reparto del convenio
+        (${d.reglas.reparto}).
+      </p>
+      <table>
+        <thead><tr>
+          <th>Se deposita el</th><th class="num chico-no">Compras</th><th class="num chico-no">Bruto</th>
+          <th class="num chico-no">Comisión</th><th class="num">A Emilia</th><th class="num">A José</th>
+        </tr></thead>
+        <tbody>${filas || '<tr><td colspan="6">Todavía no hay ventas pagadas.</td></tr>'}</tbody>
+        <tfoot><tr style="font-weight:800;">
+          <td>Total (${d.totales.compras} compras)</td><td class="chico-no"></td>
+          <td class="num chico-no">${pesos(d.totales.bruto)}</td>
+          <td class="num chico-no">-${pesos(d.totales.comision)}</td>
+          <td class="num" style="color:var(--oro-claro);">${pesos(d.totales.emilia)}</td>
+          <td class="num">${pesos(d.totales.jose)}</td>
+        </tr></tfoot>
+      </table>
+      ${d.enMano && d.enMano.compras ? `
+        <p style="font-size:13px;color:var(--texto-tenue);margin-top:12px;">
+          Aparte, <b style="color:var(--oro-claro);">${pesos(d.enMano.total)}</b> de
+          ${d.enMano.entradas} entrada${d.enMano.entradas===1?'':'s'} vendida${d.enMano.entradas===1?'':'s'} en puerta:
+          esa plata no pasa por ePagos, la cobra Emilia en mano y no se deposita.
+        </p>` : ''}`;
+  }
+
+  function exportarAcreditacion(){
+    if(!ACRED) return;
+    const filas = [['Se deposita el','Compras','Entradas','Bruto','Comision ePagos','A Emilia','A Jose']];
+    ACRED.dias.forEach(d => filas.push([d.fecha, d.compras, d.entradas, d.bruto, d.comision, d.emilia, d.jose]));
+    filas.push([]);
+    filas.push(['DETALLE POR COMPRA']);
+    filas.push(['Se deposita el','Pagada el','Comprador','Entradas','Total','Medio','A Emilia','A Jose']);
+    ACRED.dias.forEach(d => d.detalle.forEach(o =>
+      filas.push([d.fecha, o.pagadaEl, o.nombre, o.cantidad, o.total, o.medio, o.emilia, o.jose])));
+    if(ACRED.enMano && ACRED.enMano.compras){
+      filas.push([]);
+      filas.push(['VENDIDAS EN PUERTA (no pasan por ePagos, las cobra Emilia en mano)']);
+      filas.push(['Vendida el','Comprador','Entradas','Total']);
+      ACRED.enMano.detalle.forEach(o => filas.push([o.pagadaEl, o.nombre, o.cantidad, o.total]));
+      filas.push(['TOTAL EN MANO','', ACRED.enMano.entradas, ACRED.enMano.total]);
+    }
+    const csv = filas.map(f => f.map(c => `"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'}));
+    a.download = 'acreditacion-bellatrix-2026.csv'; a.click();
+  }
+
   // ── Mostrar los QR de una compra (para gente que llegó sin su entrada) ──
   let ordenModalActual = null;
   async function mostrarQR(ordenId){
@@ -548,5 +646,17 @@
   // arranque
   if(TOKEN && ROL) router(); else $('loginView').style.display='block';
 </script>
+
+<!-- ══ CALENDARIO DE ACREDITACIÓN ══ -->
+<div class="modal" id="modalAcred" onclick="if(event.target===this)cerrarAcred()">
+  <div class="modal-box" style="max-width:900px;text-align:left;">
+    <div style="font-weight:800;color:var(--oro-claro);font-size:17px;margin-bottom:12px;">🏦 Cuándo se deposita</div>
+    <div id="acredCuerpo"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn oro" onclick="exportarAcreditacion()">⬇ Descargar planilla</button>
+      <button class="btn ghost" onclick="cerrarAcred()">Cerrar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

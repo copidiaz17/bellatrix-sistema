@@ -798,6 +798,112 @@ app.post('/api/visita', async (req, res) => {
   }
 })
 
+// ═══════════════════════════════════════════════════════════════
+//  CALENDARIO DE ACREDITACIÓN
+//  Cuándo y cuánto deposita ePagos, por día.
+//    · QR y Transferencia 3.0 → 1 día hábil
+//    · Tarjeta de débito      → 5 días hábiles
+//  Comisiones de ePagos CON IVA (las de la rendición real):
+//    · transferencias 0,968 %   · débito 1,7545 %
+//    · (crédito 3,267 % y efectivo 3,5695 %, hoy no habilitados)
+//  El convenio reparte 91,8 % a Emilia y 8,2 % a José, y la comisión se
+//  prorratea igual. Entonces cada uno cobra su parte MENOS su parte de comisión.
+// ═══════════════════════════════════════════════════════════════
+const REPARTO_CLIENTE = 0.918          // Manca María Emilia
+const REPARTO_TERCERO = 0.082          // Díaz Figueroa José
+
+const DEMORA_HABILES = { transferencia: 1, billetera: 1, debito: 5, credito: 18, efectivo: 5 }
+const COMISION       = { transferencia: 0.00968, billetera: 0.00968, debito: 0.017545, credito: 0.03267, efectivo: 0.035695 }
+
+// Feriados nacionales que caen después del torneo. Si se agrega alguno, va acá.
+const FERIADOS = new Set([
+  '2026-10-12', // Día del Respeto a la Diversidad Cultural
+  '2026-11-23', // Día de la Soberanía Nacional (trasladado)
+  '2026-12-08', // Inmaculada Concepción
+  '2026-12-25', // Navidad
+  '2027-01-01', // Año Nuevo
+])
+
+const aISO = d => d.toISOString().slice(0, 10)
+function esHabil(d) {
+  const dia = d.getUTCDay()
+  return dia !== 0 && dia !== 6 && !FERIADOS.has(aISO(d))
+}
+// Suma días hábiles a una fecha (sin contar el día del pago).
+function sumarHabiles(desde, cuantos) {
+  const d = new Date(Date.UTC(desde.getUTCFullYear(), desde.getUTCMonth(), desde.getUTCDate()))
+  let faltan = cuantos
+  while (faltan > 0) { d.setUTCDate(d.getUTCDate() + 1); if (esHabil(d)) faltan-- }
+  return d
+}
+
+app.get('/api/admin/acreditacion', requireAuth(['admin']), async (req, res) => {
+  try {
+    // Las pruebas y las cortesías no son plata. Las entradas vendidas en puerta
+    // tampoco entran al calendario: no pasan por ePagos, las cobra Emilia en mano
+    // (se reconocen porque no tienen medioPago, que lo escribe la pasarela).
+    const ordenes = await Orden.findAll({
+      where: { estado: 'pagada', metodo: { [Op.notIn]: ['prueba', 'cortesia', 'certificacion'] } },
+      order: [['updatedAt', 'ASC']],
+    })
+
+    const porDia = new Map()
+    const enMano = { compras: 0, entradas: 0, total: 0, detalle: [] }
+    let brutoTotal = 0, comisionTotal = 0, emiliaTotal = 0, joseTotal = 0
+
+    for (const o of ordenes) {
+      // El día del pago se toma en hora de Argentina: una compra de las 22:30
+      // figura en la base como del día siguiente en UTC.
+      const pagadaEl = aISO(new Date(new Date(o.updatedAt).getTime() - 3 * 3600 * 1000))
+
+      if (!o.medioPago) {
+        enMano.compras++; enMano.entradas += o.cantidad; enMano.total += Number(o.total)
+        enMano.detalle.push({ nombre: o.nombre, cantidad: o.cantidad, total: Number(o.total), pagadaEl })
+        continue
+      }
+
+      const medio = String(o.medioPago).toLowerCase()
+      const tasa  = COMISION[medio] ?? COMISION.transferencia
+      const dias  = DEMORA_HABILES[medio] ?? 1
+
+      const acredita = aISO(sumarHabiles(new Date(pagadaEl + 'T12:00:00Z'), dias))
+
+      const total    = Number(o.total)
+      const comision = total * tasa
+      const emilia   = total * REPARTO_CLIENTE * (1 - tasa)
+      const jose     = total * REPARTO_TERCERO * (1 - tasa)
+
+      brutoTotal += total; comisionTotal += comision; emiliaTotal += emilia; joseTotal += jose
+
+      const d = porDia.get(acredita) || { fecha: acredita, compras: 0, entradas: 0, bruto: 0, comision: 0, emilia: 0, jose: 0, detalle: [] }
+      d.compras++; d.entradas += o.cantidad; d.bruto += total; d.comision += comision; d.emilia += emilia; d.jose += jose
+      d.detalle.push({
+        nombre: o.nombre, cantidad: o.cantidad, total,
+        medio, pagadaEl, emilia: num2(emilia), jose: num2(jose),
+      })
+      porDia.set(acredita, d)
+    }
+
+    const dias = [...porDia.values()]
+      .sort((a, b) => a.fecha.localeCompare(b.fecha))
+      .map(d => ({ ...d, bruto: num2(d.bruto), comision: num2(d.comision), emilia: num2(d.emilia), jose: num2(d.jose) }))
+
+    res.json({
+      dias,
+      enMano: { ...enMano, total: num2(enMano.total) },
+      totales: {
+        compras: ordenes.length - enMano.compras,
+        bruto: num2(brutoTotal), comision: num2(comisionTotal),
+        emilia: num2(emiliaTotal), jose: num2(joseTotal),
+      },
+      reglas: { transferencia: '1 día hábil · 0,968 %', debito: '5 días hábiles · 1,7545 %', reparto: '91,8 % Emilia / 8,2 % José' },
+    })
+  } catch (e) {
+    console.error('❌ Error armando la acreditación:', e?.message || e)
+    res.status(500).json({ error: 'No se pudo armar el calendario de acreditación' })
+  }
+})
+
 app.get('/api/admin/resumen', requireAuth(['admin', 'venta', 'control']), async (req, res) => {
   try {
     // Excluye las órdenes de PRUEBA (metodo='prueba') para no ensuciar el panel.
