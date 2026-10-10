@@ -1200,8 +1200,23 @@ function comienzoDelDiaArgentino() {
 // Redondea a 2 decimales sin arrastrar errores de punto flotante.
 const num2 = n => Math.round(Number(n) * 100) / 100
 
+// En rítmica, Ejecución y Artístico se cargan como DESCUENTO y la nota sale de
+// restarlo de un tope que depende del nivel (confirmado por las juezas el 10/10):
+//   · Nivel B → sobre 10      · Nivel C → sobre 15
+// Las exhibiciones (nivel "Escuela") no compiten; se les deja el tope de B para
+// que la planilla funcione igual. Artística devuelve null: todavía no está
+// definido cómo puntúa, así que ahí la nota se toma tal cual se carga.
+const TOPE_POR_NIVEL = { B: 10, C: 15 }
+function topeDeduccion(categoria) {
+  if (!categoria || categoria.disciplina !== 'Rítmica') return null
+  return TOPE_POR_NIVEL[categoria.nivel] ?? 10
+}
+// Lo que entra al promedio: el descuento ya restado del tope. Sin tope (artística)
+// la nota es la que cargó el juez.
+const neta = (valor, tope) => tope == null ? Number(valor) : tope - Number(valor)
+
 // Dado un array de Puntaje (todos de la misma coreografía), calcula D/E/A/Final.
-function calcularNotas(puntajes) {
+function calcularNotas(puntajes, tope = null) {
   const promedio = arr => arr.length ? arr.reduce((s, n) => s + n, 0) / arr.length : null
 
   // Solo cuentan las planillas completas: una jueza que dejó un campo vacío
@@ -1211,8 +1226,8 @@ function calcularNotas(puntajes) {
     p.bd != null && p.ejecucion != null && p.artistico != null)
 
   const notaD = promedio(llenas.map(p => Number(p.bd) + Number(p.da || 0)))
-  const notaE = promedio(llenas.map(p => Number(p.ejecucion)))
-  const notaA = promedio(llenas.map(p => Number(p.artistico)))
+  const notaE = promedio(llenas.map(p => neta(p.ejecucion, tope)))
+  const notaA = promedio(llenas.map(p => neta(p.artistico, tope)))
 
   const completo = llenas.length > 0
   return {
@@ -1270,6 +1285,8 @@ app.delete('/api/admin/coreografias/:id', requireAuth(['admin','director']), asy
 // Resultados de una categoría: cada coreografía con sus notas y el puesto.
 app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']), async (req, res) => {
   try {
+    const categoria = await Categoria.findByPk(req.params.categoriaId)
+    const tope = topeDeduccion(categoria)
     const coreografias = await Coreografia.findAll({
       where: { categoria_id: req.params.categoriaId },
       include: [{ model: Puntaje, as: 'puntajes', include: [{ model: Usuario, as: 'jueza' }] }],
@@ -1277,18 +1294,23 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
     })
     const filas = coreografias.map(c => ({
       id: c.id, nombre: c.nombre, escuela: c.escuela, exhibicion: c.exhibicion,
-      ...calcularNotas(c.puntajes),
+      ...calcularNotas(c.puntajes, tope),
       // Voto de cada jueza por separado, para poder auditar de dónde sale el promedio.
+      // Se muestran las dos caras: lo que escribió (el descuento) y lo que quedó.
       detalle: c.puntajes.map(p => {
         const bd = p.bd == null ? null : Number(p.bd)
         const da = p.da == null ? null : Number(p.da)
         const ej = p.ejecucion == null ? null : Number(p.ejecucion)
         const ar = p.artistico == null ? null : Number(p.artistico)
         const completa = bd != null && ej != null && ar != null
+        const ejN = ej == null ? null : num2(neta(ej, tope))
+        const arN = ar == null ? null : num2(neta(ar, tope))
         return {
           jueza: p.jueza?.nombre || p.jueza?.usuario || 'Jueza',
-          bd, da, ejecucion: ej, artistico: ar, completa,
-          total: completa ? num2(bd + (da || 0) + ej + ar) : null,
+          bd, da, completa,
+          ejecucion: ejN, artistico: arN,          // ya netas, es lo que suma
+          ejecucionDesc: ej, artisticoDesc: ar,    // lo que cargó el juez
+          total: completa ? num2(bd + (da || 0) + ejN + arN) : null,
         }
       }).sort((a, b) => String(a.jueza).localeCompare(String(b.jueza))),
     }))
@@ -1344,6 +1366,8 @@ app.get('/api/jueza/categorias/:id/coreografias', requireAuth(['jueza', 'admin']
     })
     res.json(coreografias.map(c => ({
       aparato: aparatoDeCategoria(categoria),
+      // Sobre cuánto se descuentan Ejecución y Artístico en este nivel.
+      tope: topeDeduccion(categoria),
       id: c.id, nombre: c.nombre, escuela: c.escuela, exhibicion: c.exhibicion,
       // Mi propio puntaje ya cargado para esta coreografía (si existe), para poder editarlo.
       miPuntaje: c.puntajes[0] || null,
@@ -1381,11 +1405,32 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
     const { coreografia_id, bd, da, ejecucion, artistico } = req.body || {}
     if (!coreografia_id) return res.status(400).json({ error: 'Falta coreografia_id' })
 
+    // El tope de deducción sale del nivel de la categoría a la que pertenece.
+    const coreo = await Coreografia.findByPk(coreografia_id, {
+      include: [{ model: Categoria, as: 'categoria' }],
+    })
+    if (!coreo) return res.status(404).json({ error: 'No existe esa coreografía' })
+    const tope = topeDeduccion(coreo.categoria)
+
     // La jueza puntúa la coreografía entera. DA es la única opcional: en las
     // categorías sin aparato no hay destreza de aparato que puntuar.
-    for (const [nombre, valor] of Object.entries({ bd, ejecucion, artistico })) {
-      if (!valorValido(valor)) {
-        return res.status(400).json({ error: `${nombre.toUpperCase()} debe estar entre 0,10 y 10,00` })
+    if (!valorValido(bd)) {
+      return res.status(400).json({ error: 'BD debe estar entre 0,10 y 10,00' })
+    }
+    // Ejecución y Artístico son descuentos: 0 es una ejecución sin deducciones,
+    // y el máximo es el tope del nivel (más que eso daría una nota negativa).
+    // ⚠️ El vacío se rechaza a mano: aNumero('') devuelve 0, y un campo que
+    // quedó sin llenar no puede guardarse como "sin deducciones".
+    for (const [nombre, valor] of Object.entries({ ejecucion, artistico })) {
+      if (valor === '' || valor === null || valor === undefined) {
+        return res.status(400).json({ error: `Falta ${nombre.toUpperCase()}` })
+      }
+      const x = aNumero(valor)
+      const maximo = tope ?? 10
+      if (!Number.isFinite(x) || x < 0 || x > maximo) {
+        return res.status(400).json({
+          error: `${nombre.toUpperCase()} debe estar entre 0 y ${String(maximo).replace('.', ',')}`,
+        })
       }
     }
     const daVacia = da === '' || da === null || da === undefined

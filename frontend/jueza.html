@@ -167,12 +167,7 @@
       </div>
       <button class="btn ghost" onclick="volverACategorias()">‹ Categorías</button>
     </div>
-    <div class="banner">
-      Las notas van de <b>0,10 a 10,00</b>. Los decimales podés separarlos con
-      <b>coma o con punto</b>: 8,50 y 8.50 son lo mismo.
-      Una nota guardada <b>se puede corregir</b> todas las veces que haga falta:
-      la cambiás y tocás Actualizar.
-    </div>
+    <div class="banner" id="bannerNotas"></div>
     <div id="listaCoreografias"></div>
     <div class="vacio" id="sinCoreografias" style="display:none;">No hay coreografías cargadas en esta categoría todavía.</div>
   </div>
@@ -250,6 +245,9 @@
       if(r.status === 401){ logout(); return; }
       const cors = await r.json();
       $('sinCoreografias').style.display = cors.length ? 'none' : 'block';
+      // Sobre cuánto descuenta esta categoría; lo necesita recalcular() y el banner.
+      cors.forEach(c => { TOPES[c.id] = c.tope; });
+      pintarBanner(cors[0] ? cors[0].tope : null);
       $('listaCoreografias').innerHTML = cors.map(c => pintarCoreografia(c)).join('');
       cors.forEach(c => { if(c.miPuntaje) recalcular(c.id); });
     }catch(e){ $('listaCoreografias').innerHTML = '<div class="vacio">No se pudo cargar.</div>'; }
@@ -261,6 +259,21 @@
     if(t === '') return null;
     const n = Number(t);
     return Number.isFinite(n) ? n : NaN;
+  }
+
+  // Sobre cuánto se descuentan Ejecución y Artístico, por coreografía.
+  // Nivel B → 10 · Nivel C → 15 · null = la nota se carga directa (artística).
+  const TOPES = {};
+
+  function pintarBanner(tope){
+    const comun = `Los decimales podés separarlos con <b>coma o con punto</b>: 8,50 y 8.50 son lo mismo.
+      Una nota guardada <b>se puede corregir</b> todas las veces que haga falta: la cambiás y tocás Actualizar.`;
+    $('bannerNotas').innerHTML = tope == null
+      ? `Las notas van de <b>0,10 a 10,00</b>. ${comun}`
+      : `<b>BD y DA</b> son notas, de 0,10 a 10,00.
+         <b>Ejecución y Artístico se cargan como descuento</b>: escribís lo que descontás y el
+         sistema hace la resta sobre <b>${String(tope).replace('.', ',')}</b>.
+         Si no hay deducciones, va <b>0</b>. ${comun}`;
   }
 
   // Cómo se muestra una nota guardada: siempre con coma y 2 decimales.
@@ -290,8 +303,8 @@
       <div class="campos">
         ${campo('bd_' + c.id, 'BD', mp && mp.bd)}
         ${campo('da_' + c.id, 'DA', mp && mp.da, c.aparato ? esc(c.aparato) : 'sin aparato')}
-        ${campo('eje_' + c.id, 'Ejecución', mp && mp.ejecucion)}
-        ${campo('art_' + c.id, 'Artístico', mp && mp.artistico)}
+        ${campo('eje_' + c.id, 'Ejecución', mp && mp.ejecucion, c.tope ? 'descuento' : '')}
+        ${campo('art_' + c.id, 'Artístico', mp && mp.artistico, c.tope ? 'descuento' : '')}
       </div>
       <div class="totales" id="tot_${c.id}"></div>
       <div style="text-align:right;margin-top:10px;">
@@ -304,15 +317,25 @@
   // Muestra Nota D y Nota Final mientras la jueza escribe, para que vea el
   // total antes de guardar y detecte al toque un dedazo (un 80 en vez de 8,0).
   function recalcular(id){
-    const n = campoId => { const v = aNumero($(campoId + '_' + id).value); return typeof v === 'number' && !Number.isNaN(v) && v > 0 ? v : null; };
-    const bd = n('bd'), da = n('da'), eje = n('eje'), art = n('art');
+    // BD y DA son notas (tienen que ser > 0). Ejecución y Artístico son
+    // descuentos: un 0 es válido y significa "sin deducciones".
+    const nota = campoId => { const v = aNumero($(campoId + '_' + id).value); return Number.isFinite(v) && v > 0 ? v : null; };
+    const desc = campoId => { const t = $(campoId + '_' + id).value.trim(); if(t === '') return null;
+                              const v = aNumero(t); return Number.isFinite(v) && v >= 0 ? v : null; };
+    const bd = nota('bd'), da = nota('da'), eje = desc('eje'), art = desc('art');
     const box = $('tot_' + id);
     if(bd == null || eje == null || art == null){ box.innerHTML = ''; return; }
+    const tope = TOPES[id];
+    // Con tope, lo que suma es el descuento restado; sin tope, la nota tal cual.
+    const ejeN = tope == null ? eje : tope - eje;
+    const artN = tope == null ? art : tope - art;
     const d = Math.round((bd + (da || 0)) * 100) / 100;
-    const final = Math.round((d + eje + art) * 100) / 100;
+    const final = Math.round((d + ejeN + artN) * 100) / 100;
     const conComa = n => n.toFixed(2).replace('.', ',');
-    box.innerHTML = `<span>Nota D <b>${conComa(d)}</b></span>
-      <span>Nota Final <b class="final">${conComa(final)}</b></span>`;
+    box.innerHTML = `<span>Nota D <b>${conComa(d)}</b></span>` +
+      (tope == null ? '' :
+        `<span>Ejecución <b>${conComa(ejeN)}</b></span><span>Artístico <b>${conComa(artN)}</b></span>`) +
+      `<span>Nota Final <b class="final">${conComa(final)}</b></span>`;
   }
 
   async function guardarPuntaje(coreografiaId){
