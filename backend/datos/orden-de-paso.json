@@ -1,228 +1,1037 @@
 {
   "_comentario": "Orden de paso DEFINITIVO del 11° Torneo Aniversario Bellatrix (11/10/2026), versión del 09/10. Rítmica numerada 1 a 81 (ya sin los 'bis' de la versión anterior) y artística numerada 1 a 41 aparte.",
   "categorias": [
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Manos Libres", "coreografias": [
-      { "n": "1", "nombre": "Alfonsina Denett", "escuela": "Allegra" },
-      { "n": "2", "nombre": "Olivia Burgos", "escuela": "Allegra" },
-      { "n": "3", "nombre": "Pía Vizzoni", "escuela": "Allegra" },
-      { "n": "4", "nombre": "Alma Pollano", "escuela": "Allegra" },
-      { "n": "5", "nombre": "Malena Cancino", "escuela": "Allegra" },
-      { "n": "6", "nombre": "Renata Grima", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Pelota", "coreografias": [
-      { "n": "7", "nombre": "Alfonsina Denett", "escuela": "Allegra" },
-      { "n": "8", "nombre": "Olivia Burgos", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Manos Libres", "coreografias": [
-      { "n": "9", "nombre": "Martina Leiva", "escuela": "Allegra" },
-      { "n": "10", "nombre": "Eva Villalba", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Soga", "coreografias": [
-      { "n": "11", "nombre": "Martina Leiva", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Juvenil", "aparato": "Pelota", "coreografias": [
-      { "n": "12", "nombre": "Lourdes Aramburu", "escuela": "Thi Vale" },
-      { "n": "13", "nombre": "Saira Cheble", "escuela": "BraveS" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Manos Libres", "coreografias": [
-      { "n": "14", "nombre": "Candelaria Palanca Bertuzzi", "escuela": "Thi Vale" },
-      { "n": "15", "nombre": "Pilar Arroyo Trejo", "escuela": "Allegra" },
-      { "n": "16", "nombre": "Julieta Andrada", "escuela": "Thi Vale" },
-      { "n": "17", "nombre": "Violeta Gómez", "escuela": "Allegra" },
-      { "n": "18", "nombre": "Agostina Seco", "escuela": "Allegra" },
-      { "n": "19", "nombre": "Malena Rodríguez", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Mazas", "coreografias": [
-      { "n": "20", "nombre": "Candelaria Palanca Bertuzzi", "escuela": "Thi Vale" },
-      { "n": "21", "nombre": "Pilar Arroyo Trejo", "escuela": "Allegra" },
-      { "n": "22", "nombre": "Julieta Andrada", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Juvenil", "aparato": "Cinta", "coreografias": [
-      { "n": "23", "nombre": "Lourdes Aramburu", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Exhibición", "aparato": null, "coreografias": [
-      { "n": "24", "nombre": "Fiorella, Delfina, Olivia J. y Olivia Coria", "escuela": "Santiago Rítmica", "exhibicion": true } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "B", "categoriaEdad": null, "aparato": "Pelota", "coreografias": [
-      { "n": "25", "nombre": "Victoria Díaz Chaparro", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": null, "aparato": "Manos Libres", "coreografias": [
-      { "n": "26", "nombre": "Victoria, Jazmin, Caetana, Ana y Amaparo", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Manos Libres", "coreografias": [
-      { "n": "27", "nombre": "Alma y Paula", "escuela": "Allegra" },
-      { "n": "28", "nombre": "Pía y Alfonsina", "escuela": "Allegra" },
-      { "n": "29", "nombre": "Isabela y Helena", "escuela": "Bellatrix" },
-      { "n": "30", "nombre": "Malena y Renata", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Pelota", "coreografias": [
-      { "n": "31", "nombre": "Alma y Paula", "escuela": "Allegra" },
-      { "n": "32", "nombre": "Pía y Alfonsina", "escuela": "Allegra" },
-      { "n": "33", "nombre": "Isabela y Helena", "escuela": "Bellatrix" },
-      { "n": "34", "nombre": "Malena y Renata", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Manos Libres", "coreografias": [
-      { "n": "35", "nombre": "Jazmin y Martina", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Manos Libres", "coreografias": [
-      { "n": "36", "nombre": "Malena y Agostina", "escuela": "Allegra" },
-      { "n": "37", "nombre": "Violeta y Pilar", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "B", "categoriaEdad": "Open", "aparato": "Pelota", "coreografias": [
-      { "n": "38", "nombre": "Josefina y Valentina", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Aro", "coreografias": [
-      { "n": "39", "nombre": "Malena y Agostina", "escuela": "Allegra" },
-      { "n": "40", "nombre": "Violeta y Pilar", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "Escuela", "categoriaEdad": "Exhibición", "aparato": null, "coreografias": [
-      { "n": "41", "nombre": "Natalia Tevez", "escuela": "Santiago Rítmica", "exhibicion": true } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": null, "aparato": "Aro", "coreografias": [
-      { "n": "42", "nombre": "Victoria, Jazmin, Caetana, Ana y Amaparo", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Pre Mini", "aparato": "Manos Libres", "coreografias": [
-      { "n": "43", "nombre": "Malena, Josefina y Antonella", "escuela": "Thi Vale" },
-      { "n": "44", "nombre": "Luz, Octavia e Isabella", "escuela": "Bellatrix" },
-      { "n": "45", "nombre": "Ainhoa, Luz y Agustina", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Manos Libres", "coreografias": [
-      { "n": "46", "nombre": "Victoria, Juliana y Milagros", "escuela": "Thi Vale" },
-      { "n": "47", "nombre": "Daiara, Sofía y Angelina", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Mini", "aparato": "Aro", "coreografias": [
-      { "n": "48", "nombre": "Victoria, Juliana y Milagros", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Manos Libres", "coreografias": [
-      { "n": "49", "nombre": "Pía, Rosario y Sofía", "escuela": "Thi Vale" },
-      { "n": "50", "nombre": "Micaela, Mia y Eva", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "B", "categoriaEdad": "Ac3", "aparato": "Manos Libres", "coreografias": [
-      { "n": "51", "nombre": "Indira, Sol y Catalina", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Pelota", "coreografias": [
-      { "n": "52", "nombre": "Pía, Rosario y Sofía", "escuela": "Thi Vale" },
-      { "n": "53", "nombre": "Micaela, Mia y Eva", "escuela": "Allegra" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Open", "aparato": "Aro", "coreografias": [
-      { "n": "54", "nombre": "Melani, Naiara y Rocío", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "B", "categoriaEdad": "Ac3", "aparato": "Pelota", "coreografias": [
-      { "n": "55", "nombre": "Indira, Sol y Catalina", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "C", "categoriaEdad": "Open", "aparato": "Pelota", "coreografias": [
-      { "n": "56", "nombre": "Melani, Naiara y Rocío", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Trío", "nivel": "Escuela", "categoriaEdad": "Exhibición", "aparato": null, "coreografias": [
-      { "n": "57", "nombre": "Amparo, Ysabel, Franchesca y Cintia", "escuela": "Santiago Rítmica", "exhibicion": true } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Manos Libres", "coreografias": [
-      { "n": "58", "nombre": "Catalina R., Catalina Medina, Guadalupe, Celina y Juliana", "escuela": "Bellatrix" },
-      { "n": "59", "nombre": "Olivia, Emma, Martina, Sol y Morena", "escuela": "Allegra" },
-      { "n": "60", "nombre": "Guillermina, Martina H., Sabina, Ana Victoria y Amanda B.", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": "Ac4", "aparato": "Aro", "coreografias": [
-      { "n": "61", "nombre": "Martina Romero Costa", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "C", "categoriaEdad": "Ac2", "aparato": "Aro", "coreografias": [
-      { "n": "62", "nombre": "Catalina R., Victoria S., Guadalupe, Celina y Juliana", "escuela": "Bellatrix" },
-      { "n": "63", "nombre": "Olivia, Emma, Martina, Sol y Morena", "escuela": "Allegra" },
-      { "n": "64", "nombre": "Guillermina, Martina H., Sabina, Ana Victoria y Amanda B.", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": "Ac4", "aparato": "Mazas", "coreografias": [
-      { "n": "65", "nombre": "Martina Romero Costa", "escuela": "Thi Vale" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Manos Libres", "coreografias": [
-      { "n": "66", "nombre": "Nayla, Camila, Azul, Constanza y Bianca", "escuela": "Bellatrix" },
-      { "n": "67", "nombre": "Olivia, Amanda R. N., Abigail, Victoria e Isabella", "escuela": "Bellatrix" },
-      { "n": "68", "nombre": "Araceli, Felicita, Delfina, Agostina y Martina", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "C", "categoriaEdad": "Exhibición", "aparato": "Aro", "coreografias": [
-      { "n": "69", "nombre": "Constanza Rubio Cruz", "escuela": "Bellatrix", "exhibicion": true } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "C", "categoriaEdad": "Mayor", "aparato": "Mixto", "coreografias": [
-      { "n": "70", "nombre": "Azul, Julieta, Bernardita, Valentina y Victoria", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "C", "categoriaEdad": "Ac3", "aparato": "Aro", "coreografias": [
-      { "n": "71", "nombre": "Nayla, Camila, Azul, Constanza y Bianca", "escuela": "Bellatrix" },
-      { "n": "72", "nombre": "Olivia, Amanda R. N., Abigail, Victoria e Isabella", "escuela": "Bellatrix" },
-      { "n": "73", "nombre": "Araceli, Felicita, Delfina, Agostina y Martina", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "B", "categoriaEdad": "Mayor", "aparato": "Cinta", "coreografias": [
-      { "n": "74", "nombre": "Victoria Díaz Chaparro", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "B", "categoriaEdad": "Open", "aparato": "Mazas", "coreografias": [
-      { "n": "75", "nombre": "Josefina y Valentina", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "B", "categoriaEdad": "Mini", "aparato": "Manos Libres", "coreografias": [
-      { "n": "76", "nombre": "Emma y Clara", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": "Mayor", "aparato": "Pelota", "coreografias": [
-      { "n": "77", "nombre": "Ornella, Amelia, Paulina, Alma e Isabella", "escuela": "Santiago Rítmica" },
-      { "n": "78", "nombre": "Azul, Julieta, Bernardita, Valentina y Victoria", "escuela": "Bellatrix" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Dúo", "nivel": "B", "categoriaEdad": "Mini", "aparato": "Pelota", "coreografias": [
-      { "n": "79", "nombre": "Emma y Clara", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Individual", "nivel": "B", "categoriaEdad": "Mayor", "aparato": "Mazas", "coreografias": [
-      { "n": "80", "nombre": "Victoria Díaz Chaparro", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Rítmica", "modalidad": "Conjunto", "nivel": "B", "categoriaEdad": "Mayor", "aparato": "Mixto", "coreografias": [
-      { "n": "81", "nombre": "Ornella, Amelia, Paulina, Alma e Isabella", "escuela": "Santiago Rítmica" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Pulgas", "aparato": null, "coreografias": [
-      { "n": "1", "nombre": "Anita Zamora" },
-      { "n": "2", "nombre": "Gianna Montoya" },
-      { "n": "3", "nombre": "Milena Ortiz Perez" },
-      { "n": "4", "nombre": "Sofia Burgos" },
-      { "n": "5", "nombre": "Faustina Aybar" },
-      { "n": "6", "nombre": "Emma Fernandez" },
-      { "n": "7", "nombre": "Catalina Racedo" },
-      { "n": "8", "nombre": "Juliana Martinez" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Pre Mini", "aparato": null, "coreografias": [
-      { "n": "9", "nombre": "Isabella Teseira" },
-      { "n": "10", "nombre": "Felicitas Martin Pacheco" },
-      { "n": "11", "nombre": "Anita Paste" },
-      { "n": "12", "nombre": "Guillermina Betura" },
-      { "n": "13", "nombre": "Luna Villagra" },
-      { "n": "14", "nombre": "Victoria Rivero Burgos" },
-      { "n": "15", "nombre": "Isabella Nadal" },
-      { "n": "16", "nombre": "Maite Mamani" },
-      { "n": "17", "nombre": "Emma Costilla" },
-      { "n": "18", "nombre": "Emma Mamani" },
-      { "n": "19", "nombre": "Josefina Herrera" },
-      { "n": "20", "nombre": "Amparo Acosta Veliz" },
-      { "n": "21", "nombre": "Sofia Quinteros" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Mini", "aparato": null, "coreografias": [
-      { "n": "22", "nombre": "Guillermina Arias" },
-      { "n": "23", "nombre": "Antonela Nieva" },
-      { "n": "24", "nombre": "Arumy Gutierrez" },
-      { "n": "25", "nombre": "Albertina Barrera Lindon" },
-      { "n": "26", "nombre": "Justina Bermudes" },
-      { "n": "27", "nombre": "Nina Yurko" },
-      { "n": "28", "nombre": "Josefina Quintana" },
-      { "n": "29", "nombre": "Virginia Norry" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Pre Infantil", "aparato": null, "coreografias": [
-      { "n": "30", "nombre": "Paulina Robles" },
-      { "n": "31", "nombre": "Catalina Palacio Jimenez" },
-      { "n": "32", "nombre": "Ines Paste" },
-      { "n": "33", "nombre": "Martina Alvarez" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "Escuela", "categoriaEdad": "Masculina", "aparato": null, "coreografias": [
-      { "n": "34", "nombre": "Lorenzo Rodriguez Cruz" },
-      { "n": "35", "nombre": "Constantino Manca" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "1", "categoriaEdad": "Mini", "aparato": null, "coreografias": [
-      { "n": "36", "nombre": "Guillermina Medina" },
-      { "n": "37", "nombre": "Sarah Lastfoigel" },
-      { "n": "38", "nombre": "Isabel Esber Attiel" },
-      { "n": "39", "nombre": "Pilar Gomez Ale" } ] },
-
-    { "disciplina": "Artística", "modalidad": "Individual", "nivel": "1", "categoriaEdad": "Infantil", "aparato": null, "coreografias": [
-      { "n": "40", "nombre": "Valentina Buffo Medina" },
-      { "n": "41", "nombre": "Agostina Alarcón Diaz" } ] }
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "1",
+          "nombre": "Alfonsina Denett",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "2",
+          "nombre": "Olivia Burgos",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "3",
+          "nombre": "Pía Vizzoni",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "4",
+          "nombre": "Alma Pollano",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "5",
+          "nombre": "Malena Cancino",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "6",
+          "nombre": "Renata Grima",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "7",
+          "nombre": "Alfonsina Denett",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "8",
+          "nombre": "Olivia Burgos",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "9",
+          "nombre": "Martina Leiva",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "10",
+          "nombre": "Eva Villalba",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Soga",
+      "coreografias": [
+        {
+          "n": "11",
+          "nombre": "Martina Leiva",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Juvenil",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "12",
+          "nombre": "Lourdes Aramburu",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "13",
+          "nombre": "Saira Cheble",
+          "escuela": "BraveS"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "14",
+          "nombre": "Candelaria Palanca Bertuzzi",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "15",
+          "nombre": "Pilar Arroyo Trejo",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "16",
+          "nombre": "Julieta Andrada",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "17",
+          "nombre": "Violeta Gómez",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "18",
+          "nombre": "Agostina Seco",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "19",
+          "nombre": "Malena Rodríguez",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Mazas",
+      "coreografias": [
+        {
+          "n": "20",
+          "nombre": "Candelaria Palanca Bertuzzi",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "21",
+          "nombre": "Pilar Arroyo Trejo",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "22",
+          "nombre": "Julieta Andrada",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Juvenil",
+      "aparato": "Cinta",
+      "coreografias": [
+        {
+          "n": "23",
+          "nombre": "Lourdes Aramburu",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Exhibición",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "24",
+          "nombre": "Fiorella, Delfina, Olivia J. y Olivia Coria",
+          "escuela": "Santiago Rítmica",
+          "exhibicion": true
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "B",
+      "categoriaEdad": null,
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "25",
+          "nombre": "Victoria Díaz Chaparro",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "B",
+      "categoriaEdad": null,
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "26",
+          "nombre": "Victoria, Jazmin, Caetana, Ana y Amaparo",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "27",
+          "nombre": "Alma y Paula",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "28",
+          "nombre": "Pía y Alfonsina",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "29",
+          "nombre": "Isabela y Helena",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "30",
+          "nombre": "Malena y Renata",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "31",
+          "nombre": "Alma y Paula",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "32",
+          "nombre": "Pía y Alfonsina",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "33",
+          "nombre": "Isabela y Helena",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "34",
+          "nombre": "Malena y Renata",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "35",
+          "nombre": "Jazmin y Martina",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "36",
+          "nombre": "Malena y Agostina",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "37",
+          "nombre": "Violeta y Pilar",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "B",
+      "categoriaEdad": "Open",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "38",
+          "nombre": "Josefina y Valentina",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "39",
+          "nombre": "Malena y Agostina",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "40",
+          "nombre": "Violeta y Pilar",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "Escuela",
+      "categoriaEdad": "Exhibición",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "41",
+          "nombre": "Natalia Tevez",
+          "escuela": "Santiago Rítmica",
+          "exhibicion": true
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "B",
+      "categoriaEdad": null,
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "42",
+          "nombre": "Victoria, Jazmin, Caetana, Ana y Amaparo",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Pre Mini",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "43",
+          "nombre": "Malena, Josefina y Antonella",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "44",
+          "nombre": "Luz, Octavia e Isabella",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "45",
+          "nombre": "Ainhoa, Luz y Agustina",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "46",
+          "nombre": "Victoria, Juliana y Milagros",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "47",
+          "nombre": "Daiara, Sofía y Angelina",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Mini",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "48",
+          "nombre": "Victoria, Juliana y Milagros",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "49",
+          "nombre": "Pía, Rosario y Sofía",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "50",
+          "nombre": "Micaela, Mia y Eva",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "B",
+      "categoriaEdad": "Ac3",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "51",
+          "nombre": "Indira, Sol y Catalina",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "52",
+          "nombre": "Pía, Rosario y Sofía",
+          "escuela": "Thi Vale"
+        },
+        {
+          "n": "53",
+          "nombre": "Micaela, Mia y Eva",
+          "escuela": "Allegra"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Open",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "54",
+          "nombre": "Melani, Naiara y Rocío",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "B",
+      "categoriaEdad": "Ac3",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "55",
+          "nombre": "Indira, Sol y Catalina",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "C",
+      "categoriaEdad": "Open",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "56",
+          "nombre": "Melani, Naiara y Rocío",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Trío",
+      "nivel": "Escuela",
+      "categoriaEdad": "Exhibición",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "57",
+          "nombre": "Amparo, Ysabel, Franchesca y Cintia",
+          "escuela": "Santiago Rítmica",
+          "exhibicion": true
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "58",
+          "nombre": "Catalina R., Catalina Medina, Guadalupe, Celina y Juliana",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "59",
+          "nombre": "Olivia, Emma, Martina, Sol y Morena",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "60",
+          "nombre": "Guillermina, Martina H., Sabina, Ana Victoria y Amanda B.",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "B",
+      "categoriaEdad": "Ac4",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "61",
+          "nombre": "Martina Romero Costa",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "C",
+      "categoriaEdad": "Ac2",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "62",
+          "nombre": "Catalina R., Victoria S., Guadalupe, Celina y Juliana",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "63",
+          "nombre": "Olivia, Emma, Martina, Sol y Morena",
+          "escuela": "Allegra"
+        },
+        {
+          "n": "64",
+          "nombre": "Guillermina, Martina H., Sabina, Ana Victoria y Amanda B.",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "B",
+      "categoriaEdad": "Ac4",
+      "aparato": "Mazas",
+      "coreografias": [
+        {
+          "n": "65",
+          "nombre": "Martina Romero Costa",
+          "escuela": "Thi Vale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "66",
+          "nombre": "Nayla, Camila, Azul, Constanza y Bianca",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "67",
+          "nombre": "Olivia, Amanda R. N., Abigail, Victoria e Isabella",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "68",
+          "nombre": "Araceli, Felicita, Delfina, Agostina y Martina",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "C",
+      "categoriaEdad": "Exhibición",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "69",
+          "nombre": "Constanza Rubio Cruz",
+          "escuela": "Bellatrix",
+          "exhibicion": true
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "C",
+      "categoriaEdad": "Mayor",
+      "aparato": "Mixto",
+      "coreografias": [
+        {
+          "n": "70",
+          "nombre": "Azul, Julieta, Bernardita, Valentina y Victoria",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "C",
+      "categoriaEdad": "Ac3",
+      "aparato": "Aro",
+      "coreografias": [
+        {
+          "n": "71",
+          "nombre": "Nayla, Camila, Azul, Constanza y Bianca",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "72",
+          "nombre": "Olivia, Amanda R. N., Abigail, Victoria e Isabella",
+          "escuela": "Bellatrix"
+        },
+        {
+          "n": "73",
+          "nombre": "Araceli, Felicita, Delfina, Agostina y Martina",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "B",
+      "categoriaEdad": "Mayor",
+      "aparato": "Cinta",
+      "coreografias": [
+        {
+          "n": "74",
+          "nombre": "Victoria Díaz Chaparro",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "B",
+      "categoriaEdad": "Open",
+      "aparato": "Mazas",
+      "coreografias": [
+        {
+          "n": "75",
+          "nombre": "Josefina y Valentina",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "B",
+      "categoriaEdad": "Mini",
+      "aparato": "Manos Libres",
+      "coreografias": [
+        {
+          "n": "76",
+          "nombre": "Emma y Clara",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "B",
+      "categoriaEdad": "Mayor",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "77",
+          "nombre": "Ornella, Amelia, Paulina, Alma e Isabella",
+          "escuela": "Santiago Rítmica"
+        },
+        {
+          "n": "78",
+          "nombre": "Azul, Julieta, Bernardita, Valentina y Victoria",
+          "escuela": "Bellatrix"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Dúo",
+      "nivel": "B",
+      "categoriaEdad": "Mini",
+      "aparato": "Pelota",
+      "coreografias": [
+        {
+          "n": "79",
+          "nombre": "Emma y Clara",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Individual",
+      "nivel": "B",
+      "categoriaEdad": "Mayor",
+      "aparato": "Mazas",
+      "coreografias": [
+        {
+          "n": "80",
+          "nombre": "Victoria Díaz Chaparro",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Rítmica",
+      "modalidad": "Conjunto",
+      "nivel": "B",
+      "categoriaEdad": "Mayor",
+      "aparato": "Mixto",
+      "coreografias": [
+        {
+          "n": "81",
+          "nombre": "Ornella, Amelia, Paulina, Alma e Isabella",
+          "escuela": "Santiago Rítmica"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Pulgas",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "1",
+          "nombre": "Anita Zamora"
+        },
+        {
+          "n": "2",
+          "nombre": "Gianna Montoya"
+        },
+        {
+          "n": "3",
+          "nombre": "Milena Ortiz Perez"
+        },
+        {
+          "n": "4",
+          "nombre": "Sofia Burgos"
+        },
+        {
+          "n": "5",
+          "nombre": "Faustina Aybar"
+        },
+        {
+          "n": "6",
+          "nombre": "Emma Fernandez"
+        },
+        {
+          "n": "7",
+          "nombre": "Catalina Racedo"
+        },
+        {
+          "n": "8",
+          "nombre": "Juliana Martinez"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Pre Mini",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "9",
+          "nombre": "Isabella Teseira"
+        },
+        {
+          "n": "10",
+          "nombre": "Felicitas Martin Pacheco"
+        },
+        {
+          "n": "11",
+          "nombre": "Anita Paste"
+        },
+        {
+          "n": "12",
+          "nombre": "Guillermina Betura"
+        },
+        {
+          "n": "13",
+          "nombre": "Luna Villagra"
+        },
+        {
+          "n": "14",
+          "nombre": "Victoria Rivero Burgos"
+        },
+        {
+          "n": "15",
+          "nombre": "Isabella Nadal"
+        },
+        {
+          "n": "16",
+          "nombre": "Maite Mamani"
+        },
+        {
+          "n": "17",
+          "nombre": "Emma Costilla"
+        },
+        {
+          "n": "18",
+          "nombre": "Emma Mamani"
+        },
+        {
+          "n": "19",
+          "nombre": "Josefina Herrera"
+        },
+        {
+          "n": "20",
+          "nombre": "Amparo Acosta Veliz"
+        },
+        {
+          "n": "21",
+          "nombre": "Sofia Quinteros"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Mini",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "22",
+          "nombre": "Guillermina Arias"
+        },
+        {
+          "n": "23",
+          "nombre": "Antonela Nieva"
+        },
+        {
+          "n": "24",
+          "nombre": "Arumy Gutierrez"
+        },
+        {
+          "n": "25",
+          "nombre": "Albertina Barrera Lindon"
+        },
+        {
+          "n": "26",
+          "nombre": "Justina Bermudes"
+        },
+        {
+          "n": "27",
+          "nombre": "Nina Yurko"
+        },
+        {
+          "n": "28",
+          "nombre": "Josefina Quintana"
+        },
+        {
+          "n": "29",
+          "nombre": "Virginia Norry"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Pre Infantil",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "30",
+          "nombre": "Paulina Robles"
+        },
+        {
+          "n": "31",
+          "nombre": "Catalina Palacio Jimenez"
+        },
+        {
+          "n": "32",
+          "nombre": "Ines Paste"
+        },
+        {
+          "n": "33",
+          "nombre": "Martina Alvarez"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "Escuela",
+      "categoriaEdad": "Masculina",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "34",
+          "nombre": "Lorenzo Rodriguez Cruz"
+        },
+        {
+          "n": "35",
+          "nombre": "Constantino Manca"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "1",
+      "categoriaEdad": "Mini",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "36",
+          "nombre": "Guillermina Medina"
+        },
+        {
+          "n": "37",
+          "nombre": "Sarah Lastfoigel"
+        },
+        {
+          "n": "38",
+          "nombre": "Isabel Esber Attiel"
+        },
+        {
+          "n": "39",
+          "nombre": "Pilar Gomez Ale"
+        }
+      ]
+    },
+    {
+      "disciplina": "Artística",
+      "modalidad": "Individual",
+      "nivel": "1",
+      "categoriaEdad": "Infantil",
+      "aparato": null,
+      "coreografias": [
+        {
+          "n": "40",
+          "nombre": "Valentina Buffo Medina"
+        },
+        {
+          "n": "41",
+          "nombre": "Agostina Alarcón Diaz"
+        }
+      ]
+    }
   ]
 }
