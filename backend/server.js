@@ -808,9 +808,12 @@ app.post('/api/visita', async (req, res) => {
 //    · (crédito 3,267 % y efectivo 3,5695 %, hoy no habilitados)
 //  El convenio reparte 91,8 % a Emilia y 8,2 % a José, y la comisión se
 //  prorratea igual. Entonces cada uno cobra su parte MENOS su parte de comisión.
+//
+//  ⚠️ Este calendario es para mostrárselo a Emilia: devuelve SOLO lo que cobra
+//  ella. Ni el bruto ni la comisión salen de acá, porque restando se deduce la
+//  parte de José. La parte de José está en la rendición de ePagos.
 // ═══════════════════════════════════════════════════════════════
 const REPARTO_CLIENTE = 0.918          // Manca María Emilia
-const REPARTO_TERCERO = 0.082          // Díaz Figueroa José
 
 const DEMORA_HABILES = { transferencia: 1, billetera: 1, debito: 5, credito: 18, efectivo: 5 }
 const COMISION       = { transferencia: 0.00968, billetera: 0.00968, debito: 0.017545, credito: 0.03267, efectivo: 0.035695 }
@@ -849,7 +852,7 @@ app.get('/api/admin/acreditacion', requireAuth(['admin']), async (req, res) => {
 
     const porDia = new Map()
     const enMano = { compras: 0, entradas: 0, total: 0, detalle: [] }
-    let brutoTotal = 0, comisionTotal = 0, emiliaTotal = 0, joseTotal = 0
+    let emiliaTotal = 0
 
     for (const o of ordenes) {
       // El día del pago se toma en hora de Argentina: una compra de las 22:30
@@ -868,35 +871,28 @@ app.get('/api/admin/acreditacion', requireAuth(['admin']), async (req, res) => {
 
       const acredita = aISO(sumarHabiles(new Date(pagadaEl + 'T12:00:00Z'), dias))
 
-      const total    = Number(o.total)
-      const comision = total * tasa
-      const emilia   = total * REPARTO_CLIENTE * (1 - tasa)
-      const jose     = total * REPARTO_TERCERO * (1 - tasa)
+      const emilia = Number(o.total) * REPARTO_CLIENTE * (1 - tasa)
+      emiliaTotal += emilia
 
-      brutoTotal += total; comisionTotal += comision; emiliaTotal += emilia; joseTotal += jose
-
-      const d = porDia.get(acredita) || { fecha: acredita, compras: 0, entradas: 0, bruto: 0, comision: 0, emilia: 0, jose: 0, detalle: [] }
-      d.compras++; d.entradas += o.cantidad; d.bruto += total; d.comision += comision; d.emilia += emilia; d.jose += jose
-      d.detalle.push({
-        nombre: o.nombre, cantidad: o.cantidad, total,
-        medio, pagadaEl, emilia: num2(emilia), jose: num2(jose),
-      })
+      const d = porDia.get(acredita) || { fecha: acredita, compras: 0, entradas: 0, emilia: 0, detalle: [] }
+      d.compras++; d.entradas += o.cantidad; d.emilia += emilia
+      d.detalle.push({ nombre: o.nombre, cantidad: o.cantidad, medio, pagadaEl, emilia: num2(emilia) })
       porDia.set(acredita, d)
     }
 
     const dias = [...porDia.values()]
       .sort((a, b) => a.fecha.localeCompare(b.fecha))
-      .map(d => ({ ...d, bruto: num2(d.bruto), comision: num2(d.comision), emilia: num2(d.emilia), jose: num2(d.jose) }))
+      .map(d => ({ ...d, emilia: num2(d.emilia) }))
 
     res.json({
       dias,
       enMano: { ...enMano, total: num2(enMano.total) },
       totales: {
         compras: ordenes.length - enMano.compras,
-        bruto: num2(brutoTotal), comision: num2(comisionTotal),
-        emilia: num2(emiliaTotal), jose: num2(joseTotal),
+        entradas: dias.reduce((s, d) => s + d.entradas, 0),
+        emilia: num2(emiliaTotal),
       },
-      reglas: { transferencia: '1 día hábil · 0,968 %', debito: '5 días hábiles · 1,7545 %', reparto: '91,8 % Emilia / 8,2 % José' },
+      reglas: { transferencia: '1 día hábil', debito: '5 días hábiles' },
     })
   } catch (e) {
     console.error('❌ Error armando la acreditación:', e?.message || e)

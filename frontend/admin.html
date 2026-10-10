@@ -412,29 +412,24 @@
       <tr>
         <td>${dia(x.fecha)}</td>
         <td class="num chico-no">${x.compras}</td>
-        <td class="num chico-no">${pesos(x.bruto)}</td>
-        <td class="num chico-no" style="color:var(--texto-tenue);">-${pesos(x.comision)}</td>
+        <td class="num chico-no">${x.entradas}</td>
         <td class="num" style="font-weight:800;color:var(--oro-claro);">${pesos(x.emilia)}</td>
-        <td class="num">${pesos(x.jose)}</td>
       </tr>`).join('');
     $('acredCuerpo').innerHTML = `
       <p style="font-size:13px;color:var(--texto-tenue);margin-bottom:10px;">
         QR y transferencias se acreditan al <b>día hábil siguiente</b> · tarjeta de débito, a los <b>5 días hábiles</b>.
-        Los montos ya tienen descontada la comisión de ePagos y el reparto del convenio
-        (${d.reglas.reparto}).
+        Los montos son los que entran a la cuenta, ya netos.
       </p>
       <table>
         <thead><tr>
-          <th>Se deposita el</th><th class="num chico-no">Compras</th><th class="num chico-no">Bruto</th>
-          <th class="num chico-no">Comisión</th><th class="num">A Emilia</th><th class="num">A José</th>
+          <th>Se deposita el</th><th class="num chico-no">Compras</th>
+          <th class="num chico-no">Entradas</th><th class="num">Se acredita</th>
         </tr></thead>
-        <tbody>${filas || '<tr><td colspan="6">Todavía no hay ventas pagadas.</td></tr>'}</tbody>
+        <tbody>${filas || '<tr><td colspan="4">Todavía no hay ventas pagadas.</td></tr>'}</tbody>
         <tfoot><tr style="font-weight:800;">
           <td>Total (${d.totales.compras} compras)</td><td class="chico-no"></td>
-          <td class="num chico-no">${pesos(d.totales.bruto)}</td>
-          <td class="num chico-no">-${pesos(d.totales.comision)}</td>
+          <td class="num chico-no">${d.totales.entradas}</td>
           <td class="num" style="color:var(--oro-claro);">${pesos(d.totales.emilia)}</td>
-          <td class="num">${pesos(d.totales.jose)}</td>
         </tr></tfoot>
       </table>
       ${d.enMano && d.enMano.compras ? `
@@ -447,13 +442,13 @@
 
   function exportarAcreditacion(){
     if(!ACRED) return;
-    const filas = [['Se deposita el','Compras','Entradas','Bruto','Comision ePagos','A Emilia','A Jose']];
-    ACRED.dias.forEach(d => filas.push([d.fecha, d.compras, d.entradas, d.bruto, d.comision, d.emilia, d.jose]));
+    const filas = [['Se deposita el','Compras','Entradas','Se acredita']];
+    ACRED.dias.forEach(d => filas.push([d.fecha, d.compras, d.entradas, d.emilia]));
     filas.push([]);
     filas.push(['DETALLE POR COMPRA']);
-    filas.push(['Se deposita el','Pagada el','Comprador','Entradas','Total','Medio','A Emilia','A Jose']);
+    filas.push(['Se deposita el','Pagada el','Comprador','Entradas','Medio','Se acredita']);
     ACRED.dias.forEach(d => d.detalle.forEach(o =>
-      filas.push([d.fecha, o.pagadaEl, o.nombre, o.cantidad, o.total, o.medio, o.emilia, o.jose])));
+      filas.push([d.fecha, o.pagadaEl, o.nombre, o.cantidad, o.medio, o.emilia])));
     if(ACRED.enMano && ACRED.enMano.compras){
       filas.push([]);
       filas.push(['VENDIDAS EN PUERTA (no pasan por ePagos, las cobra Emilia en mano)']);
