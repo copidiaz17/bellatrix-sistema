@@ -60,11 +60,12 @@ services:
       # Lista blanca de formas de pago. OJO: si además se manda TIPOS_EXCLUIDOS,
       # ePagos ignora esta lista. Se usa una o la otra, no las dos.
       # 44 = Transferencias 3.0 (también es "Otras billeteras", el QR)
-      # 14/41/28/15/52 = tarjetas de débito
+      # 14/41/28/15/52 = tarjetas de débito. Desde el 10/10 quedan afuera: el
+      # débito acredita a los 5 días hábiles, o sea después del torneo.
       - key: EPAGOS_TIPOS_EXCLUIDOS
         value: ""
       - key: EPAGOS_FORMAS_PERMITIDAS
-        value: "44,14,41,28,15,52"
+        value: "44"
 
       # ── Base de datos (Aiven, servidor ritmica-falube-stock) ──
       - key: DB_HOST
