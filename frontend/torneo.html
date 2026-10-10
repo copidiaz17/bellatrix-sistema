@@ -146,9 +146,14 @@
     <b style="color:var(--oro-claro);">¿Dónde se cargan las notas?</b>
     <div style="font-size:13.5px;color:var(--texto-tenue);margin-top:6px;line-height:1.5;">
       En <b>Panel de jueces</b> (botón de arriba, o
-      <b>bellatrix-2026.onrender.com/jueza.html</b>). Cada jueza entra con su
-      usuario y ve solo su área: Dificultad carga BD y DA, Ejecución y Artístico
-      cargan una sola nota. Los resultados aparecen acá, en cada categoría.
+      <b>bellatrix-2026.onrender.com/jueza.html</b>). Cada juez entra con su usuario
+      y ve solo las categorías de su disciplina; los tres de rítmica puntúan todos
+      los campos y la nota final es el promedio.
+      <b>Ejecución y Artístico se cargan como descuento</b> y el sistema hace la
+      resta: en <b>nivel B sobre 10</b>, en <b>nivel C sobre 15</b>.
+      <b>Artística</b> lleva una sola nota, también como descuento, sobre 10.
+      Entre paréntesis, en el detalle de cada juez, se ve lo que descontó.
+      Los resultados aparecen acá, en cada categoría.
     </div>
   </div>
 
@@ -314,7 +319,7 @@
         <td class="num">${fmt(f.notaA)}</td>
         <td class="num"><b>${fmt(f.notaFinal)}</b>${f.juezas > 1 ? `<div style="font-size:10px;color:var(--texto-tenue);font-weight:400;">prom. ${f.juezas} juezas</div>` : ''}</td>
         <td>${ROL === 'admin' ? `<button class="btn peligro chico" onclick="borrarCoreografia(${f.id})">✕</button>` : ''}</td>
-      </tr>${filaDetalle(f)}${!f.completo ? `<tr><td></td><td colspan="6" class="incompleto">${f.cargas ? `${f.cargas} jueza(s) empezaron a cargar, ninguna terminó las 4 notas` : 'Sin puntajes cargados'}</td><td></td></tr>` : ''}`;
+      </tr>${filaDetalle(f)}${!f.completo ? `<tr><td></td><td colspan="6" class="incompleto">${f.cargas ? `${f.cargas} juez/a(s) empezaron a cargar, ninguno terminó la planilla` : 'Sin puntajes cargados'}</td><td></td></tr>` : ''}`;
     }).join('');
   }
 
@@ -367,16 +372,24 @@
   // así que conviene poder verlos para entender de dónde sale cada número.
   function filaDetalle(f){
     if(!f.detalle || !f.detalle.length) return '';
-    const votos = f.detalle.map(v =>
-      `<div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:3px 0;">
+    const votos = f.detalle.map(v => {
+      // Artística carga una sola nota: ahí BD, DA y Artístico vienen vacíos y
+      // no se muestran. Entre paréntesis va el descuento que escribió el juez.
+      const conDesc = (valor, desc) => fmt(valor) + (desc == null ? '' :
+        ` <span style="opacity:.55;">(−${fmt(desc)})</span>`);
+      const campos = v.bd == null
+        ? `<span style="opacity:.75;">Nota ${conDesc(v.ejecucion, v.ejecucionDesc)}</span>`
+        : `<span style="opacity:.75;">BD ${fmt(v.bd)}</span>
+           <span style="opacity:.75;">DA ${v.da == null ? '—' : fmt(v.da)}</span>
+           <span style="opacity:.75;">Ejec. ${conDesc(v.ejecucion, v.ejecucionDesc)}</span>
+           <span style="opacity:.75;">Art. ${conDesc(v.artistico, v.artisticoDesc)}</span>`;
+      return `<div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:3px 0;">
          <b style="min-width:130px;">${esc(v.jueza)}</b>
-         <span style="opacity:.75;">BD ${fmt(v.bd)}</span>
-         <span style="opacity:.75;">DA ${v.da == null ? '—' : fmt(v.da)}</span>
-         <span style="opacity:.75;">Ejec. ${fmt(v.ejecucion)}</span>
-         <span style="opacity:.75;">Art. ${fmt(v.artistico)}</span>
+         ${campos}
          ${v.completa ? `<b style="color:var(--oro-claro);">= ${fmt(v.total)}</b>`
                       : '<span style="color:#ffb84d;">· sin terminar</span>'}
-       </div>`).join('');
+       </div>`;
+    }).join('');
     return `<tr><td></td><td colspan="7" style="padding:6px 10px 12px;">
       <div style="background:rgba(255,255,255,.05);border-left:3px solid var(--oro-claro);
                   border-radius:0 8px 8px 0;padding:8px 12px;font-size:12.5px;">${votos}</div>
