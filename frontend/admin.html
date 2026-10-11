@@ -179,6 +179,9 @@
     </div>
     <div style="text-align:center;margin-bottom:14px;">
       <button class="btn oro" id="btnAbrirCam" onclick="abrirCamara()" style="font-size:16px;padding:13px 26px;">📷 Abrir cámara para escanear</button>
+      <div style="margin-top:10px;">
+        <button class="btn ghost" onclick="probarSonido()" style="font-size:13px;">🔊 Probar sonido</button>
+      </div>
     </div>
     <div id="scanZone" style="display:none;">
       <div id="reader"></div>
@@ -592,6 +595,12 @@
   // Abrir la cámara recién al tocar el botón (no automáticamente)
   function abrirCamara(){
     if(window._scanner) return;            // ya está abierta
+    // Este toque es el que habilita el sonido: los navegadores no dejan sonar
+    // sin un gesto previo. Se prepara acá para que el primer escaneo ya pite.
+    try{
+      if(!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if(audio.state === 'suspended') audio.resume();
+    }catch(e){}
     $('scanZone').style.display = 'block';
     $('btnAbrirCam').style.display = 'none';
     $('reader').style.display = '';
@@ -619,15 +628,56 @@
   }
   function validarManual(){ const c = $('codigoManual').value.trim(); if(c) validar(c); $('codigoManual').value=''; }
 
+  // ── Sonido al escanear ────────────────────────────────────────────────────
+  // En la puerta, con ruido y gente encima, mirar la pantalla en cada entrada
+  // es lento: el pitido avisa sin mirar. Se genera acá, sin archivo de audio,
+  // así suena aunque la conexión esté lenta.
+  // Los navegadores no dejan sonar hasta que la persona toca algo, por eso el
+  // contexto se crea recién al primer toque (abrir la cámara ya cuenta).
+  let audio = null;
+  function tono(frecuencia, desde, duracion, volumen){
+    const osc = audio.createOscillator(), vol = audio.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(frecuencia, audio.currentTime + desde);
+    // Sube y baja suave: un corte seco suena a chasquido.
+    vol.gain.setValueAtTime(0, audio.currentTime + desde);
+    vol.gain.linearRampToValueAtTime(volumen, audio.currentTime + desde + 0.01);
+    vol.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + desde + duracion);
+    osc.connect(vol); vol.connect(audio.destination);
+    osc.start(audio.currentTime + desde);
+    osc.stop(audio.currentTime + desde + duracion + 0.02);
+  }
+  function sonar(tipo){
+    try{
+      if(!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if(audio.state === 'suspended') audio.resume();
+      if(tipo === 'ok'){            // dos notas que suben: entró
+        tono(880, 0, 0.09, 0.35); tono(1320, 0.1, 0.14, 0.35);
+      }else if(tipo === 'usado'){   // dos iguales, medio tono: ojo, repetida
+        tono(600, 0, 0.12, 0.3); tono(600, 0.18, 0.12, 0.3);
+      }else{                        // grave y largo: no pasa
+        tono(200, 0, 0.35, 0.4);
+      }
+    }catch(e){ /* si el navegador no deja sonar, no pasa nada: queda la vibración */ }
+  }
+
+  // Para probar antes de abrir la puerta: suena el de OK y, un segundo después,
+  // el de error, así se escucha la diferencia y se regula el volumen del celular.
+  function probarSonido(){
+    sonar('ok');
+    setTimeout(() => sonar('usado'), 900);
+    setTimeout(() => sonar('error'), 1800);
+  }
+
   async function validar(codigo){
     try{
       const r = await fetch('/api/validar', { method:'POST', headers:{'Content-Type':'application/json', ...auth()}, body: JSON.stringify({codigo}) });
       if(r.status === 401){ logout(); return; }
       const d = await r.json();
       const box = $('scanResult'); box.style.display='block';
-      if(d.ok){ box.className='result ok'; $('scanIco').textContent='✅'; $('scanMsg').textContent='INGRESO OK'; ingresados++; $('ingresados').textContent=ingresados; }
-      else if(d.estado==='usado'){ box.className='result warn'; $('scanIco').textContent='⚠️'; $('scanMsg').textContent='YA INGRESÓ'; }
-      else { box.className='result err'; $('scanIco').textContent='❌'; $('scanMsg').textContent = (d.msg||'ENTRADA NO VÁLIDA').toUpperCase(); }
+      if(d.ok){ box.className='result ok'; $('scanIco').textContent='✅'; $('scanMsg').textContent='INGRESO OK'; ingresados++; $('ingresados').textContent=ingresados; sonar('ok'); }
+      else if(d.estado==='usado'){ box.className='result warn'; $('scanIco').textContent='⚠️'; $('scanMsg').textContent='YA INGRESÓ'; sonar('usado'); }
+      else { box.className='result err'; $('scanIco').textContent='❌'; $('scanMsg').textContent = (d.msg||'ENTRADA NO VÁLIDA').toUpperCase(); sonar('error'); }
       let info = d.nombre || '';
       if(d.cantidad > 1 && d.usadas != null) info += '  ·  ' + d.usadas + ' de ' + d.cantidad;
       $('scanNom').textContent = info;
@@ -635,6 +685,7 @@
     }catch(e){
       const box = $('scanResult'); box.style.display='block'; box.className='result err';
       $('scanIco').textContent='❌'; $('scanMsg').textContent='ERROR DE CONEXIÓN'; $('scanNom').textContent='';
+      sonar('error');
     }
   }
 

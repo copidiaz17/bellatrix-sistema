@@ -22,3 +22,5 @@ backend/crearJuezas.mjs
 backend/migrar-disciplina.mjs
 docs/
 backend/crearMesa.mjs
+backend/clavesPuertas.mjs
+backend/crearAccesos.mjs
