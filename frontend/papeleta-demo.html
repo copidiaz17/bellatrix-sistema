@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Papeleta de Artístico · prueba — Bellatrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0d060d; --negro-2:#17101c; --negro-3:#1f1626;
+    --borde:rgba(255,255,255,.12); --texto:#f3eef7; --texto-tenue:#a99cb5;
+    --fucsia:#d6247a; --violeta:#8e3bb8; --oro-claro:#ff5fae; --ok:#16a34a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--negro);color:var(--texto);
+       font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.5;
+       padding:16px;}
+  h1,h2,h3{font-family:'Bricolage Grotesque','Segoe UI',Arial,sans-serif;letter-spacing:-.02em;}
+  .wrap{max-width:780px;margin:0 auto;}
+
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;}
+  h1{font-size:22px;background:linear-gradient(135deg,#d6247a,#8e3bb8);
+     -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .sub{font-size:13px;color:var(--texto-tenue);}
+
+  .aviso{background:rgba(226,182,79,.1);border:1px solid rgba(226,182,79,.45);
+         border-radius:12px;padding:13px 15px;font-size:13.5px;margin-bottom:16px;}
+  .aviso b{color:#ffcf6b;}
+
+  .caja{background:var(--negro-2);border:1px solid var(--borde);border-radius:16px;
+        padding:16px;margin-bottom:14px;}
+  .caja > h2{font-size:16px;margin-bottom:4px;}
+  .caja > .pie{font-size:12.5px;color:var(--texto-tenue);margin-bottom:12px;}
+
+  /* ── Las cuatro bancas ── */
+  .campos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .campo label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+               color:var(--texto-tenue);margin-bottom:5px;font-weight:700;}
+  .campo .et{background:rgba(214,36,122,.18);color:var(--oro-claro);border-radius:6px;
+             padding:1px 6px;font-size:9.5px;margin-left:4px;letter-spacing:.03em;}
+  input[type=text]{width:100%;background:var(--negro-3);border:1px solid var(--borde);
+    border-radius:10px;padding:11px 12px;color:var(--texto);font-size:19px;text-align:center;
+    font-family:Consolas,monospace;}
+  input[type=text]:focus{outline:none;border-color:var(--fucsia);}
+
+  /* ── Papeleta ── */
+  .linea{border-top:1px solid rgba(255,255,255,.07);padding:9px 0;}
+  .linea:first-of-type{border-top:0;}
+  .linea .tit{font-size:12.5px;color:var(--texto-tenue);font-weight:700;margin-bottom:6px;
+              display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .varias{background:rgba(142,59,184,.25);color:#d6a6f5;border-radius:5px;
+          padding:1px 6px;font-size:9.5px;font-weight:700;letter-spacing:.03em;}
+  .ops{display:flex;gap:7px;flex-wrap:wrap;}
+  .op{background:var(--negro-3);border:1px solid var(--borde);border-radius:9px;
+      padding:7px 11px;font-size:13px;cursor:pointer;color:var(--texto);
+      display:flex;align-items:baseline;gap:6px;transition:.12s;font-family:inherit;}
+  .op:hover{border-color:var(--fucsia);}
+  .op .val{font-family:Consolas,monospace;font-size:12px;color:var(--texto-tenue);}
+  .op.sel{background:linear-gradient(135deg,#d6247a,#8e3bb8);border-color:transparent;
+          color:#fff;font-weight:700;}
+  .op.sel .val{color:rgba(255,255,255,.85);}
+  .op.cero.sel{background:var(--ok);}
+
+  .libres{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;}
+
+  /* ── Totales ── */
+  .totales{background:var(--negro-3);border:1px solid var(--borde);border-radius:14px;
+           padding:14px 16px;margin-top:12px;}
+  .fila{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+        padding:5px 0;font-size:14px;}
+  .fila b{font-family:Consolas,monospace;font-size:16px;}
+  .fila.grande{border-top:1px solid var(--borde);margin-top:6px;padding-top:10px;font-size:15px;}
+  .fila.grande b{font-size:21px;color:var(--oro-claro);}
+  .detalle{font-size:12px;color:var(--texto-tenue);margin-top:8px;line-height:1.6;}
+
+  .comparar{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px;}
+  .op-a,.op-b{border-radius:14px;padding:14px;border:1px solid var(--borde);}
+  .op-a{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.5);}
+  .op-b{background:rgba(214,36,122,.08);}
+  .op-a h3,.op-b h3{font-size:13.5px;margin-bottom:6px;}
+  .op-a h3{color:#5fe08f;} .op-b h3{color:var(--oro-claro);}
+  .op-a .n,.op-b .n{font-family:Consolas,monospace;font-size:26px;font-weight:700;margin:4px 0;}
+  .op-a p,.op-b p{font-size:12px;color:var(--texto-tenue);}
+
+  .btn{background:linear-gradient(135deg,#d6247a,#8e3bb8);color:#fff;border:0;border-radius:10px;
+       padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .btn.ghost{background:transparent;border:1px solid var(--borde);color:var(--texto);}
+  .acciones{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;}
+
+  @media (max-width:560px){
+    .campos{grid-template-columns:repeat(2,1fr);}
+    .comparar,.libres{grid-template-columns:1fr;}
+    body{padding:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <h1>Papeleta de Artístico</h1>
+      <div class="sub">Prueba para los jueces · 11° Torneo Aniversario Bellatrix</div>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <b>Esto es una prueba, no el sistema real.</b> Es para ver si la papeleta en pantalla
+    funciona como en papel. Nada de lo que toques acá se guarda ni afecta al torneo.
+    Abajo de todo hay <b>dos formas de aplicar la penalización</b>: necesitamos que nos digas cuál es la correcta.
+  </div>
+
+  <!-- ══ LAS CUATRO BANCAS ══ -->
+  <div class="caja">
+    <h2>Las cuatro bancas</h2>
+    <div class="pie">Como en el sistema: BD y DA suman; Ejecución y Artístico se cargan como descuento.</div>
+    <div class="campos">
+      <div class="campo"><label>BD <span class="et">suma</span></label>
+        <input type="text" id="bd" value="5,00" inputmode="decimal" oninput="calcular()"></div>
+      <div class="campo"><label>DA <span class="et">suma</span></label>
+        <input type="text" id="da" value="2,00" inputmode="decimal" oninput="calcular()"></div>
+      <div class="campo"><label>Ejecución <span class="et">descuento</span></label>
+        <input type="text" id="eje" value="2,30" inputmode="decimal" oninput="calcular()"></div>
+      <div class="campo"><label>Artístico <span class="et">descuento</span></label>
+        <input type="text" id="art" value="1,00" inputmode="decimal" oninput="calcular()"></div>
+    </div>
+    <div class="pie" style="margin:10px 0 0;">
+      Nivel de la categoría:
+      <button class="op sel" id="nivB" onclick="setNivel('B')">Nivel B <span class="val">Ejec. sobre 10</span></button>
+      <button class="op" id="nivC" onclick="setNivel('C')">Nivel C <span class="val">Ejec. sobre 15</span></button>
+    </div>
+  </div>
+
+  <!-- ══ PAPELETA ══ -->
+  <div class="caja">
+    <h2>Elementos / Momentos</h2>
+    <div class="pie">Tocá una opción en cada línea, igual que marcás la papeleta.</div>
+    <div id="elementos"></div>
+  </div>
+
+  <div class="caja">
+    <h2>Penalizaciones generales</h2>
+    <div id="generales"></div>
+  </div>
+
+  <div class="caja">
+    <h2>Cálculo de penalizaciones</h2>
+    <div class="pie">Estos dos se escriben a mano, de 0,0 a 2,0.</div>
+    <div class="libres">
+      <div class="campo"><label>Conexiones (0,0 – 2,0)</label>
+        <input type="text" id="conexiones" value="0,00" inputmode="decimal" oninput="calcular()"></div>
+      <div class="campo"><label>Ritmo (0,0 – 2,0)</label>
+        <input type="text" id="ritmo" value="0,00" inputmode="decimal" oninput="calcular()"></div>
+    </div>
+
+    <div class="totales">
+      <div class="fila"><span>Elementos / momentos</span><b id="t_elem">0,00</b></div>
+      <div class="fila"><span>Penalizaciones generales</span><b id="t_gen">0,00</b></div>
+      <div class="fila"><span>Conexiones + Ritmo</span><b id="t_libres">0,00</b></div>
+      <div class="fila grande"><span>PENALIZACIÓN TOTAL</span><b id="t_total">0,00</b></div>
+      <div class="detalle" id="t_detalle"></div>
+    </div>
+
+    <div class="acciones">
+      <button class="btn ghost" onclick="limpiar()">Empezar de nuevo</button>
+      <button class="btn ghost" onclick="todoOK()">Marcar todo OK</button>
+    </div>
+  </div>
+
+  <!-- ══ LAS DOS LECTURAS ══ -->
+  <div class="caja">
+    <h2>¿Cómo se aplica esta penalización?</h2>
+    <div class="pie">Decinos cuál es la correcta y lo dejamos así.</div>
+    <div class="aviso" id="coinciden" style="display:none;margin-bottom:12px;">
+      <b>Ahora las dos dan el mismo número</b>, porque el campo Artístico está en 0 y la única
+      fuente de descuento es la papeleta. Poné algo en Artístico y vas a ver la diferencia:
+      ahí se nota si la papeleta <b>reemplaza</b> a ese campo (A) o <b>se suma</b> a él (B).
+    </div>
+    <div class="comparar">
+      <div class="op-a">
+        <h3>A · Es el descuento de Artístico</h3>
+        <div class="n" id="res_a">—</div>
+        <p id="exp_a"></p>
+        <p style="margin-top:6px;">La papeleta se llama "de Artístico", así que la penalización total
+           sería lo que se descuenta de 10 en esa banca.</p>
+      </div>
+      <div class="op-b">
+        <h3>B · Resta del puntaje total</h3>
+        <div class="n" id="res_b">—</div>
+        <p id="exp_b"></p>
+        <p style="margin-top:6px;">La penalización se descuenta al final, después de sumar las
+           cuatro bancas, como una quinta banca.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="aviso" style="margin-bottom:40px;">
+    <b>Dos cosas más para confirmar.</b>
+    <br>① Las líneas marcadas <span class="varias">varias</span> dejan elegir más de una opción,
+    porque en la papeleta no tienen un "OK". Si en realidad es una sola, avisanos.
+    <br>② En "Formaciones", ¿se pueden descontar diseño <b>y</b> amplitud a la vez (0,6 en total)?
+  </div>
+
+</div>
+
+<script>
+  // ── La papeleta, tal cual está impresa ──────────────────────────────────
+  // Cada línea es un grupo: el juez marca UNA opción, salvo las de "varias",
+  // que son las que no traen un "OK" y por eso parecen acumulables.
+  const ELEMENTOS = [
+    { id:'intro',   tit:'Introducción',  ops:[['OK',0],['4+ s',0.3]] },
+    { id:'pasos',   tit:'Pasos de danza', ops:[['OK',0],['Falta 1',0.3],['Falta 2',0.6]] },
+    { id:'dinam',   tit:'Din. / efectos', ops:[['OK',0],['Falta 1',0.3],['Falta 2',0.6],['Falta 3',0.9],['Falta 4',1.2]] },
+    { id:'colab',   tit:'Colaboraciones', varias:true,
+      ops:[['Colab. sinc.',0.3],['Contraste',0.3],['Canon/rápido',0.3],['Coral',0.3]] },
+    { id:'contin',  tit:'Continuidad',   ops:[['OK',0],['Interrupción',0.6]] },
+    { id:'contacto',tit:'Contacto',      ops:[['OK',0],['5 s sin contacto',0.3],['Inicio/final',0.6],['Construcción',0.6]] },
+    { id:'final',   tit:'Final',         ops:[['Con música',0],['Final ≠ música',0.3],['Normas musicales',0.3]] },
+  ];
+  const GENERALES = [
+    { id:'idea',    tit:'Idea / carácter',    ops:[['0,0',0],['0,3',0.3],['0,6',0.6],['1,0',1.0]] },
+    { id:'corporal',tit:'Expresión corporal', ops:[['0,0',0],['0,3',0.3],['0,6',0.6]] },
+    { id:'facial',  tit:'Expresión facial',   ops:[['0,0',0],['0,3',0.3]] },
+    { id:'formac',  tit:'Formaciones',        varias:true,
+      ops:[['0,3 diseño',0.3],['0,3 amplitud',0.3]] },
+  ];
+
+  const $ = id => document.getElementById(id);
+  const coma = n => n.toFixed(2).replace('.', ',');
+  const leer = id => { const t = $(id).value.trim().replace(',', '.');
+                       const v = Number(t); return Number.isFinite(v) && v >= 0 ? v : 0; };
+  let NIVEL = 'B';
+  const elegido = {};   // id de línea -> Set de índices marcados
+
+  function pintar(lista, donde){
+    $(donde).innerHTML = lista.map(l => `
+      <div class="linea">
+        <div class="tit">${l.tit}${l.varias ? ' <span class="varias">varias</span>' : ''}</div>
+        <div class="ops">
+          ${l.ops.map(([texto, valor], i) => `
+            <button class="op${valor === 0 ? ' cero' : ''}" id="op_${l.id}_${i}"
+                    onclick="marcar('${l.id}', ${i}, ${!!l.varias})">
+              ${texto}${valor ? `<span class="val">−${coma(valor)}</span>` : '<span class="val">0,00</span>'}
+            </button>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function marcar(idLinea, i, varias){
+    const sel = elegido[idLinea] || (elegido[idLinea] = new Set());
+    if(varias){
+      sel.has(i) ? sel.delete(i) : sel.add(i);        // se puede marcar y desmarcar
+    }else{
+      sel.has(i) ? sel.clear() : (sel.clear(), sel.add(i));   // una sola por línea
+    }
+    const linea = [...ELEMENTOS, ...GENERALES].find(l => l.id === idLinea);
+    linea.ops.forEach((_, j) => $(`op_${idLinea}_${j}`).classList.toggle('sel', sel.has(j)));
+    calcular();
+  }
+
+  function sumar(lista){
+    let total = 0, detalle = [];
+    for(const l of lista){
+      const sel = elegido[l.id];
+      if(!sel || !sel.size) continue;
+      for(const i of sel){
+        const [texto, valor] = l.ops[i];
+        if(valor > 0){ total += valor; detalle.push(`${l.tit}: ${texto} (−${coma(valor)})`); }
+      }
+    }
+    return { total: Math.round(total * 100) / 100, detalle };
+  }
+
+  function setNivel(n){
+    NIVEL = n;
+    $('nivB').classList.toggle('sel', n === 'B');
+    $('nivC').classList.toggle('sel', n === 'C');
+    calcular();
+  }
+
+  function calcular(){
+    const e = sumar(ELEMENTOS), g = sumar(GENERALES);
+    const libres = Math.round((leer('conexiones') + leer('ritmo')) * 100) / 100;
+    const total = Math.round((e.total + g.total + libres) * 100) / 100;
+
+    $('t_elem').textContent   = coma(e.total);
+    $('t_gen').textContent    = coma(g.total);
+    $('t_libres').textContent = coma(libres);
+    $('t_total').textContent  = coma(total);
+    $('t_detalle').innerHTML  = [...e.detalle, ...g.detalle].join(' · ') || 'Sin penalizaciones marcadas.';
+
+    // Las cuatro bancas
+    const topeEje = NIVEL === 'C' ? 15 : 10;
+    const resta = (desc, tope) => Math.max(0, Math.round((tope - desc) * 100) / 100);
+    const bd = leer('bd'), da = leer('da');
+    const ejeN = resta(leer('eje'), topeEje);
+    const d = Math.round((bd + da) * 100) / 100;
+
+    // A: la penalización ES el descuento de Artístico (se ignora lo escrito en el campo)
+    const artA = resta(total, 10);
+    const finalA = Math.round((d + ejeN + artA) * 100) / 100;
+    $('res_a').textContent = coma(finalA);
+    $('exp_a').innerHTML = `D ${coma(d)} + Ejec. ${coma(ejeN)} + <b>Art. ${coma(artA)}</b>
+      <span style="opacity:.7;">(10 − ${coma(total)})</span>`;
+
+    // B: el campo Artístico se carga aparte y la penalización resta del total
+    const artB = resta(leer('art'), 10);
+    const finalB = Math.round((d + ejeN + artB - total) * 100) / 100;
+    $('res_b').textContent = coma(finalB);
+    $('exp_b').innerHTML = `D ${coma(d)} + Ejec. ${coma(ejeN)} + Art. ${coma(artB)}
+      <b> − ${coma(total)}</b>`;
+
+    // Las dos cuentas coinciden cuando el campo Artístico está en 0: ahí la
+    // única fuente de descuento artístico es la papeleta. Conviene decirlo,
+    // porque si no parece que da igual cuál se elija.
+    $('coinciden').style.display = finalA === finalB ? 'block' : 'none';
+  }
+
+  function limpiar(){
+    for(const k in elegido) delete elegido[k];
+    document.querySelectorAll('.op.sel').forEach(b => { if(!b.id.startsWith('niv')) b.classList.remove('sel'); });
+    $('conexiones').value = '0,00'; $('ritmo').value = '0,00';
+    calcular();
+  }
+  function todoOK(){
+    limpiar();
+    for(const l of [...ELEMENTOS, ...GENERALES]){
+      const i = l.ops.findIndex(([, v]) => v === 0);
+      if(i >= 0) marcar(l.id, i, false);
+    }
+  }
+
+  pintar(ELEMENTOS, 'elementos');
+  pintar(GENERALES, 'generales');
+  calcular();
+</script>
+</body>
+</html>
