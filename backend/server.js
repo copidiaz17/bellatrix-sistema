@@ -1239,16 +1239,17 @@ function calcularNotas(puntajes, topes = { ejecucion: 10, artistico: 10 }, artis
     cargas: puntajes.length,     // cuántas juezas la tocaron (completas o no)
   }
 
-  // La penalización es la quinta banca: resta del total. Es opcional, así que
-  // una planilla sin penalización cargada cuenta como 0.
-  const penal = promedio(llenas.map(p => Number(p.penalizacion || 0)))
-
+  // Artística no tiene penalización: esa quinta banca es solo de rítmica.
   if (artistica) {
     const nota = promedio(llenas.map(p => neta(p.ejecucion, topes.ejecucion)))
     return { notaD: null, notaE: nota != null ? num2(nota) : null, notaA: null,
-             penalizacion: completo ? num2(penal) : null,
-             notaFinal: completo ? num2(nota - penal) : null, ...comunes }
+             penalizacion: null,
+             notaFinal: completo ? num2(nota) : null, ...comunes }
   }
+
+  // La penalización es la quinta banca: resta del total. Es opcional, así que
+  // una planilla sin penalización cargada cuenta como 0.
+  const penal = promedio(llenas.map(p => Number(p.penalizacion || 0)))
 
   const notaD = promedio(llenas.map(p => Number(p.bd) + Number(p.da || 0)))
   const notaE = promedio(llenas.map(p => neta(p.ejecucion, topes.ejecucion)))
@@ -1329,14 +1330,14 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
         const completa = artistica ? ej != null : (bd != null && ej != null && ar != null)
         const ejN = ej == null ? null : num2(neta(ej, topes.ejecucion))
         const arN = ar == null ? null : num2(neta(ar, topes.artistico))
-        const pen = Number(p.penalizacion || 0)
+        const pen = artistica ? 0 : Number(p.penalizacion || 0)
         return {
           jueza: p.jueza?.nombre || p.jueza?.usuario || 'Jueza',
-          bd, da, completa, penalizacion: pen,
+          bd, da, completa, penalizacion: artistica ? null : pen,
           ejecucion: ejN, artistico: arN,          // ya netas, es lo que suma
           ejecucionDesc: ej, artisticoDesc: ar,    // lo que cargó el juez
           total: !completa ? null
-               : artistica ? num2(ejN - pen)
+               : artistica ? ejN
                : num2(bd + (da || 0) + ejN + arN - pen),
         }
       }).sort((a, b) => String(a.jueza).localeCompare(String(b.jueza))),
@@ -1459,9 +1460,10 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
     }
 
     // La penalización es la única opcional: si queda vacía, es 0. No tiene tope.
+    // Es una banca de RÍTMICA: en artística no se pide ni se guarda.
     const penVacia = penalizacion === '' || penalizacion === null || penalizacion === undefined
     const pen = penVacia ? 0 : aNumero(penalizacion)
-    if (!Number.isFinite(pen) || pen < 0) {
+    if (!artistica && (!Number.isFinite(pen) || pen < 0)) {
       return res.status(400).json({ error: 'PENALIZACIÓN: escribí un número positivo, o dejala vacía' })
     }
 
@@ -1469,7 +1471,7 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
     const datos = artistica
       ? { coreografia_id, usuario_id: usuario.id,
           bd: null, da: null, ejecucion: num2(aNumero(ejecucion)), artistico: null,
-          penalizacion: num2(pen) }
+          penalizacion: 0 }
       : { coreografia_id, usuario_id: usuario.id,
           bd: num2(aNumero(bd)), da: num2(aNumero(da)),
           ejecucion: num2(aNumero(ejecucion)), artistico: num2(aNumero(artistico)),
