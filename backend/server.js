@@ -1200,28 +1200,28 @@ function comienzoDelDiaArgentino() {
 // Redondea a 2 decimales sin arrastrar errores de punto flotante.
 const num2 = n => Math.round(Number(n) * 100) / 100
 
-// Todo se carga como DESCUENTO y la nota sale de restarlo de un tope
-// (confirmado por las juezas el 10/10):
-//   · Rítmica nivel B → sobre 10   · Rítmica nivel C → sobre 15
-//   · Artística       → una sola nota, sobre 10
-// Las exhibiciones (nivel "Escuela") no compiten; se les deja el tope de B para
-// que la planilla funcione igual.
-const TOPE_POR_NIVEL = { B: 10, C: 15 }
-function topeDeduccion(categoria) {
-  if (!categoria) return 10
-  if (categoria.disciplina !== 'Rítmica') return 10
-  return TOPE_POR_NIVEL[categoria.nivel] ?? 10
+// BD y DA son notas que SUMAN y no tienen tope.
+// Ejecución y Artístico se cargan como DESCUENTO (siempre en positivo) y la nota
+// sale de restarlo de un tope. Precisiones del juez, 10/10:
+//   · Artístico  → siempre sobre 10
+//   · Ejecución  → sobre 10, salvo en nivel C que es sobre 15
+//   · Artística (la disciplina) → una sola nota, sobre 10
+// Si el descuento supera el tope, la nota NO se va a negativo: el piso es 0.
+// Las exhibiciones (nivel "Escuela") no compiten; usan los topes de B.
+function topesDe(categoria) {
+  if (esArtistica(categoria)) return { ejecucion: 10, artistico: 10 }
+  return { ejecucion: categoria?.nivel === 'C' ? 15 : 10, artistico: 10 }
 }
 
 // Artística usa una planilla de un solo campo; rítmica, la de cuatro
 // (BD, DA, Ejecución y Artístico).
 const esArtistica = categoria => categoria?.disciplina === 'Artística'
-// Lo que entra al promedio: el descuento ya restado del tope. Sin tope (artística)
-// la nota es la que cargó el juez.
-const neta = (valor, tope) => tope == null ? Number(valor) : tope - Number(valor)
+
+// Lo que entra al promedio: el descuento restado del tope, nunca por debajo de 0.
+const neta = (descuento, tope) => Math.max(0, tope - Number(descuento))
 
 // Dado un array de Puntaje (todos de la misma coreografía), calcula D/E/A/Final.
-function calcularNotas(puntajes, tope = 10, artistica = false) {
+function calcularNotas(puntajes, topes = { ejecucion: 10, artistico: 10 }, artistica = false) {
   const promedio = arr => arr.length ? arr.reduce((s, n) => s + n, 0) / arr.length : null
 
   // Solo cuentan las planillas completas: un juez que dejó un campo vacío
@@ -1240,14 +1240,14 @@ function calcularNotas(puntajes, tope = 10, artistica = false) {
   }
 
   if (artistica) {
-    const nota = promedio(llenas.map(p => neta(p.ejecucion, tope)))
+    const nota = promedio(llenas.map(p => neta(p.ejecucion, topes.ejecucion)))
     return { notaD: null, notaE: nota != null ? num2(nota) : null, notaA: null,
              notaFinal: completo ? num2(nota) : null, ...comunes }
   }
 
   const notaD = promedio(llenas.map(p => Number(p.bd) + Number(p.da || 0)))
-  const notaE = promedio(llenas.map(p => neta(p.ejecucion, tope)))
-  const notaA = promedio(llenas.map(p => neta(p.artistico, tope)))
+  const notaE = promedio(llenas.map(p => neta(p.ejecucion, topes.ejecucion)))
+  const notaA = promedio(llenas.map(p => neta(p.artistico, topes.artistico)))
 
   return {
     notaD: notaD != null ? num2(notaD) : null,
@@ -1303,7 +1303,7 @@ app.delete('/api/admin/coreografias/:id', requireAuth(['admin','director']), asy
 app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']), async (req, res) => {
   try {
     const categoria = await Categoria.findByPk(req.params.categoriaId)
-    const tope = topeDeduccion(categoria)
+    const topes = topesDe(categoria)
     const artistica = esArtistica(categoria)
     const coreografias = await Coreografia.findAll({
       where: { categoria_id: req.params.categoriaId },
@@ -1312,7 +1312,7 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
     })
     const filas = coreografias.map(c => ({
       id: c.id, nombre: c.nombre, escuela: c.escuela, exhibicion: c.exhibicion,
-      ...calcularNotas(c.puntajes, tope, artistica),
+      ...calcularNotas(c.puntajes, topes, artistica),
       // Voto de cada jueza por separado, para poder auditar de dónde sale el promedio.
       // Se muestran las dos caras: lo que escribió (el descuento) y lo que quedó.
       detalle: c.puntajes.map(p => {
@@ -1321,8 +1321,8 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
         const ej = p.ejecucion == null ? null : Number(p.ejecucion)
         const ar = p.artistico == null ? null : Number(p.artistico)
         const completa = artistica ? ej != null : (bd != null && ej != null && ar != null)
-        const ejN = ej == null ? null : num2(neta(ej, tope))
-        const arN = ar == null ? null : num2(neta(ar, tope))
+        const ejN = ej == null ? null : num2(neta(ej, topes.ejecucion))
+        const arN = ar == null ? null : num2(neta(ar, topes.artistico))
         return {
           jueza: p.jueza?.nombre || p.jueza?.usuario || 'Jueza',
           bd, da, completa,
@@ -1334,7 +1334,9 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
     }))
     // Puesto: solo entre las que tienen al menos una planilla completa Y no son exhibición
     // (una exhibición nunca compite, aunque alguien la puntúe por error).
-    const completas = filas.filter(f => f.completo && !f.exhibicion).sort((a, b) => b.notaFinal - a.notaFinal)
+    // Si dos empatan en la nota final, define la de Ejecución (regla del juez, 10/10).
+    const completas = filas.filter(f => f.completo && !f.exhibicion)
+      .sort((a, b) => (b.notaFinal - a.notaFinal) || ((b.notaE ?? 0) - (a.notaE ?? 0)))
     completas.forEach((f, i) => { f.puesto = i + 1 })
     res.json(filas)
   } catch (e) {
@@ -1388,9 +1390,9 @@ app.get('/api/jueza/categorias/:id/coreografias', requireAuth(['jueza', 'admin']
     })
     res.json(coreografias.map(c => ({
       aparato: aparatoDeCategoria(categoria),
-      // Sobre cuánto se descuenta en este nivel, y si la planilla es la de
+      // Sobre cuánto se descuenta cada banca, y si la planilla es la de
       // artística (una sola nota) o la de rítmica (BD, DA, Ejecución, Artístico).
-      tope: topeDeduccion(categoria),
+      topes: topesDe(categoria),
       artistica: esArtistica(categoria),
       id: c.id, nombre: c.nombre, escuela: c.escuela, exhibicion: c.exhibicion,
       // Mi propio puntaje ya cargado para esta coreografía (si existe), para poder editarlo.
@@ -1417,12 +1419,6 @@ function aNumero(n) {
   return Number(String(n).trim().replace(',', '.'))
 }
 
-// Rango válido de carga: 0,10 a 10,00 con hasta 2 decimales (indicado por la directora).
-function valorValido(n) {
-  const x = aNumero(n)
-  return Number.isFinite(x) && x >= 0.10 && x <= 10.00
-}
-
 app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
   try {
     const usuario = await Usuario.findOne({ where: { usuario: req.usuario.usuario } })
@@ -1434,34 +1430,23 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
       include: [{ model: Categoria, as: 'categoria' }],
     })
     if (!coreo) return res.status(404).json({ error: 'No existe esa coreografía' })
-    const tope = topeDeduccion(coreo.categoria)
     const artistica = esArtistica(coreo.categoria)
 
-    // La jueza puntúa la coreografía entera. DA es la única opcional: en las
-    // categorías sin aparato no hay destreza de aparato que puntuar.
-    // En artística hay un solo campo, así que BD y DA no se piden.
-    if (!artistica && !valorValido(bd)) {
-      return res.status(400).json({ error: 'BD debe estar entre 0,10 y 10,00' })
-    }
-    // Los descuentos: 0 es "sin deducciones" y el máximo es el tope del nivel
-    // (más que eso daría una nota negativa). En artística se pide uno solo.
-    // ⚠️ El vacío se rechaza a mano: aNumero('') devuelve 0, y un campo que
-    // quedó sin llenar no puede guardarse como "sin deducciones".
-    const aValidar = artistica ? { nota: ejecucion } : { ejecucion, artistico }
+    // Todos los valores se escriben SIEMPRE en positivo. Ninguno puede quedar
+    // vacío: en rítmica DA también se carga en manos libres.
+    // ⚠️ El vacío se rechaza a mano porque aNumero('') devuelve 0, y un campo
+    // sin llenar no puede guardarse como un cero legítimo.
+    // No hay tope superior: las bancas que suman (BD, DA) no lo tienen, y en las
+    // que restan un descuento más grande que el tope solo deja la nota en 0.
+    const aValidar = artistica ? { nota: ejecucion } : { bd, da, ejecucion, artistico }
     for (const [nombre, valor] of Object.entries(aValidar)) {
       if (valor === '' || valor === null || valor === undefined) {
         return res.status(400).json({ error: `Falta ${nombre.toUpperCase()}` })
       }
       const x = aNumero(valor)
-      if (!Number.isFinite(x) || x < 0 || x > tope) {
-        return res.status(400).json({
-          error: `${nombre.toUpperCase()} debe estar entre 0 y ${String(tope).replace('.', ',')}`,
-        })
+      if (!Number.isFinite(x) || x < 0) {
+        return res.status(400).json({ error: `${nombre.toUpperCase()}: escribí un número positivo` })
       }
-    }
-    const daVacia = artistica || da === '' || da === null || da === undefined
-    if (!daVacia && !valorValido(da)) {
-      return res.status(400).json({ error: 'DA debe estar entre 0,10 y 10,00, o vacía si no hay aparato' })
     }
 
     // En artística la única nota se guarda en `ejecucion`; el resto queda vacío.
@@ -1469,7 +1454,7 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
       ? { coreografia_id, usuario_id: usuario.id,
           bd: null, da: null, ejecucion: num2(aNumero(ejecucion)), artistico: null }
       : { coreografia_id, usuario_id: usuario.id,
-          bd: num2(aNumero(bd)), da: daVacia ? null : num2(aNumero(da)),
+          bd: num2(aNumero(bd)), da: num2(aNumero(da)),
           ejecucion: num2(aNumero(ejecucion)), artistico: num2(aNumero(artistico)) }
 
     // Upsert: si ya había cargado esta coreografía, se actualiza (permite corregir).

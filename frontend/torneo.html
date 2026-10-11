@@ -146,14 +146,16 @@
     <b style="color:var(--oro-claro);">¿Dónde se cargan las notas?</b>
     <div style="font-size:13.5px;color:var(--texto-tenue);margin-top:6px;line-height:1.5;">
       En <b>Panel de jueces</b> (botón de arriba, o
-      <b>bellatrix-2026.onrender.com/jueza.html</b>). Cada juez entra con su usuario
-      y ve solo las categorías de su disciplina; los tres de rítmica puntúan todos
-      los campos y la nota final es el promedio.
-      <b>Ejecución y Artístico se cargan como descuento</b> y el sistema hace la
-      resta: en <b>nivel B sobre 10</b>, en <b>nivel C sobre 15</b>.
+      <b>bellatrix-2026.onrender.com/jueza.html</b>). Cada usuario ve solo las
+      categorías de su disciplina. Todo se carga <b>en positivo</b>:
+      <b>BD y DA suman</b> (sin tope) y <b>Ejecución y Artístico son descuentos</b>
+      que el sistema resta — Artístico sobre <b>10</b> siempre, Ejecución sobre
+      <b>10</b>, salvo en <b>nivel C que es sobre 15</b>. Si el descuento se pasa,
+      la nota queda en 0, nunca negativa.
       <b>Artística</b> lleva una sola nota, también como descuento, sobre 10.
-      Entre paréntesis, en el detalle de cada juez, se ve lo que descontó.
-      Los resultados aparecen acá, en cada categoría.
+      Entre paréntesis, en el detalle, se ve lo que se descontó.
+      Si hay más de un usuario cargando, la nota final es el promedio.
+      <b>En caso de empate, define la nota de Ejecución.</b>
     </div>
   </div>
 
