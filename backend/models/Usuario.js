@@ -17,6 +17,9 @@ const Usuario = sequelize.define('Usuario', {
   // 'Rítmica' o 'Artística': el usuario ve SOLO las categorías de esa disciplina.
   // Vacío = ve todas (es el caso de los admin).
   disciplina: { type: DataTypes.STRING, allowNull: true },
+  // En false el usuario existe pero no puede entrar. Sirve para dejar afuera
+  // accesos que no se usan sin perderlos: se vuelven a habilitar con un UPDATE.
+  activo:   { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
 }, {
   tableName: 'usuarios',
   timestamps: true,

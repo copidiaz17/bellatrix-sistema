@@ -775,6 +775,10 @@ app.post('/api/admin/login', rateLimit({ windowMs: 60000, max: 10, msg: 'Demasia
     if (!u || !verifyPassword(password, u.salt, u.hash)) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' })
     }
+    // Un acceso deshabilitado existe pero no entra.
+    if (u.activo === false) {
+      return res.status(403).json({ error: 'Este acceso está deshabilitado' })
+    }
     res.json({
       token: firmarToken({ usuario: u.usuario, rol: u.rol, area: u.area }),
       rol: u.rol, usuario: u.usuario, area: u.area, nombre: u.nombre,
