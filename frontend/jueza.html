@@ -82,9 +82,11 @@
   .campo .pista{font-size:9.5px;color:var(--texto-tenue);opacity:.6;text-align:center;margin-top:3px;letter-spacing:.3px;}
   .campo .ayuda{text-transform:none;letter-spacing:0;font-size:10.5px;color:var(--oro);
     background:rgba(226,182,79,.12);padding:1px 6px;border-radius:8px;font-weight:600;}
-  .totales{display:flex;gap:16px;justify-content:flex-end;margin-top:10px;font-size:12.5px;
-    color:var(--texto-tenue);text-transform:uppercase;letter-spacing:.5px;}
-  .totales b{color:var(--texto);font-family:Consolas,monospace;font-size:15px;margin-left:5px;}
+  /* Hasta cinco valores: se envuelven en vez de desbordar el recuadro. */
+  .totales{display:flex;gap:10px 16px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px;
+    font-size:12.5px;color:var(--texto-tenue);text-transform:uppercase;letter-spacing:.5px;}
+  .totales > span{display:flex;align-items:baseline;gap:5px;white-space:nowrap;}
+  .totales b{color:var(--texto);font-family:Consolas,monospace;font-size:15px;}
   .totales b.final{color:var(--oro-claro);font-size:18px;}
   .campo label{margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--texto-tenue);}
   .campo input{text-align:center;font-size:17px;font-weight:700;font-family:Consolas,monospace;}
@@ -267,7 +269,9 @@
   const TOPES = {}, ARTISTICA = {};
 
   function pintarBanner(topes, artistica){
-    const comun = `<b>Todo se escribe en positivo.</b> Los decimales van con <b>coma o con punto</b>:
+    const comun = `<b>Penalización</b> es opcional: se deja vacía si no hay, y si hay, <b>resta del total</b>
+      (no tiene tope).
+      <b>Todo se escribe en positivo.</b> Los decimales van con <b>coma o con punto</b>:
       8,50 y 8.50 son lo mismo. Una nota guardada <b>se puede corregir</b> todas las veces que
       haga falta: la cambiás y tocás Actualizar.`;
     const coma = n => String(n).replace('.', ',');
@@ -312,6 +316,7 @@
              ${campo('da_' + c.id, 'DA', mp && mp.da, 'suma')}
              ${campo('eje_' + c.id, 'Ejecución', mp && mp.ejecucion, 'descuento')}
              ${campo('art_' + c.id, 'Artístico', mp && mp.artistico, 'descuento')}`}
+        ${campo('pen_' + c.id, 'Penalización', mp && mp.penalizacion, 'opcional')}
       </div>
       <div class="totales" id="tot_${c.id}"></div>
       <div style="text-align:right;margin-top:10px;">
@@ -335,11 +340,16 @@
     // El descuento nunca deja la nota en negativo: el piso es 0.
     const restar = (desc, tope) => Math.max(0, Math.round((tope - desc) * 100) / 100);
 
+    // La penalización es opcional: vacía vale 0. Resta del total.
+    const pen = leer('pen') || 0;
+    const resta = pen ? `<span>Penalización <b>−${conComa(pen)}</b></span>` : '';
+
     // Artística: una sola nota, el total es el descuento restado del tope.
     if(ARTISTICA[id]){
       const d = leer('eje');
       if(d == null){ box.innerHTML = ''; return; }
-      box.innerHTML = `<span>Nota <b class="final">${conComa(restar(d, topes.ejecucion))}</b></span>`;
+      const nota = Math.round((restar(d, topes.ejecucion) - pen) * 100) / 100;
+      box.innerHTML = `${resta}<span>Nota <b class="final">${conComa(nota)}</b></span>`;
       return;
     }
 
@@ -347,10 +357,11 @@
     if(bd == null || da == null || eje == null || art == null){ box.innerHTML = ''; return; }
     const ejeN = restar(eje, topes.ejecucion), artN = restar(art, topes.artistico);
     const d = Math.round((bd + da) * 100) / 100;
-    const final = Math.round((d + ejeN + artN) * 100) / 100;
+    const final = Math.round((d + ejeN + artN - pen) * 100) / 100;
     box.innerHTML = `<span>Nota D <b>${conComa(d)}</b></span>
       <span>Ejecución <b>${conComa(ejeN)}</b></span>
       <span>Artístico <b>${conComa(artN)}</b></span>
+      ${resta}
       <span>Nota Final <b class="final">${conComa(final)}</b></span>`;
   }
 
@@ -365,12 +376,15 @@
     };
     // En artística va una sola nota; se manda en ejecucion y el resto vacío.
     const body = ARTISTICA[coreografiaId]
-      ? { coreografia_id: coreografiaId, bd: '', da: '', ejecucion: leer('eje'), artistico: '' }
+      ? { coreografia_id: coreografiaId, bd: '', da: '', ejecucion: leer('eje'), artistico: '',
+          penalizacion: leer('pen') }
       : { coreografia_id: coreografiaId,
-          bd: leer('bd'), da: leer('da'), ejecucion: leer('eje'), artistico: leer('art') };
-    const aChequear = ARTISTICA[coreografiaId]
+          bd: leer('bd'), da: leer('da'), ejecucion: leer('eje'), artistico: leer('art'),
+          penalizacion: leer('pen') };
+    const aChequear = (ARTISTICA[coreografiaId]
       ? [['Nota', body.ejecucion]]
-      : [['BD',body.bd],['DA',body.da],['Ejecución',body.ejecucion],['Artístico',body.artistico]];
+      : [['BD',body.bd],['DA',body.da],['Ejecución',body.ejecucion],['Artístico',body.artistico]]
+    ).concat([['Penalización', body.penalizacion]]);
     for(const [etiqueta, valor] of aChequear){
       if(Number.isNaN(valor)){
         errBox.textContent = etiqueta + ': escribí solo el número, con coma o punto (ej: 8,50)';
@@ -392,6 +406,9 @@
       const escribir = (campoId, valor) => { const el = $(campoId + '_' + coreografiaId); if(el) el.value = aTexto(valor); };
       escribir('bd', p.bd); escribir('da', p.da);
       escribir('eje', p.ejecucion); escribir('art', p.artistico);
+      // La penalización suele ser 0: se deja el campo vacío para no ensuciar la planilla.
+      const elPen = $('pen_' + coreografiaId);
+      if(elPen) elPen.value = Number(p.penalizacion) ? aTexto(p.penalizacion) : '';
       recalcular(coreografiaId);
       if(navigator.vibrate) navigator.vibrate(80);
     }catch(e){

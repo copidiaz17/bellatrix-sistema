@@ -21,3 +21,4 @@ backend/horas.mjs
 backend/crearJuezas.mjs
 backend/migrar-disciplina.mjs
 docs/
+backend/crearMesa.mjs

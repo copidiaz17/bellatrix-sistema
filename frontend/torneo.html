@@ -153,6 +153,7 @@
       <b>10</b>, salvo en <b>nivel C que es sobre 15</b>. Si el descuento se pasa,
       la nota queda en 0, nunca negativa.
       <b>Artística</b> lleva una sola nota, también como descuento, sobre 10.
+      <b>Penalización</b> es opcional, no tiene tope y <b>resta del total</b>.
       Entre paréntesis, en el detalle, se ve lo que se descontó.
       Si hay más de un usuario cargando, la nota final es el promedio.
       <b>En caso de empate, define la nota de Ejecución.</b>
@@ -319,7 +320,7 @@
         <td class="num">${fmt(f.notaD)}</td>
         <td class="num">${fmt(f.notaE)}</td>
         <td class="num">${fmt(f.notaA)}</td>
-        <td class="num"><b>${fmt(f.notaFinal)}</b>${f.juezas > 1 ? `<div style="font-size:10px;color:var(--texto-tenue);font-weight:400;">prom. ${f.juezas} juezas</div>` : ''}</td>
+        <td class="num"><b>${fmt(f.notaFinal)}</b>${f.penalizacion ? `<div style="font-size:10px;color:#ff8a8a;font-weight:600;">penal. −${fmt(f.penalizacion)}</div>` : ''}${f.juezas > 1 ? `<div style="font-size:10px;color:var(--texto-tenue);font-weight:400;">prom. ${f.juezas} juezas</div>` : ''}</td>
         <td>${ROL === 'admin' ? `<button class="btn peligro chico" onclick="borrarCoreografia(${f.id})">✕</button>` : ''}</td>
       </tr>${filaDetalle(f)}${!f.completo ? `<tr><td></td><td colspan="6" class="incompleto">${f.cargas ? `${f.cargas} juez/a(s) empezaron a cargar, ninguno terminó la planilla` : 'Sin puntajes cargados'}</td><td></td></tr>` : ''}`;
     }).join('');
@@ -379,12 +380,13 @@
       // no se muestran. Entre paréntesis va el descuento que escribió el juez.
       const conDesc = (valor, desc) => fmt(valor) + (desc == null ? '' :
         ` <span style="opacity:.55;">(−${fmt(desc)})</span>`);
-      const campos = v.bd == null
+      const campos = (v.bd == null
         ? `<span style="opacity:.75;">Nota ${conDesc(v.ejecucion, v.ejecucionDesc)}</span>`
         : `<span style="opacity:.75;">BD ${fmt(v.bd)}</span>
            <span style="opacity:.75;">DA ${v.da == null ? '—' : fmt(v.da)}</span>
            <span style="opacity:.75;">Ejec. ${conDesc(v.ejecucion, v.ejecucionDesc)}</span>
-           <span style="opacity:.75;">Art. ${conDesc(v.artistico, v.artisticoDesc)}</span>`;
+           <span style="opacity:.75;">Art. ${conDesc(v.artistico, v.artisticoDesc)}</span>`)
+        + (v.penalizacion ? `<span style="color:#ff8a8a;">Penal. −${fmt(v.penalizacion)}</span>` : '');
       return `<div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:3px 0;">
          <b style="min-width:130px;">${esc(v.jueza)}</b>
          ${campos}

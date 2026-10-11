@@ -1239,10 +1239,15 @@ function calcularNotas(puntajes, topes = { ejecucion: 10, artistico: 10 }, artis
     cargas: puntajes.length,     // cuántas juezas la tocaron (completas o no)
   }
 
+  // La penalización es la quinta banca: resta del total. Es opcional, así que
+  // una planilla sin penalización cargada cuenta como 0.
+  const penal = promedio(llenas.map(p => Number(p.penalizacion || 0)))
+
   if (artistica) {
     const nota = promedio(llenas.map(p => neta(p.ejecucion, topes.ejecucion)))
     return { notaD: null, notaE: nota != null ? num2(nota) : null, notaA: null,
-             notaFinal: completo ? num2(nota) : null, ...comunes }
+             penalizacion: completo ? num2(penal) : null,
+             notaFinal: completo ? num2(nota - penal) : null, ...comunes }
   }
 
   const notaD = promedio(llenas.map(p => Number(p.bd) + Number(p.da || 0)))
@@ -1253,7 +1258,8 @@ function calcularNotas(puntajes, topes = { ejecucion: 10, artistico: 10 }, artis
     notaD: notaD != null ? num2(notaD) : null,
     notaE: notaE != null ? num2(notaE) : null,
     notaA: notaA != null ? num2(notaA) : null,
-    notaFinal: completo ? num2(notaD + notaE + notaA) : null,
+    penalizacion: completo ? num2(penal) : null,
+    notaFinal: completo ? num2(notaD + notaE + notaA - penal) : null,
     ...comunes,
   }
 }
@@ -1323,12 +1329,15 @@ app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']),
         const completa = artistica ? ej != null : (bd != null && ej != null && ar != null)
         const ejN = ej == null ? null : num2(neta(ej, topes.ejecucion))
         const arN = ar == null ? null : num2(neta(ar, topes.artistico))
+        const pen = Number(p.penalizacion || 0)
         return {
           jueza: p.jueza?.nombre || p.jueza?.usuario || 'Jueza',
-          bd, da, completa,
+          bd, da, completa, penalizacion: pen,
           ejecucion: ejN, artistico: arN,          // ya netas, es lo que suma
           ejecucionDesc: ej, artisticoDesc: ar,    // lo que cargó el juez
-          total: !completa ? null : artistica ? ejN : num2(bd + (da || 0) + ejN + arN),
+          total: !completa ? null
+               : artistica ? num2(ejN - pen)
+               : num2(bd + (da || 0) + ejN + arN - pen),
         }
       }).sort((a, b) => String(a.jueza).localeCompare(String(b.jueza))),
     }))
@@ -1422,7 +1431,7 @@ function aNumero(n) {
 app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
   try {
     const usuario = await Usuario.findOne({ where: { usuario: req.usuario.usuario } })
-    const { coreografia_id, bd, da, ejecucion, artistico } = req.body || {}
+    const { coreografia_id, bd, da, ejecucion, artistico, penalizacion } = req.body || {}
     if (!coreografia_id) return res.status(400).json({ error: 'Falta coreografia_id' })
 
     // El tope de deducción sale del nivel de la categoría a la que pertenece.
@@ -1449,13 +1458,22 @@ app.post('/api/jueza/puntaje', requireAuth(['jueza']), async (req, res) => {
       }
     }
 
+    // La penalización es la única opcional: si queda vacía, es 0. No tiene tope.
+    const penVacia = penalizacion === '' || penalizacion === null || penalizacion === undefined
+    const pen = penVacia ? 0 : aNumero(penalizacion)
+    if (!Number.isFinite(pen) || pen < 0) {
+      return res.status(400).json({ error: 'PENALIZACIÓN: escribí un número positivo, o dejala vacía' })
+    }
+
     // En artística la única nota se guarda en `ejecucion`; el resto queda vacío.
     const datos = artistica
       ? { coreografia_id, usuario_id: usuario.id,
-          bd: null, da: null, ejecucion: num2(aNumero(ejecucion)), artistico: null }
+          bd: null, da: null, ejecucion: num2(aNumero(ejecucion)), artistico: null,
+          penalizacion: num2(pen) }
       : { coreografia_id, usuario_id: usuario.id,
           bd: num2(aNumero(bd)), da: num2(aNumero(da)),
-          ejecucion: num2(aNumero(ejecucion)), artistico: num2(aNumero(artistico)) }
+          ejecucion: num2(aNumero(ejecucion)), artistico: num2(aNumero(artistico)),
+          penalizacion: num2(pen) }
 
     // Upsert: si ya había cargado esta coreografía, se actualiza (permite corregir).
     const existente = await Puntaje.findOne({ where: { coreografia_id, usuario_id: usuario.id } })
