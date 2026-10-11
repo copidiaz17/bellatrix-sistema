@@ -1265,13 +1265,25 @@ function calcularNotas(puntajes, topes = { ejecucion: 10, artistico: 10 }, artis
   }
 }
 
+// La disciplina del usuario que pide, o null si ve todo (admin sin disciplina).
+// Es lo que separa los accesos: el de rítmica no ve artística ni al revés, y no
+// alcanza con ocultarlo en pantalla — el filtro va acá.
+async function disciplinaDe(req) {
+  const quien = await Usuario.findOne({ where: { usuario: req.usuario.usuario } })
+  return quien?.disciplina || null
+}
+
 // ── ADMIN: armar el torneo (categorías y coreografías) ──
-app.get('/api/admin/categorias', requireAuth(['admin','director']), async (_req, res) => {
-  const categorias = await Categoria.findAll({ order: [['orden', 'ASC'], ['id', 'ASC']] })
+app.get('/api/admin/categorias', requireAuth(['admin','director']), async (req, res) => {
+  const disciplina = await disciplinaDe(req)
+  const categorias = await Categoria.findAll({
+    ...(disciplina ? { where: { disciplina } } : {}),
+    order: [['orden', 'ASC'], ['id', 'ASC']],
+  })
   res.json(categorias)
 })
 
-app.post('/api/admin/categorias', requireAuth(['admin','director']), async (req, res) => {
+app.post('/api/admin/categorias', requireAuth(['admin']), async (req, res) => {
   try {
     const { nivel, categoriaEdad, modalidad, aparato, orden } = req.body || {}
     if (!nivel || !modalidad) return res.status(400).json({ error: 'Faltan nivel y modalidad' })
@@ -1284,12 +1296,12 @@ app.post('/api/admin/categorias', requireAuth(['admin','director']), async (req,
   }
 })
 
-app.delete('/api/admin/categorias/:id', requireAuth(['admin','director']), async (req, res) => {
+app.delete('/api/admin/categorias/:id', requireAuth(['admin']), async (req, res) => {
   await Categoria.destroy({ where: { id: req.params.id } })
   res.json({ ok: true })
 })
 
-app.post('/api/admin/coreografias', requireAuth(['admin','director']), async (req, res) => {
+app.post('/api/admin/coreografias', requireAuth(['admin']), async (req, res) => {
   try {
     const { categoria_id, nombre, escuela, orden, exhibicion } = req.body || {}
     if (!categoria_id || !nombre) return res.status(400).json({ error: 'Faltan categoria_id y nombre' })
@@ -1301,7 +1313,7 @@ app.post('/api/admin/coreografias', requireAuth(['admin','director']), async (re
   }
 })
 
-app.delete('/api/admin/coreografias/:id', requireAuth(['admin','director']), async (req, res) => {
+app.delete('/api/admin/coreografias/:id', requireAuth(['admin']), async (req, res) => {
   await Coreografia.destroy({ where: { id: req.params.id } })
   res.json({ ok: true })
 })
@@ -1310,6 +1322,12 @@ app.delete('/api/admin/coreografias/:id', requireAuth(['admin','director']), asy
 app.get('/api/admin/resultados/:categoriaId', requireAuth(['admin','director']), async (req, res) => {
   try {
     const categoria = await Categoria.findByPk(req.params.categoriaId)
+    if (!categoria) return res.status(404).json({ error: 'No existe esa categoría' })
+    // Un acceso de una disciplina no puede pedir los resultados de la otra.
+    const suya = await disciplinaDe(req)
+    if (suya && categoria.disciplina !== suya) {
+      return res.status(403).json({ error: 'Esa categoría es de otra disciplina' })
+    }
     const topes = topesDe(categoria)
     const artistica = esArtistica(categoria)
     const coreografias = await Coreografia.findAll({

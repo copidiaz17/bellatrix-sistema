@@ -131,7 +131,7 @@
 
   <div id="panelView" style="display:none;">
   <div class="topbar">
-    <h1>🏆 Torneo — Categorías y Resultados</h1>
+    <h1>🏆 Torneo — Categorías y Resultados<span id="quienMira"></span></h1>
     <div style="display:flex;gap:8px;">
       <a class="btn ghost" href="jueza.html" target="_blank"
          style="text-decoration:none;display:inline-flex;align-items:center;">📝 Panel de jueces</a>
@@ -161,7 +161,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card soloadmin">
     <h2>Nueva categoría</h2>
     <div class="fila">
       <div><label>Nivel</label><input id="f_nivel" placeholder="Escuela / C"></div>
@@ -183,7 +183,7 @@
     <div class="card" id="panelCategoria" style="display:none;">
       <h2 id="tituloCat">—</h2>
 
-      <div class="fila">
+      <div class="fila soloadmin">
         <div style="flex:2;"><label>Nombre (gimnasta o conjunto)</label><input id="f_cornombre" placeholder="Nombre"></div>
         <div style="flex:1;"><label>Escuela (opcional)</label><input id="f_corescuela" placeholder="Escuela"></div>
         <div><label>&nbsp;</label><label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;text-transform:none;color:var(--texto);white-space:nowrap;"><input type="checkbox" id="f_corexhibicion" style="width:auto;"> Exhibición (no compite)</label></div>
@@ -235,7 +235,18 @@
   function mostrarPanel(){
     $('loginView').style.display = 'none';
     $('panelView').style.display = 'block';
+    // Los accesos de resultados (rol director) solo miran: se les esconden los
+    // formularios de crear, que de todos modos el servidor les rechaza.
+    if(ROL !== 'admin') document.querySelectorAll('.soloadmin').forEach(e => e.style.display = 'none');
     cargarCategorias();
+  }
+
+  // Qué disciplina está mirando este acceso. Se deduce de las categorías que le
+  // llegan: si son todas de la misma, es un acceso separado por disciplina.
+  function mostrarQuienMira(cats){
+    const d = [...new Set((cats || []).map(c => c.disciplina).filter(Boolean))];
+    $('quienMira').innerHTML = d.length === 1
+      ? ` <span style="font-size:15px;color:var(--texto-tenue);font-weight:400;">· ${esc(d[0])}</span>` : '';
   }
 
   function auth(){ return { 'Authorization': 'Bearer ' + TOKEN }; }
@@ -259,6 +270,7 @@
       </div>`
     ).join('');
     pintarContadorAnuncios(cats);
+    mostrarQuienMira(cats);
   }
 
   async function crearCategoria(){
