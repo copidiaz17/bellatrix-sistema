@@ -434,13 +434,7 @@
           <td class="num chico-no">${d.totales.entradas}</td>
           <td class="num" style="color:var(--oro-claro);">${pesos(d.totales.emilia)}</td>
         </tr></tfoot>
-      </table>
-      ${d.enMano && d.enMano.compras ? `
-        <p style="font-size:13px;color:var(--texto-tenue);margin-top:12px;">
-          Aparte, <b style="color:var(--oro-claro);">${pesos(d.enMano.total)}</b> de
-          ${d.enMano.entradas} entrada${d.enMano.entradas===1?'':'s'} vendida${d.enMano.entradas===1?'':'s'} en puerta:
-          esa plata no pasa por ePagos, la cobra Emilia en mano y no se deposita.
-        </p>` : ''}`;
+      </table>`;
   }
 
   function exportarAcreditacion(){
@@ -452,13 +446,6 @@
     filas.push(['Se deposita el','Pagada el','Comprador','Entradas','Medio','Se acredita']);
     ACRED.dias.forEach(d => d.detalle.forEach(o =>
       filas.push([d.fecha, o.pagadaEl, o.nombre, o.cantidad, o.medio, o.emilia])));
-    if(ACRED.enMano && ACRED.enMano.compras){
-      filas.push([]);
-      filas.push(['VENDIDAS EN PUERTA (no pasan por ePagos, las cobra Emilia en mano)']);
-      filas.push(['Vendida el','Comprador','Entradas','Total']);
-      ACRED.enMano.detalle.forEach(o => filas.push([o.pagadaEl, o.nombre, o.cantidad, o.total]));
-      filas.push(['TOTAL EN MANO','', ACRED.enMano.entradas, ACRED.enMano.total]);
-    }
     const csv = filas.map(f => f.map(c => `"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'}));
